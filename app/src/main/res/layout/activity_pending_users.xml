@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/backgrdimg"
+    tools:context=".activities.PendingUsersActivity">
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@android:color/transparent"
+        android:title="Vehicle Details"
+        android:titleTextColor="@android:color/white"
+        android:paddingTop="40dp"
+        app:navigationIcon="@drawable/baseline_arrow_back_24"/>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerPendingUsers"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+</LinearLayout>

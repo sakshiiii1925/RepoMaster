@@ -1,10 +1,318 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.ProfileActivity">
+    android:fillViewport="true"
+    android:background="@drawable/backgrdimg">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Toolbar -->
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="@android:color/transparent"
+            android:paddingTop="40dp"
+            android:title="My Profile"
+            android:titleTextColor="@android:color/white"
+            app:navigationIcon="@drawable/baseline_arrow_back_24"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <!-- Profile Image -->
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                app:cardCornerRadius="65dp"
+                app:cardElevation="8dp"
+                app:strokeColor="#FF8D2A"
+                app:strokeWidth="3dp">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="25dp"
+                    android:background="@android:color/white"
+                    android:src="@drawable/baseline_account_circle_24"
+                    app:tint="#FF8D2A"/>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"
+                android:text="My Profile"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                android:textSize="28sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Manage your account information"
+                android:textColor="#DDDDDD"
+                android:textStyle="bold"
+                android:textSize="14sp"/>
+
+            <!-- Profile Card -->
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="8dp"
+                android:backgroundTint="@android:color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="18dp">
+
+                    <!-- Name -->
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:src="@drawable/baseline_account_circle_24"
+                            app:tint="#FF8D2A"/>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Full Name:"
+                                android:textStyle="bold"
+                                android:textColor="#666666"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/txtName"
+                                android:textSize="18sp"
+                                android:textStyle="bold"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="12dp"
+                        android:background="#EEEEEE"/>
+
+                    <!-- Email -->
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:src="@drawable/baseline_email_24"
+                            app:tint="#FF8D2A"/>
+
+                        <LinearLayout
+                            android:layout_marginStart="16dp"
+                            android:orientation="horizontal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Email:"
+                                android:textStyle="bold"
+                                android:textColor="#666666"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/txtEmail"
+                                android:textSize="17sp"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="12dp"
+                        android:background="#EEEEEE"/>
+
+                    <!-- Mobile -->
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:src="@drawable/baseline_call_24"
+                            app:tint="#FF8D2A"/>
+
+                        <LinearLayout
+                            android:layout_marginStart="16dp"
+                            android:orientation="horizontal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Mobile:"
+                                android:textStyle="bold"
+                                android:textColor="#666666"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/txtMobile"
+                                android:textSize="17sp"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="12dp"
+                        android:background="#EEEEEE"/>
+
+                    <!-- Role -->
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:src="@drawable/baseline_person_24"
+                            app:tint="#FF8D2A"/>
+
+                        <LinearLayout
+                            android:layout_marginStart="16dp"
+                            android:orientation="horizontal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Role:"
+                                android:textStyle="bold"
+                                android:textColor="#666666"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/txtRole"
+                                android:textSize="17sp"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="12dp"
+                        android:background="#EEEEEE"/>
+
+                    <!-- Status -->
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:src="@drawable/baseline_verified_24"
+                            app:tint="#4CAF50"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:text="Status"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:id="@+id/txtStatus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
+                            android:background="@drawable/status_green"
+                            android:paddingHorizontal="14dp"
+                            android:paddingVertical="6dp"
+                            android:text="Active"
+                            android:textColor="@android:color/white"
+                            android:textStyle="bold"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Button -->
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/editprofile"
+                android:layout_width="match_parent"
+                android:layout_height="58dp"
+                android:layout_marginTop="25dp"
+                android:backgroundTint="#002147"
+                android:text="Edit Profile"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                app:cornerRadius="16dp"
+                app:iconGravity="textStart"
+                app:icon="@drawable/outline_edit_24"
+                app:iconTint="@android:color/white"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

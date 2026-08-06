@@ -2,41 +2,94 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/launchlogo1"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:roundIcon="@drawable/launchlogo1"
         android:supportsRtl="true"
-        android:theme="@style/Theme.RepoMaster">
+        android:theme="@style/Theme.RepoMaster"
+        android:usesCleartextTraffic="true">
+        <activity
+            android:name=".activities.VehicleInfo"
+            android:exported="false" />
+        <activity
+            android:name=".activities.VehicleReportActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.UserActivityReportActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ReportListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.UsersListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ResetPassword"
+            android:exported="true" />
+        <activity
+            android:name=".activities.ForgetPassword"
+            android:exported="true" />
+        <activity
+            android:name=".activities.EditUserProfile"
+            android:exported="false" />
+        <activity
+            android:name=".activities.AdminSearchHistoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.UserVehicleDetails"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ActivityChooserole"
+            android:exported="false" />
+        <activity
+            android:name=".activities.PendingUsersActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.UserRegistration"
+            android:exported="false" />
+        <activity
+            android:name=".activities.ReportsActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activities.BulkUploadActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activities.ViewVehicleActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activities.AddVehicleActivity"
+            android:exported="true" />
         <activity
             android:name=".activities.AdminDashboardActivity"
-            android:exported="false" />
+            android:exported="true" />
         <activity
-            android:name=".activities.AdminLoginActivity"
-            android:exported="false" />
+            android:name=".activities.AdminRegistrationActivity"
+            android:exported="true" />
         <activity
             android:name=".activities.ProfileActivity"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".activities.VehicleDetailsActivity"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".activities.SearchVehicleActivity"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".activities.HomeActivity"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".activities.LoginActivity"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".activities.SplashActivity"
-            android:exported="false" />
-        <activity
-            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -44,6 +97,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".MainActivity"
+            android:exported="true" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true" />
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

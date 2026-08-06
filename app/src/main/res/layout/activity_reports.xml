@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/backgrdimg">
+        <!-- Toolbar -->
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:background="@android:color/transparent"
+            android:paddingTop="40dp"
+            android:title="Repo Master"
+            app:navigationIcon="@drawable/baseline_arrow_back_24"
+            android:titleTextColor="@android:color/white"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:fillViewport="true"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Manage all vehicle reports from one place"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:layout_marginBottom="15dp"/>
+
+                <GridLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:columnCount="2"
+                    android:layout_marginTop="30dp"
+                    android:paddingHorizontal="4dp">
+
+                    <!-- View Vehicle -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardViewVehicle"
+                        android:layout_width="0dp"
+                        android:layout_height="145dp"
+                        android:layout_columnWeight="1"
+                        android:layout_margin="8dp"
+                        app:cardCornerRadius="22dp"
+                        android:backgroundTint="#EEF4FF"
+                        app:strokeWidth="1dp"
+                        app:strokeColor="#E0E0E0"
+                        app:cardElevation="10dp"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="60dp"
+                                android:layout_height="60dp"
+                                android:background="@drawable/bg_green_circle"
+                                android:padding="14dp"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="1dp"
+                                android:src="@drawable/baseline_pending_24"
+                                app:tint="@android:color/white"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="1dp"
+                                android:text="Repo Status Report"
+                                android:gravity="center"
+                                android:textStyle="bold"
+                                android:textSize="15sp"/>
+
+                        </LinearLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Delete Vehicle -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardSearchHistory"
+                        android:layout_width="0dp"
+                        android:layout_height="145dp"
+                        android:layout_columnWeight="1"
+                        android:backgroundTint="#EEF4FF"
+                        android:layout_margin="8dp"
+                        app:cardCornerRadius="22dp"
+                        app:strokeWidth="1dp"
+                        app:strokeColor="#E0E0E0"
+                        app:cardElevation="10dp"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="60dp"
+                                android:layout_height="60dp"
+                                android:background="@drawable/bg_red_circle"
+                                android:padding="14dp"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="1dp"
+                                android:src="@drawable/baseline_location_pin_24"
+                                app:tint="@android:color/white"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="1dp"
+                                android:gravity="center"
+                                android:text="Finance Report"
+                                android:textStyle="bold"
+                                android:textSize="15sp"/>
+
+                        </LinearLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Bulk Upload -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardBulkUpload"
+                        android:layout_width="0dp"
+                        android:layout_height="145dp"
+                        android:layout_columnWeight="1"
+                        android:layout_margin="8dp"
+                        android:backgroundTint="#EEF4FF"
+                        app:cardCornerRadius="22dp"
+                        app:strokeWidth="1dp"
+                        app:strokeColor="#E0E0E0"
+                        app:cardElevation="10dp"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="60dp"
+                                android:layout_height="60dp"
+                                android:background="@drawable/bg_purple_circle"
+                                android:padding="14dp"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="1dp"
+                                android:src="@drawable/white_account_circle_24"
+                                app:tint="@android:color/white"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="1dp"
+                                android:text="Executive Report"
+                                android:gravity="center"
+                                android:textStyle="bold"
+                                android:textSize="15sp"/>
+
+                        </LinearLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Reports -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardReports"
+                        android:layout_width="0dp"
+                        android:layout_height="145dp"
+                        android:layout_columnWeight="1"
+                        android:layout_margin="8dp"
+                        app:cardCornerRadius="22dp"
+                        android:backgroundTint="#EEF4FF"
+                        app:strokeWidth="1dp"
+                        app:strokeColor="#E0E0E0"
+                        app:cardElevation="10dp"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="60dp"
+                                android:layout_height="60dp"
+                                android:background="@drawable/bg_teal_circle"
+                                android:padding="14dp"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="1dp"
+                                android:src="@drawable/outline_analytics_24"
+                                app:tint="@android:color/white"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="1dp"
+                                android:text="Monthly Report"
+                                android:gravity="center"
+                                android:textStyle="bold"
+                                android:textSize="15sp"/>
+
+                        </LinearLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                </GridLayout>
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>

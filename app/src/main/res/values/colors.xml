@@ -2,4 +2,10 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="red">#FF0000</color>
+    <color name="status_pending">#FF9800</color>
+    <color name="status_contacted">#2196F3</color>
+    <color name="status_on_way">#9C27B0</color>
+    <color name="status_parked">#4CAF50</color>
+    <color name="status_released">#757575</color>
 </resources>

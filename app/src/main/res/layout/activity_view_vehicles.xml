@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/backgrdimg">
+
+    <!-- Toolbar -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@android:color/transparent"
+        android:title="View Vehicles"
+        android:paddingTop="40dp"
+        android:titleTextColor="#FFFFFF"
+        app:navigationIcon="@drawable/baseline_arrow_back_24"
+        app:titleTextAppearance="@style/TextAppearance.Material3.TitleLarge" />
+
+    <!-- Search Bar -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/searchLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        app:boxStrokeColor="@android:color/white"
+        app:hintTextColor="@android:color/white">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etSearch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Search Vehicle"
+            android:textColor="@android:color/white"
+            android:textColorHint="@android:color/white"
+            android:textCursorDrawable="@drawable/white_cursor"
+            android:textSize="16sp"
+            android:drawableStart="@drawable/baseline_search_24"
+            android:drawableTint="@android:color/white"
+            android:drawablePadding="12dp"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Table Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:background="#EAEAEA">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:text="Vehicle No."
+            android:gravity="center"
+            android:textStyle="bold"
+            android:background="@drawable/table_border"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:text="Engine No."
+            android:gravity="center"
+            android:textStyle="bold"
+            android:background="@drawable/table_border"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:text="Chassis No."
+            android:gravity="center"
+            android:textStyle="bold"
+            android:background="@drawable/table_border"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:text="Actions"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:background="@drawable/table_border"/>
+
+    </LinearLayout>
+    <!-- Vehicle List -->
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerVehicles"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+</LinearLayout>

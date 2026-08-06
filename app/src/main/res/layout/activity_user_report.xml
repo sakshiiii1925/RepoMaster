@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/backgrdimg">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@android:color/transparent"
+        android:title="User Activity Report"
+        android:titleTextColor="@android:color/white"
+        android:paddingTop="40dp"
+        app:navigationIcon="@drawable/baseline_arrow_back_24"/>
+
+    <!-- Download Buttons -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="12dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnDownloadPdf"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:text="PDF"
+            android:textAllCaps="false"
+            android:layout_marginEnd="8dp"
+            android:backgroundTint="#E53935"
+            app:icon="@drawable/baseline_picture_as_pdf_24"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnDownloadExcel"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:text="Excel"
+            android:textAllCaps="false"
+            android:layout_marginStart="8dp"
+            android:backgroundTint="#43A047"
+            app:icon="@drawable/ic_excel"/>
+
+    </LinearLayout>
+
+
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Header -->
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:background="@color/white"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="140dp"
+                    android:layout_height="wrap_content"
+                    android:text="User"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
+                    android:gravity="center"/>
+
+                <TextView
+                    android:layout_width="220dp"
+                    android:layout_height="wrap_content"
+                    android:text="Email"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
+                    android:gravity="center"/>
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="Searches"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
+                    android:gravity="center"/>
+
+                <TextView
+                    android:layout_width="110dp"
+                    android:layout_height="wrap_content"
+                    android:text="Repo Mark"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
+                    android:gravity="center"/>
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="Parked"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
+                    android:gravity="center"/>
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="Released"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
+                    android:gravity="center"/>
+
+                <TextView
+                    android:layout_width="180dp"
+                    android:layout_height="wrap_content"
+                    android:text="Last Search"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
+                    android:gravity="center"/>
+
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvUserActivity"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"/>
+
+        </LinearLayout>
+
+    </HorizontalScrollView>
+
+</LinearLayout>
