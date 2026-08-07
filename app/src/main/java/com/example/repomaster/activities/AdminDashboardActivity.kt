@@ -285,8 +285,6 @@ class AdminDashboardActivity : AppCompatActivity(),NavigationView.OnNavigationIt
     }
 
 //function for animation
-
-
     private fun animateCard(card: View) {
 
         val shrink = AnimationUtils.loadAnimation(this, R.anim.card_click)
@@ -305,6 +303,7 @@ class AdminDashboardActivity : AppCompatActivity(),NavigationView.OnNavigationIt
 
         card.startAnimation(shrink)
     }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
 
         menuInflater.inflate(R.menu.admin_toolbar_menu, menu)

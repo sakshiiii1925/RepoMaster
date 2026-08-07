@@ -97,7 +97,6 @@ private lateinit var toolbar: MaterialToolbar
 
         viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
 
-
         // Basic Details
 
         etVehicleNumber=findViewById(R.id.etVehicleNumber)
@@ -114,26 +113,18 @@ private lateinit var toolbar: MaterialToolbar
         etEngineNumber=findViewById(R.id.etEngineNumber)
         etChassisNumber=findViewById(R.id.etChassisNumber)
 
-
-
         // Agency
-
         etAgencyName=findViewById(R.id.etAgencyName)
         etAgencyManager=findViewById(R.id.etAgencyManager)
         etAgencyMobile=findViewById(R.id.etAgencyMobile)
         etAgencyMobile2=findViewById(R.id.etAgencyMobile2)
 
-
-
         // Finance
-
         etFinanceCompany=findViewById(R.id.etFinanceCompany)
         etBranch=findViewById(R.id.etBranch)
         etArea=findViewById(R.id.etArea)
 
-
         // Allocation
-
         etVehicleType=findViewById(R.id.etVehicleType)
         etAllocationDpd=findViewById(R.id.etAllocationDpd)
 
@@ -142,7 +133,6 @@ private lateinit var toolbar: MaterialToolbar
 
 
         // Managers
-
         etAreaManagerName=findViewById(R.id.etAreaManagerName)
         etAreaManagerMobile=findViewById(R.id.etAreaManagerMobile)
         etAreaManagerEmail=findViewById(R.id.etAreaManagerEmail)
@@ -159,8 +149,6 @@ private lateinit var toolbar: MaterialToolbar
         etRegionManagerMobile=findViewById(R.id.etRegionManagerMobile)
         etRegionManagerEmail=findViewById(R.id.etRegionManagerEmail)
 
-
-
         // Other
 
         etAgencyId=findViewById(R.id.etAgencyId)
@@ -169,16 +157,8 @@ private lateinit var toolbar: MaterialToolbar
 
         etUploadBy=findViewById(R.id.etUploadBy)
         etUploadDate=findViewById(R.id.etUploadDate)
-
-
-
         autoStatus=findViewById(R.id.autoStatus)
-
-
-
         btnSaveVehicle=findViewById(R.id.btnSaveVehicle)
-
-
 
         val statusList=listOf(
             "Open List",
@@ -187,8 +167,6 @@ private lateinit var toolbar: MaterialToolbar
             "Parked in Godown",
             "Released"
         )
-
-
         autoStatus.setAdapter(
             ArrayAdapter(
                 this,
@@ -196,8 +174,6 @@ private lateinit var toolbar: MaterialToolbar
                 statusList
             )
         )
-
-
 
         btnSaveVehicle.setOnClickListener {
 
@@ -232,15 +208,11 @@ private lateinit var toolbar: MaterialToolbar
 
                 color =
                     etColor.text.toString().trim(),
-
-
                 engineNumber =
                     etEngineNumber.text.toString().trim(),
 
                 chassisNumber =
                     etChassisNumber.text.toString().trim(),
-
-
 
                 agencyName =
                     etAgencyName.text.toString().trim(),
@@ -254,8 +226,6 @@ private lateinit var toolbar: MaterialToolbar
                 agencyMobile2 =
                     etAgencyMobile2.text.toString().trim(),
 
-
-
                 finance =
                     etFinanceCompany.text.toString().trim(),
 
@@ -265,25 +235,17 @@ private lateinit var toolbar: MaterialToolbar
                 area =
                     etArea.text.toString().trim(),
 
-
-
                 vehicleType =
                     etVehicleType.text.toString().trim(),
-
 
                 repoStatus =
                     autoStatus.text.toString().trim(),
 
-
                 allocationDpd =
                     etAllocationDpd.text.toString().trim(),
 
-
-
                 executiveName =
                     etExecutiveName.text.toString().trim(),
-
-
 
                 areaManagerName =
                     etAreaManagerName.text.toString().trim(),
@@ -294,8 +256,6 @@ private lateinit var toolbar: MaterialToolbar
                 areaManagerEmailId =
                     etAreaManagerEmail.text.toString().trim(),
 
-
-
                 contactName2 =
                     etContactName2.text.toString().trim(),
 
@@ -304,8 +264,6 @@ private lateinit var toolbar: MaterialToolbar
 
                 contactName2MobileNo =
                     etContactName2MobileNo.text.toString().trim(),
-
-
 
                 regionManagerName =
                     etRegionManagerName.text.toString().trim(),
@@ -316,8 +274,6 @@ private lateinit var toolbar: MaterialToolbar
                 regionManagerEmailId =
                     etRegionManagerEmail.text.toString().trim(),
 
-
-
                 agencyId =
                     etAgencyId.text.toString().trim(),
 
@@ -326,11 +282,9 @@ private lateinit var toolbar: MaterialToolbar
                     etRefLetter.text.toString().trim(),
 
 
-
                 totalCharges =
                     etTotalCharges.text.toString()
                         .toDoubleOrNull(),
-
 
 
                 uploadBy =
