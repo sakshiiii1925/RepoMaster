@@ -236,6 +236,13 @@ class HomeActivity : AppCompatActivity() {
                         )
                     )
                 }
+                R.id.nav_userReport ->{
+                    startActivity(
+                        Intent(
+                        this, UserReportActivity::class.java
+                    )
+                    )
+                }
 
             }
 
@@ -287,14 +294,22 @@ class HomeActivity : AppCompatActivity() {
             header.findViewById<TextView>(
                 R.id.txtUserEmail
             )
+        val txtProfileLetter =
+            header.findViewById<TextView>(R.id.txtProfileLetter)
 
+        val userName = session.getUserName()
 
-        txtUserName.text =
-            session.getUserName()
+        txtUserName.text = "$userName"
 
 
         txtUserEmail.text =
             session.getUserEmail()
+        txtProfileLetter.text =
+            userName
+                ?.trim()
+                ?.firstOrNull()
+                ?.uppercase()
+                ?: "A"
 
 
     }

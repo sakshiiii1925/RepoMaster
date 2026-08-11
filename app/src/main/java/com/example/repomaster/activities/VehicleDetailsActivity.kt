@@ -14,6 +14,11 @@ import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.example.repomaster.repository.VehicleRepository
 import com.example.repomaster.viewmodel.VehicleDetailsViewModelFactory
 import com.google.android.material.appbar.MaterialToolbar
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
+import com.example.repomaster.models.Yard
+import com.example.repomaster.viewmodel.YardViewModel
+import com.example.repomaster.utils.SessionManager
 
 class VehicleDetailsActivity : AppCompatActivity() {
 
@@ -86,13 +91,263 @@ class VehicleDetailsActivity : AppCompatActivity() {
     private lateinit var callcontactmanager: TextView
     private lateinit var autoStatus: MaterialAutoCompleteTextView
     private lateinit var btnSaveStatus: MaterialButton
+    private lateinit var autoYard: AutoCompleteTextView
 
+    private lateinit var yardViewModel: YardViewModel
+
+    private var yardList: List<Yard> = emptyList()
+
+    private lateinit var btnAssignYard: MaterialButton
+    private var selectedYard: Yard? = null
+    private var currentYard: Yard? = null
+    private lateinit var txtAssignedYard: TextView
 private lateinit var toolbar: MaterialToolbar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_vehicle_details)
+        initializeViews()
+        autoYard = findViewById(R.id.autoYard)
+
+        yardViewModel =
+            ViewModelProvider(this)[YardViewModel::class.java]
+        yardViewModel.assignVehicleToYardResponse.observe(this) { response ->
+
+            if (response.isSuccessful) {
+
+                val assignedYardName =
+                    selectedYard?.yardName ?: "Selected Yard"
+
+                val wasReassignment =
+                    currentYard != null
+
+                txtAssignedYard.text =
+                    "Current Yard: $assignedYardName"
+
+                Toast.makeText(
+                    this,
+                    if (wasReassignment)
+                        "Vehicle reassigned to $assignedYardName"
+                    else
+                        "Vehicle assigned to $assignedYardName",
+                    Toast.LENGTH_LONG
+                ).show()
+
+                // Update current yard
+                currentYard = selectedYard
+
+                // Clear selection
+                selectedYard = null
+                autoYard.setText("")
+
+            } else {
+
+                Toast.makeText(
+                    this,
+                    "Assignment failed: ${response.code()}",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+        yardViewModel.assignYardError.observe(this) { error ->
+
+            Toast.makeText(
+                this,
+                "Assignment error: $error",
+                Toast.LENGTH_LONG
+            ).show()
+        }
+        //load yards
+        val agencyId = SessionManager(this).getAgencyId()
+
+        if (!agencyId.isNullOrEmpty()) {
+
+            yardViewModel.getYards(agencyId)
+
+        } else {
+
+            Toast.makeText(
+                this,
+                "Agency ID not found",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+        //observe Yard List
+        yardViewModel.yards.observe(this) { response ->
+
+            if (response.isSuccessful) {
+
+                yardList = response.body() ?: emptyList()
+
+                val yardNames =
+                    yardList.map { it.yardName }
+
+                val adapter =
+                    ArrayAdapter(
+                        this,
+                        android.R.layout.simple_dropdown_item_1line,
+                        yardNames
+                    )
+
+                autoYard.setAdapter(adapter)
+
+            } else {
+
+                Toast.makeText(
+                    this,
+                    "Failed to load yards",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+        //assign Yard
+        yardViewModel.yard.observe(this) { response ->
+
+            if (response.isSuccessful) {
+
+                val yard = response.body()
+
+                if (yard != null) {
+
+                    currentYard = yard
+
+                    txtAssignedYard.text =
+                        "Current Yard: ${yard.yardName}"
+
+                } else {
+
+                    currentYard = null
+
+                    txtAssignedYard.text =
+                        "Current Yard: Not Assigned"
+                }
+
+            } else {
+
+                currentYard = null
+
+                txtAssignedYard.text =
+                    "Current Yard: Not Assigned"
+            }
+        }
+        //detect selected yard
+        autoYard.setOnItemClickListener { _, _, position, _ ->
+
+            selectedYard = yardList[position]
+
+            Toast.makeText(
+                this,
+                "Selected Yard: ${selectedYard?.yardName}",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+        btnAssignYard.setOnClickListener {
+
+            val vehicleNumber =
+                txtVehicleNo.text.toString().trim()
+
+            if (vehicleNumber.isEmpty()) {
+
+                Toast.makeText(
+                    this,
+                    "Vehicle number not found",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                return@setOnClickListener
+            }
+
+            val yard = selectedYard
+
+            if (yard == null) {
+
+                Toast.makeText(
+                    this,
+                    "Please select a yard",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                return@setOnClickListener
+            }
+
+            val newYardId = yard.id
+
+            if (newYardId == null) {
+
+                Toast.makeText(
+                    this,
+                    "Invalid yard ID",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                return@setOnClickListener
+            }
+
+            // -----------------------------------
+            // Check if same yard is selected
+            // -----------------------------------
+
+            if (currentYard?.id == newYardId) {
+
+                Toast.makeText(
+                    this,
+                    "Vehicle is already assigned to ${yard.yardName}",
+                    Toast.LENGTH_LONG
+                ).show()
+
+                return@setOnClickListener
+            }
+
+            // -----------------------------------
+            // Determine Assign or Reassign
+            // -----------------------------------
+
+            val isReassignment =
+                currentYard != null
+
+            val dialogTitle =
+                if (isReassignment)
+                    "Reassign Vehicle"
+                else
+                    "Assign Vehicle"
+
+            val dialogMessage =
+                if (isReassignment) {
+
+                    "Are you sure you want to move vehicle " +
+                            "$vehicleNumber from " +
+                            "\"${currentYard?.yardName}\" to " +
+                            "\"${yard.yardName}\"?"
+
+                } else {
+
+                    "Are you sure you want to assign vehicle " +
+                            "$vehicleNumber to " +
+                            "\"${yard.yardName}\"?"
+                }
+
+            // -----------------------------------
+            // Confirmation Dialog
+            // -----------------------------------
+
+            androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle(dialogTitle)
+                .setMessage(dialogMessage)
+                .setPositiveButton(
+                    if (isReassignment) "Reassign" else "Assign"
+                ) { _, _ ->
+
+                    yardViewModel.assignVehicleToYard(
+                        vehicleNumber,
+                        newYardId
+                    )
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
+        }
+
+
         toolbar =
             findViewById(R.id.toolbar)
 
@@ -119,7 +374,7 @@ private lateinit var toolbar: MaterialToolbar
 
 
 
-        initializeViews()
+
 
 
         val vehicleNumber =
@@ -214,7 +469,31 @@ private lateinit var toolbar: MaterialToolbar
                 txtUploadBy.text = vehicle.uploadBy
                 txtUploadDate.text =
                     vehicle.uploadDate.toString()
+                val yardId = vehicle.yardId
 
+                if (yardId != null) {
+
+                    val agencyId =
+                        SessionManager(this).getAgencyId()
+
+                    if (!agencyId.isNullOrEmpty()) {
+
+                        yardViewModel.getYard(
+                            yardId,
+                            agencyId
+                        )
+
+                    } else {
+
+                        txtAssignedYard.text =
+                            "Assigned Yard: Agency ID not found"
+                    }
+
+                } else {
+
+                    txtAssignedYard.text =
+                        "Assigned Yard: Not Assigned"
+                }
 
                 updateStatusColor(vehicle.repoStatus ?: "Pending")
 
@@ -414,7 +693,10 @@ private lateinit var toolbar: MaterialToolbar
 
         autoStatus=findViewById(R.id.autoStatus)
         btnSaveStatus=findViewById(R.id.btnSaveStatus)
-
+        btnAssignYard =
+            findViewById(R.id.btnAssignYard)
+        txtAssignedYard =
+            findViewById(R.id.txtAssignedYard)
     }
 
 

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="14dp"
+    app:cardElevation="4dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="#D0D7DE">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Yard Name -->
+        <TextView
+            android:id="@+id/txtYardName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pune Recovery Yard"
+            android:textColor="#001F3F"
+            android:textSize="19sp"
+            android:textStyle="bold" />
+
+        <!-- Address -->
+        <TextView
+            android:id="@+id/txtYardAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Pune"
+            android:textColor="#555555"
+            android:textSize="14sp" />
+
+        <!-- Manager -->
+        <TextView
+            android:id="@+id/txtYardManager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="Manager: Rahul Patil"
+            android:textColor="#555555"
+            android:textSize="14sp" />
+
+        <!-- Contact -->
+        <TextView
+            android:id="@+id/txtYardContact"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="Contact: 9876543210"
+            android:textColor="#555555"
+            android:textSize="14sp" />
+
+        <!-- Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEditYard"
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"
+                android:text="Edit"
+                app:icon="@drawable/outline_edit_24"
+                app:iconGravity="textStart"
+                app:iconTint="@color/white"
+                android:textStyle="bold"
+                android:backgroundTint="@color/status_parked"
+                android:textAllCaps="false"
+                android:textSize="14sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnDeleteYard"
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"
+                android:layout_marginStart="8dp"
+                app:icon="@drawable/white_delete_24"
+                android:text="Delete"
+                android:textStyle="bold"
+                android:backgroundTint="#E53935"
+                android:textAllCaps="false"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

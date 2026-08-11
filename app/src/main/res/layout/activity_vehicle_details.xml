@@ -1089,6 +1089,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:textColorHint="@color/white"
                 android:hint="Select Repo Status"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
 
@@ -1101,16 +1102,82 @@
 
 
             </com.google.android.material.textfield.TextInputLayout>
-
-            <!-- Save Status Button -->
-
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSaveStatus"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:layout_marginTop="16dp"
+                android:textStyle="bold"
                 android:text="SAVE REPO STATUS"
-                android:backgroundTint="@color/black"/>
+                android:backgroundTint="#002147"/>
+
+            <!-- Assign Vehicle to Yard -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardAssignYard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="6dp"
+                android:backgroundTint="@color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Assign Vehicle to Yard"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/layoutYard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:hint="Select Yard"
+                        app:endIconMode="dropdown_menu"
+                        app:startIconDrawable="@drawable/baseline_warehouse_24">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/autoYard"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="none"
+                            android:focusable="false"
+                            android:clickable="true" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <TextView
+                        android:id="@+id/txtAssignedYard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Assigned Yard: Not Assigned"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnAssignYard"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:layout_marginTop="16dp"
+                        android:text="Assign / Reassign Yard"
+                        android:textAllCaps="false"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:backgroundTint="#002147"
+                        android:textColor="@color/white" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
 
 
 

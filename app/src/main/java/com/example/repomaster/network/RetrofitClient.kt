@@ -2,6 +2,7 @@ package com.example.repomaster.network
 
 import com.example.repomaster.api.UserApi
 import com.example.repomaster.api.VehicleApi
+import com.example.repomaster.api.YardApi
 import com.example.repomaster.utils.Constants
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -32,5 +33,8 @@ object RetrofitClient {
 
     val userApi: UserApi by lazy {
         retrofit.create(UserApi::class.java)
+    }
+    val yardApi: YardApi by lazy {
+        retrofit.create(YardApi::class.java)
     }
 }

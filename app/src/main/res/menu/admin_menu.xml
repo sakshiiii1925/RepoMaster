@@ -14,7 +14,14 @@
         <item
             android:id="@+id/nav_viewuser"
             android:icon="@drawable/view_vehicle"
-            android:title="View Agent" />
+            android:title="Manage Agents"
+            android:iconTint="@color/black"/>
+        <item
+            android:id="@+id/nav_yards"
+            android:icon="@drawable/baseline_warehouse_24"
+            android:title="Manage Yards"
+            android:iconTint="@color/black"/>
+
         <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/baseline_logout_24"

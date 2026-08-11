@@ -45,6 +45,7 @@ class UserVehicleDetails : AppCompatActivity() {
 
 
     private lateinit var btnCallAgency: TextView
+    private lateinit var btnCallAgency2: TextView
     private lateinit var autoStatus: MaterialAutoCompleteTextView
     private lateinit var btnSaveStatus: MaterialButton
 
@@ -156,12 +157,7 @@ private lateinit var toolbar: MaterialToolbar
             }
 
         }
-
-        btnCallAgency.setOnClickListener {
-
-
-
-
+        btnCallAgency2.setOnClickListener {
             val mobile1 = txtAgencyMobile.text.toString().trim()
             val mobile2 = txtAgencyMobile2.text.toString().trim()
 
@@ -196,8 +192,43 @@ private lateinit var toolbar: MaterialToolbar
                 }
             }
 
+        }
 
+        btnCallAgency.setOnClickListener {
 
+            val mobile1 = txtAgencyMobile.text.toString().trim()
+            val mobile2 = txtAgencyMobile2.text.toString().trim()
+
+            val numbers = mutableListOf<String>()
+
+            if (mobile1.isNotEmpty()) numbers.add(mobile1)
+            if (mobile2.isNotEmpty()) numbers.add(mobile2)
+
+            when (numbers.size) {
+
+                0 -> {
+                    Toast.makeText(this, "No agency mobile number available", Toast.LENGTH_SHORT).show()
+                }
+
+                1 -> {
+                    val intent = Intent(Intent.ACTION_DIAL)
+                    intent.data = Uri.parse("tel:${numbers[0]}")
+                    startActivity(intent)
+                }
+
+                else -> {
+                    AlertDialog.Builder(this)
+                        .setTitle("Choose Agency Number")
+                        .setItems(numbers.toTypedArray()) { _, which ->
+
+                            val intent = Intent(Intent.ACTION_DIAL)
+                            intent.data = Uri.parse("tel:${numbers[which]}")
+                            startActivity(intent)
+
+                        }
+                        .show()
+                }
+            }
 
     }
 
@@ -260,6 +291,7 @@ private lateinit var toolbar: MaterialToolbar
 
 
         btnCallAgency=findViewById(R.id.btncall)
+        btnCallAgency2=findViewById(R.id.btncall2)
         autoStatus=findViewById(R.id.autoStatus)
         btnSaveStatus=findViewById(R.id.btnSaveStatus)
 

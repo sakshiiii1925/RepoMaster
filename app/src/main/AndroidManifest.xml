@@ -17,6 +17,21 @@
         android:theme="@style/Theme.RepoMaster"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".activities.YardVehiclesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.EditYard"
+            android:exported="false" />
+        <activity
+            android:name=".activities.AddYard"
+            android:exported="false" />
+        <activity
+            android:name=".activities.YardManagement"
+            android:exported="false" />
+        <activity
+            android:name=".activities.UserReportActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.VehicleInfo"
             android:exported="false" />
         <activity

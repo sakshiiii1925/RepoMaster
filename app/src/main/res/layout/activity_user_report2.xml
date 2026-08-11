@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/backgrdimg">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@android:color/transparent"
+        android:title="User Activity Report"
+        android:titleTextColor="@android:color/white"
+        android:paddingTop="40dp"
+        app:navigationIcon="@drawable/baseline_arrow_back_24"/>
+
+    <!-- Title -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:gravity="center"
+        android:text="Agent Report"
+        android:layout_marginTop="0dp"
+        android:textColor="@color/white"
+        android:textSize="22sp"
+        android:textStyle="bold"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="12dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnDownloadPdf"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:text="PDF"
+            android:textAllCaps="false"
+            android:layout_marginEnd="8dp"
+            android:backgroundTint="#E53935"
+            app:icon="@drawable/baseline_picture_as_pdf_24"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnDownloadExcel"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:text="Excel"
+            android:textAllCaps="false"
+            android:layout_marginStart="8dp"
+            android:backgroundTint="#43A047"
+            app:icon="@drawable/ic_excel"/>
+
+    </LinearLayout>
+
+
+    <!-- Horizontal Scroll -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:scrollbars="horizontal">
+
+        <!-- Vertical Scroll -->
+        <ScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:scrollbars="vertical">
+
+            <TableLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <!-- HEADER ROW -->
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="55dp"
+                   >
+
+                    <!-- Total Vehicle -->
+                    <TextView
+                        android:layout_width="160dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:padding="8dp"
+                        android:text="Total Vehicle Search"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:background="@drawable/table_cell_border"/>
+
+                    <!-- Repo Marked -->
+                    <TextView
+                        android:layout_width="160dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:padding="8dp"
+                        android:text="Repo Marked"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:background="@drawable/table_cell_border"/>
+
+                    <!-- Parked -->
+                    <TextView
+                        android:layout_width="160dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:padding="8dp"
+                        android:text="Parked"
+                        android:background="@drawable/table_cell_border"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <!-- Released -->
+                    <TextView
+                        android:layout_width="160dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:padding="8dp"
+                        android:background="@drawable/table_cell_border"
+                        android:text="Released"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                </TableRow>
+
+
+                <!-- DATA ROW -->
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp">
+
+                    <!-- Total Vehicle -->
+                    <TextView
+                        android:id="@+id/txtTotalVehicles"
+                        android:layout_width="160dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="0"
+                        android:background="@drawable/table_cell_border"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <!-- Repo Marked -->
+                    <TextView
+                        android:id="@+id/txtRepoMarked"
+                        android:layout_width="160dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="0"
+                        android:background="@drawable/table_cell_border"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <!-- Parked -->
+                    <TextView
+                        android:id="@+id/txtParked"
+                        android:layout_width="160dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="0"
+                        android:background="@drawable/table_cell_border"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <!-- Released -->
+                    <TextView
+                        android:id="@+id/txtReleased"
+                        android:layout_width="160dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="0"
+                        android:background="@drawable/table_cell_border"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                </TableRow>
+
+            </TableLayout>
+
+        </ScrollView>
+
+    </HorizontalScrollView>
+
+</LinearLayout>
+</LinearLayout>

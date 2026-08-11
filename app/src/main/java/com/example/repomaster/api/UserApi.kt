@@ -20,6 +20,7 @@ import com.example.repomaster.models.MonthlyReport
 import okhttp3.ResponseBody
 import retrofit2.http.Streaming
 import com.example.repomaster.models.VehicleReport
+import com.example.repomaster.models.UserReport
 
 interface UserApi {
 
@@ -173,5 +174,13 @@ interface UserApi {
         @Query("month") month: String?,
         @Query("status") status: String
     ): Response<List<VehicleReport>>
+    @GET("api/reports/user")
+    suspend fun getUserReport(
+        @Query("userEmail") userEmail: String
+    ): UserReport
+    @GET("api/reports/user/excel")
+    suspend fun downloadUserReportExcel(
+        @Query("userEmail") userEmail: String
+    ): ResponseBody
 
 }

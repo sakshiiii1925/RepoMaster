@@ -5,7 +5,7 @@ package com.example.repomaster.utils
 object Constants {
 
     // Android Emulator
-    const val BASE_URL = "http://192.168.1.104:8080/"
+    const val BASE_URL = "http://192.168.1.113:8080/"
 
 
     // Real device example:

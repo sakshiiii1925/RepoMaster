@@ -68,7 +68,9 @@ data class Vehicle(
 
 
     val uploadBy:String?,
-    val uploadDate:String?
+    val uploadDate:String?,
+    var yardId: Long? = null,
+    var yardName: String? = null
 
 )
 

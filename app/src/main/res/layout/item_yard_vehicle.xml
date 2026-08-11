@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardVehicle"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="4dp"
+    android:layout_marginEnd="4dp"
+    android:layout_marginTop="6dp"
+    android:layout_marginBottom="6dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="3dp"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Vehicle Number -->
+        <TextView
+            android:id="@+id/txtVehicleNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="MH14XY1919"
+            android:textColor="#002147"
+            android:textSize="19sp"
+            android:textStyle="bold" />
+
+        <!-- Owner Name -->
+        <TextView
+            android:id="@+id/txtOwnerName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Owner: Rahul Sharma"
+            android:textColor="@android:color/black"
+            android:textSize="15sp" />
+
+        <!-- Loan Number -->
+        <TextView
+            android:id="@+id/txtLoanNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Loan: LN123456"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="14sp" />
+
+        <!-- Repo Status -->
+        <TextView
+            android:id="@+id/txtRepoStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:paddingStart="12dp"
+            android:paddingTop="5dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="5dp"
+            android:text="Parked"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnRemoveYard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Remove from Yard"
+            android:backgroundTint="@color/red"
+            android:textStyle="bold"
+            android:textAllCaps="false" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

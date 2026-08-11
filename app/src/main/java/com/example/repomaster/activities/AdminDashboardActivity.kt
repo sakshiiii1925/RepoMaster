@@ -141,10 +141,27 @@ class AdminDashboardActivity : AppCompatActivity(),NavigationView.OnNavigationIt
         navigationView.setNavigationItemSelectedListener(this)
         val headerView = navigationView.getHeaderView(0)
 
-        val txtAdminName = headerView.findViewById<TextView>(R.id.txtadminName)
-        val txtAdminemail=headerView.findViewById<TextView>(R.id.txtadminEmail)
-        txtAdminName.text = "Admin ${sessionManager.getUserName()}"
-        txtAdminemail.text=sessionManager.getUserEmail()
+        val txtAdminName =
+            headerView.findViewById<TextView>(R.id.txtadminName)
+
+        val txtAdminemail =
+            headerView.findViewById<TextView>(R.id.txtadminEmail)
+
+        val txtProfileLetter =
+            headerView.findViewById<TextView>(R.id.txtProfileLetter)
+
+        val userName = sessionManager.getUserName()
+
+        txtAdminName.text = "$userName"
+
+        txtAdminemail.text = sessionManager.getUserEmail()
+
+        txtProfileLetter.text =
+            userName
+                ?.trim()
+                ?.firstOrNull()
+                ?.uppercase()
+                ?: "A"
         navigationView.setCheckedItem(R.id.nav_home)
         cardAddVehicle = findViewById(R.id.cardAddVehicle)
         cardViewVehicle = findViewById(R.id.cardViewVehicle)
@@ -246,6 +263,11 @@ class AdminDashboardActivity : AppCompatActivity(),NavigationView.OnNavigationIt
                 val intent= Intent(this, UsersListActivity::class.java)
                 startActivity(intent)
             }
+            R.id.nav_yards -> {
+                val intent= Intent(this, YardManagement::class.java)
+                startActivity(intent)
+            }
+
 
             R.id.nav_logout -> {
 

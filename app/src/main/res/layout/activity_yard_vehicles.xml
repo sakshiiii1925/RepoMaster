@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/backgrdimg">
+
+    <!-- Toolbar -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:paddingTop="35dp"
+
+        android:elevation="4dp"
+        app:title="Yard Vehicles"
+        app:titleTextColor="@color/white"
+        app:navigationIcon="@drawable/baseline_arrow_back_24"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Yard Name Card -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardYard"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="3dp"
+        app:strokeWidth="1dp"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Selected Yard"
+                android:textSize="13sp"
+                android:textColor="@android:color/black" />
+
+            <TextView
+                android:id="@+id/txtYardName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Pune Yard"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#002147" />
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Vehicle Count -->
+    <TextView
+        android:id="@+id/txtVehicleCount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="16dp"
+        android:text="Vehicles: 0"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        app:layout_constraintTop_toBottomOf="@id/cardYard"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+    <!-- Search Vehicle -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/searchVehicleLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:hint="Search Vehicle"
+        app:startIconDrawable="@drawable/baseline_search_24"
+        app:startIconTint="@color/white"
+        app:hintTextColor="@color/white"
+        app:boxBackgroundMode="outline"
+        app:layout_constraintTop_toBottomOf="@id/txtVehicleCount"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etSearchVehicle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:singleLine="true"
+            android:textColor="@android:color/white"
+            android:textColorHint="@android:color/white" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Vehicle List with Pull-to-Refresh -->
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshYardVehicles"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintTop_toBottomOf="@id/searchVehicleLayout"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerYardVehicles"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="8dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    <!-- Empty List Message -->
+    <TextView
+        android:id="@+id/txtNoVehicles"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No vehicles assigned to this yard"
+        android:textSize="16sp"
+        android:textColor="@android:color/darker_gray"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@id/swipeRefreshYardVehicles"
+        app:layout_constraintBottom_toBottomOf="@id/swipeRefreshYardVehicles"
+        app:layout_constraintStart_toStartOf="@id/swipeRefreshYardVehicles"
+        app:layout_constraintEnd_toEndOf="@id/swipeRefreshYardVehicles">
+
+    </TextView>
+    <!-- Loading Progress -->
+    <ProgressBar
+        android:id="@+id/progressYardVehicles"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@id/swipeRefreshYardVehicles"
+        app:layout_constraintBottom_toBottomOf="@id/swipeRefreshYardVehicles"
+        app:layout_constraintStart_toStartOf="@id/swipeRefreshYardVehicles"
+        app:layout_constraintEnd_toEndOf="@id/swipeRefreshYardVehicles">
+
+    </ProgressBar>
+</androidx.constraintlayout.widget.ConstraintLayout>

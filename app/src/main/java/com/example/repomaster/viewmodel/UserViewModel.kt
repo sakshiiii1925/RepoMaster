@@ -10,6 +10,13 @@ import com.example.repomaster.models.LoginRequest
 import com.example.repomaster.models.ReportSummary
 import androidx.lifecycle.MutableLiveData
 import retrofit2.Response
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.viewModelScope
+import com.example.repomaster.models.UserReport
+import kotlinx.coroutines.launch
+import okhttp3.ResponseBody
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 class UserViewModel : ViewModel() {
 
     private val repository = UserRepository()
@@ -237,6 +244,30 @@ class UserViewModel : ViewModel() {
                 status
             )
         )
+    }
+    private val _userReport = MutableLiveData<UserReport>()
+    val userReport: LiveData<UserReport> = _userReport
+    fun getUserReport(userEmail: String) {
+
+        viewModelScope.launch {
+
+            try {
+
+                val report = repository.getUserReport(userEmail)
+
+                _userReport.postValue(report)
+
+            } catch (e: Exception) {
+
+                e.printStackTrace()
+
+            }
+        }
+    }
+    fun downloadUserReportExcel(
+        userEmail: String
+    )= liveData {
+        emit(repository.downloadUserReportExcel(userEmail))
     }
 
 }

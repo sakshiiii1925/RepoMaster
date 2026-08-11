@@ -11,7 +11,7 @@ import com.example.repomaster.models.UserActivityReport
 import com.example.repomaster.models.MonthlyReport
 import com.example.repomaster.models.financeReport
 import com.example.repomaster.models.VehicleReport
-
+import com.example.repomaster.models.UserReport
 class UserRepository {
 
     suspend fun registerAdmin(user: User): Response<User> {
@@ -198,6 +198,14 @@ class UserRepository {
             month,
             status
         )
+    suspend fun getUserReport(userEmail: String): UserReport {
+        return RetrofitClient.userApi.getUserReport(userEmail)
+    }
+    suspend fun downloadUserReportExcel(
+        userEmail: String
+    )=
+         RetrofitClient.userApi.downloadUserReportExcel(userEmail)
+
 }
 
 

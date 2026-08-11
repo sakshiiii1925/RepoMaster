@@ -9,12 +9,16 @@
     android:padding="20dp"
     android:background="@drawable/backgrdimg">
 
-        <ImageView
-            android:id="@+id/imgProfile"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:padding="16dp"
-            android:src="@drawable/white_account_circle_24" />
+    <TextView
+        android:id="@+id/txtProfileLetter"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:text="A"
+        android:textColor="@android:color/white"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:background="@drawable/bg_orange_circle" />
 
     <!-- User Name -->
     <TextView
@@ -45,7 +49,7 @@
         android:text="Repo User"
         android:textColor="@android:color/white"
         android:textStyle="bold"
-        app:chipBackgroundColor="#FF8D2A"
+        app:chipBackgroundColor="#00122A"
         app:chipIcon="@drawable/baseline_person_24"
         app:chipIconTint="@android:color/white"
         app:chipMinHeight="34dp"/>
