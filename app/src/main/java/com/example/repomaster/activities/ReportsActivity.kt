@@ -21,6 +21,7 @@ class ReportsActivity : AppCompatActivity() {
     private lateinit var cardFinance: MaterialCardView
     private lateinit var cardExecutive: MaterialCardView
     private lateinit var cardMonthly: MaterialCardView
+    private lateinit var cardYard: MaterialCardView
     private lateinit var toolbar: MaterialToolbar
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,6 +44,7 @@ class ReportsActivity : AppCompatActivity() {
         cardFinance = findViewById(R.id.cardSearchHistory)
         cardExecutive = findViewById(R.id.cardBulkUpload)
         cardMonthly = findViewById(R.id.cardReports)
+        cardYard=findViewById(R.id.cardReportsYard)
 
         val agencyId = SessionManager(this).getAgencyId()
 
@@ -99,6 +101,11 @@ Released : ${report.released}
                             .putExtra("TYPE","MONTHLY")
                     )
 
+                }
+                cardYard.setOnClickListener {
+                    startActivity(
+                        Intent(this, YardReportActivity::class.java)
+                    )
                 }
 
             }

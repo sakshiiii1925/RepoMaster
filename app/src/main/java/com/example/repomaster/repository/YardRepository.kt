@@ -89,4 +89,14 @@ class YardRepository(
             vehicleNumber
         )
     }
+    suspend fun downloadYardExcel(
+        yardId: Long,
+        agencyId: String
+    ): Response<ResponseBody> {
+
+        return yardApi.downloadYardExcel(
+            yardId,
+            agencyId
+        )
+    }
 }

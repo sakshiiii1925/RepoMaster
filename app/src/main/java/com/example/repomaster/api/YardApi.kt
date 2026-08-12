@@ -58,5 +58,9 @@ interface YardApi {
     suspend fun removeVehicleFromYard(
         @Path("vehicleNumber") vehicleNumber: String
     ): Response<ResponseBody>
-
+    @GET("api/reports/yard/excel/{yardId}")
+    suspend fun downloadYardExcel(
+        @Path("yardId") yardId: Long,
+        @Query("agencyId") agencyId: String
+    ): Response<ResponseBody>
 }

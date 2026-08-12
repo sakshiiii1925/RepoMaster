@@ -319,4 +319,46 @@ class YardViewModel : ViewModel() {
             }
         }
     }
+    private val _yardExcelResponse =
+        MutableLiveData<Response<ResponseBody>>()
+
+    val yardExcelResponse:
+            LiveData<Response<ResponseBody>>
+        get() = _yardExcelResponse
+
+    private val _yardExcelError =
+        MutableLiveData<String>()
+
+    val yardExcelError:
+            LiveData<String>
+        get() = _yardExcelError
+
+    fun downloadYardExcel(
+        yardId: Long,
+        agencyId: String
+    ) {
+
+        viewModelScope.launch {
+
+            try {
+
+                val response =
+                    repository.downloadYardExcel(
+                        yardId,
+                        agencyId
+                    )
+
+                _yardExcelResponse.postValue(
+                    response
+                )
+
+            } catch (e: Exception) {
+
+                _yardExcelError.postValue(
+                    e.message
+                        ?: "Failed to download yard Excel"
+                )
+            }
+        }
+    }
 }

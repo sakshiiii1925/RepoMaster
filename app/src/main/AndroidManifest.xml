@@ -17,6 +17,9 @@
         android:theme="@style/Theme.RepoMaster"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".activities.YardReportActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.YardVehiclesActivity"
             android:exported="false" />
         <activity
