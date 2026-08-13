@@ -267,6 +267,10 @@ class AdminDashboardActivity : AppCompatActivity(),NavigationView.OnNavigationIt
                 val intent= Intent(this, YardManagement::class.java)
                 startActivity(intent)
             }
+            R.id.nav_invoice -> {
+                val intent= Intent(this, InvoiceActivity::class.java)
+                startActivity(intent)
+            }
 
 
             R.id.nav_logout -> {

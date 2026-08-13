@@ -61,6 +61,7 @@ interface YardApi {
     @GET("api/reports/yard/excel/{yardId}")
     suspend fun downloadYardExcel(
         @Path("yardId") yardId: Long,
-        @Query("agencyId") agencyId: String
+        @Query("agencyId") agencyId: String,
+        @Query("status") status: String
     ): Response<ResponseBody>
 }

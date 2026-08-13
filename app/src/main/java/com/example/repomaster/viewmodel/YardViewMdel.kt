@@ -335,7 +335,8 @@ class YardViewModel : ViewModel() {
 
     fun downloadYardExcel(
         yardId: Long,
-        agencyId: String
+        agencyId: String,
+        status: String
     ) {
 
         viewModelScope.launch {
@@ -345,7 +346,8 @@ class YardViewModel : ViewModel() {
                 val response =
                     repository.downloadYardExcel(
                         yardId,
-                        agencyId
+                        agencyId,
+                        status
                     )
 
                 _yardExcelResponse.postValue(

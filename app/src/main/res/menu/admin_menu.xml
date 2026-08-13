@@ -21,6 +21,11 @@
             android:icon="@drawable/baseline_warehouse_24"
             android:title="Manage Yards"
             android:iconTint="@color/black"/>
+        <item
+            android:id="@+id/nav_invoice"
+            android:icon="@drawable/baseline_warehouse_24"
+            android:title="Manage Invoice"
+            android:iconTint="@color/black"/>
 
         <item
             android:id="@+id/nav_logout"

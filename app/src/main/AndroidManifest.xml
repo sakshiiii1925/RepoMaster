@@ -17,6 +17,12 @@
         android:theme="@style/Theme.RepoMaster"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".activities.InvoiceDetailsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.InvoiceActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.YardReportActivity"
             android:exported="false" />
         <activity

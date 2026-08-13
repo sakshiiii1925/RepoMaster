@@ -5,6 +5,7 @@ import android.widget.ArrayAdapter
 import android.widget.TableRow
 import android.widget.TextView
 import android.widget.Toast
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.repomaster.R
@@ -17,6 +18,7 @@ import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import android.graphics.Color
 import android.view.View
 import android.widget.TableLayout
+import com.example.repomaster.models.Vehicle
 import com.example.repomaster.utils.FileDownloader
 import com.example.repomaster.utils.PdfReportGenerator
 class YardReportActivity : AppCompatActivity() {
@@ -28,8 +30,12 @@ class YardReportActivity : AppCompatActivity() {
     private lateinit var txtSelectedYard: TextView
     private lateinit var txtVehicleCount: TextView
 
+    private lateinit var txtRepoMarked: TextView
+    private lateinit var txtParked: TextView
+    private lateinit var txtReleased: TextView
     private lateinit var tableVehicleReport: TableLayout
-
+    private var selectedStatus = "ALL"
+    private var yardVehicleList: List<Vehicle> = emptyList()
     private lateinit var btnDownloadPdf: MaterialButton
     private lateinit var btnDownloadExcel: MaterialButton
 
@@ -58,7 +64,7 @@ class YardReportActivity : AppCompatActivity() {
         observeYards()
         observeYardExcel()
         observeYardVehicles()
-
+        setupSummaryClicks()
         setupYardSelection()
 
         btnDownloadPdf.setOnClickListener {
@@ -103,7 +109,8 @@ class YardReportActivity : AppCompatActivity() {
 
         yardViewModel.downloadYardExcel(
             yard.id!!,
-            agencyId
+            agencyId,
+            selectedStatus
         )
     }
     //observe excel
@@ -168,75 +175,103 @@ class YardReportActivity : AppCompatActivity() {
         val yard = selectedYard
 
         if (yard == null) {
-
             Toast.makeText(
                 this,
                 "Please select a yard first",
                 Toast.LENGTH_SHORT
             ).show()
-
             return
         }
-
-        if (selectedVehicles.isEmpty()) {
-
+        if (yardVehicleList.isEmpty()) {
             Toast.makeText(
                 this,
                 "No vehicles assigned to this yard",
                 Toast.LENGTH_SHORT
             ).show()
-
             return
         }
 
-        val agencyId =
-            SessionManager(this).getAgencyId()
+        val agencyId = SessionManager(this).getAgencyId()
 
         if (agencyId.isNullOrEmpty()) {
-
             Toast.makeText(
                 this,
                 "Agency ID not found",
                 Toast.LENGTH_SHORT
             ).show()
-
             return
         }
 
-        val rows = selectedVehicles.mapIndexed { index, vehicleNumber ->
+        // Apply currently selected filter
+        val filteredVehicles = when (selectedStatus.uppercase()) {
+
+            "ALL" -> yardVehicleList
+
+            else -> yardVehicleList.filter {
+                it.repoStatus.equals(
+                    selectedStatus,
+                    ignoreCase = true
+                )
+            }
+        }
+
+        if (filteredVehicles.isEmpty()) {
+            Toast.makeText(
+                this,
+                "No vehicles found for selected filter",
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+
+        // Create PDF rows
+        val rows = filteredVehicles.mapIndexed { index, vehicle ->
 
             listOf(
                 (index + 1).toString(),
-                vehicleNumber
+                vehicle.vehicleNumber ?: "N/A",
+                vehicle.repoStatus ?: "N/A"
             )
         }
 
+        val filterName = when (selectedStatus.uppercase()) {
+
+            "ALL" -> "All Vehicles"
+
+            "REPO MARK" -> "Repo Marked"
+
+            "PARKED" -> "Parked"
+
+            "RELEASED" -> "Released"
+
+            else -> selectedStatus
+        }
+
+        val safeYardName =
+            yard.yardName
+                .replace(" ", "_")
+                .replace("/", "_")
+
         val fileName =
-            "Yard_Report_${yard.yardName.replace(" ", "_")}.pdf"
+            "Yard_${safeYardName}_${filterName.replace(" ", "_")}.pdf"
 
         PdfReportGenerator(this).generateReport(
 
-            title = "Yard Vehicle Report - ${yard.yardName}",
+            title = "Yard Vehicle Report",
 
             agencyId = agencyId,
 
             headers = listOf(
                 "Sr. No.",
-                "Vehicle Number"
+                "Vehicle Number",
+                "Status"
             ),
 
             rows = rows,
 
             fileName = fileName
         )
-
-        Toast.makeText(
-            this,
-            "Yard PDF downloaded successfully",
-            Toast.LENGTH_LONG
-        ).show()
     }
-
     private fun initializeViews() {
 
         toolbar = findViewById(R.id.toolbar)
@@ -249,6 +284,14 @@ class YardReportActivity : AppCompatActivity() {
         txtVehicleCount =
             findViewById(R.id.txtVehicleCount)
 
+        txtRepoMarked =
+            findViewById(R.id.txtRepoMarked)
+
+        txtParked =
+            findViewById(R.id.txtParked)
+
+        txtReleased =
+            findViewById(R.id.txtReleased)
         tableVehicleReport =
             findViewById(R.id.tableVehicleReport)
 
@@ -380,20 +423,21 @@ class YardReportActivity : AppCompatActivity() {
 
         yardViewModel.yardVehicles.observe(this) { response ->
 
-            progressYardReport.visibility =
-                View.GONE
+            progressYardReport.visibility = View.GONE
 
             if (response.isSuccessful) {
 
                 val vehicles =
                     response.body() ?: emptyList()
 
-                selectedVehicles = vehicles.mapNotNull {
-                    it.vehicleNumber
-                }
+                yardVehicleList = vehicles
 
-                displayVehicles(selectedVehicles)
+                selectedStatus = "ALL"
+                updateSelectedCard(
+                    txtVehicleCount
+                )
 
+                displayVehicles(vehicles)
             } else {
 
                 Toast.makeText(
@@ -406,8 +450,7 @@ class YardReportActivity : AppCompatActivity() {
 
         yardViewModel.yardVehiclesError.observe(this) { error ->
 
-            progressYardReport.visibility =
-                View.GONE
+            progressYardReport.visibility = View.GONE
 
             Toast.makeText(
                 this,
@@ -418,7 +461,7 @@ class YardReportActivity : AppCompatActivity() {
     }
 
     private fun displayVehicles(
-        vehicleNumbers: List<String?>
+        vehicles: List<Vehicle>
     ) {
 
         // Keep header row
@@ -427,9 +470,47 @@ class YardReportActivity : AppCompatActivity() {
         }
 
         txtVehicleCount.text =
-            "Vehicles: ${vehicleNumbers.size}"
+            "Vehicles: ${vehicles.size}"
 
-        vehicleNumbers.forEachIndexed { index, vehicleNumber ->
+        val totalVehicles =
+            vehicles.size
+
+        val repoMarked =
+            vehicles.count {
+                it.repoStatus.equals(
+                    "repo mark",
+                    ignoreCase = true
+                )
+            }
+
+        val parked =
+            vehicles.count {
+                it.repoStatus.equals(
+                    "parked",
+                    ignoreCase = true
+                )
+            }
+
+        val released =
+            vehicles.count {
+                it.repoStatus.equals(
+                    "released",
+                    ignoreCase = true
+                )
+            }
+
+        txtRepoMarked.text =
+            "Repo Marked: $repoMarked"
+
+        txtParked.text =
+            "Parked: $parked"
+
+        txtReleased.text =
+            "Released: $released"
+        vehicles.forEachIndexed { index, vehicle ->
+
+            val vehicleNumber =
+                vehicle.vehicleNumber
 
             if (vehicleNumber.isNullOrBlank()) {
                 return@forEachIndexed
@@ -437,10 +518,13 @@ class YardReportActivity : AppCompatActivity() {
 
             val row = TableRow(this)
 
-            // Sr No
+            // -------------------------
+            // Sr. No.
+            // -------------------------
             val srText = TextView(this)
 
-            srText.text = (index + 1).toString()
+            srText.text =
+                (index + 1).toString()
 
             srText.setPadding(
                 10,
@@ -449,17 +533,24 @@ class YardReportActivity : AppCompatActivity() {
                 10
             )
 
-            srText.gravity = android.view.Gravity.CENTER
+            srText.gravity =
+                android.view.Gravity.CENTER
 
             srText.setTextColor(Color.WHITE)
 
             srText.background =
-                getDrawable(R.drawable.table_cell_border)
+                getDrawable(
+                    R.drawable.table_cell_border
+                )
 
+
+            // -------------------------
             // Vehicle Number
+            // -------------------------
             val vehicleText = TextView(this)
 
-            vehicleText.text = vehicleNumber
+            vehicleText.text =
+                vehicleNumber
 
             vehicleText.setPadding(
                 10,
@@ -478,13 +569,46 @@ class YardReportActivity : AppCompatActivity() {
             vehicleText.isClickable = true
 
             vehicleText.background =
-                getDrawable(R.drawable.table_cell_border)
+                getDrawable(
+                    R.drawable.table_cell_border
+                )
 
-            // Click vehicle
+
+            // -------------------------
+            // Status
+            // -------------------------
+            val statusText = TextView(this)
+
+            statusText.text =
+                vehicle.repoStatus ?: "N/A"
+
+            statusText.setPadding(
+                10,
+                10,
+                10,
+                10
+            )
+
+            statusText.gravity =
+                android.view.Gravity.CENTER
+
+            statusText.setTextColor(Color.WHITE)
+
+            statusText.textSize = 15f
+
+            statusText.background =
+                getDrawable(
+                    R.drawable.table_cell_border
+                )
+
+
+            // -------------------------
+            // Vehicle Click
+            // -------------------------
             vehicleText.setOnClickListener {
 
                 val intent =
-                    android.content.Intent(
+                    Intent(
                         this,
                         VehicleInfo::class.java
                     )
@@ -497,14 +621,264 @@ class YardReportActivity : AppCompatActivity() {
                 startActivity(intent)
             }
 
+
             row.addView(srText)
 
             row.addView(vehicleText)
 
+            row.addView(statusText)
+
             tableVehicleReport.addView(row)
         }
     }
+    private fun setupSummaryClicks() {
 
+        // Total Vehicles
+        txtVehicleCount.setOnClickListener {
+
+            selectedStatus = "ALL"
+
+            updateSelectedCard(
+                txtVehicleCount
+            )
+
+            displayVehicles(
+                yardVehicleList
+            )
+        }
+
+
+        // Repo Marked
+        txtRepoMarked.setOnClickListener {
+
+            selectedStatus = "repo mark"
+
+            updateSelectedCard(
+                txtRepoMarked
+            )
+
+            filterVehiclesByStatus(
+                "repo mark"
+            )
+        }
+
+
+        // Parked
+        txtParked.setOnClickListener {
+
+            selectedStatus = "parked"
+
+            updateSelectedCard(
+                txtParked
+            )
+
+            filterVehiclesByStatus(
+                "parked"
+            )
+        }
+
+
+        // Released
+        txtReleased.setOnClickListener {
+
+            selectedStatus = "released"
+
+            updateSelectedCard(
+                txtReleased
+            )
+
+            filterVehiclesByStatus(
+                "released"
+            )
+        }
+    }
+    private fun filterVehiclesByStatus(
+        status: String
+    ) {
+
+        val filteredVehicles =
+            yardVehicleList.filter {
+
+                it.repoStatus.equals(
+                    status,
+                    ignoreCase = true
+                )
+            }
+
+        displayFilteredVehicles(
+            filteredVehicles
+        )
+    }
+    private fun displayFilteredVehicles(
+        vehicles: List<Vehicle>
+    ) {
+
+        while (tableVehicleReport.childCount > 1) {
+
+            tableVehicleReport.removeViewAt(1)
+        }
+
+        vehicles.forEachIndexed { index, vehicle ->
+
+            val vehicleNumber =
+                vehicle.vehicleNumber
+
+            if (vehicleNumber.isNullOrBlank()) {
+                return@forEachIndexed
+            }
+
+            val row =
+                TableRow(this)
+
+            // Sr No
+            val srText =
+                TextView(this)
+
+            srText.text =
+                (index + 1).toString()
+
+            srText.setPadding(
+                10,
+                10,
+                10,
+                10
+            )
+
+            srText.gravity =
+                android.view.Gravity.CENTER
+
+            srText.setTextColor(
+                Color.WHITE
+            )
+
+            srText.background =
+                getDrawable(
+                    R.drawable.table_cell_border
+                )
+
+
+            // Vehicle Number
+            val vehicleText =
+                TextView(this)
+
+            vehicleText.text =
+                vehicleNumber
+
+            vehicleText.setPadding(
+                10,
+                10,
+                10,
+                10
+            )
+
+            vehicleText.gravity =
+                android.view.Gravity.CENTER
+
+            vehicleText.setTextColor(
+                Color.WHITE
+            )
+
+            vehicleText.textSize =
+                16f
+
+            vehicleText.isClickable =
+                true
+
+            vehicleText.background =
+                getDrawable(
+                    R.drawable.table_cell_border
+                )
+
+
+            // Status
+            val statusText =
+                TextView(this)
+
+            statusText.text =
+                vehicle.repoStatus ?: "N/A"
+
+            statusText.setPadding(
+                10,
+                10,
+                10,
+                10
+            )
+
+            statusText.gravity =
+                android.view.Gravity.CENTER
+
+            statusText.setTextColor(
+                Color.WHITE
+            )
+
+            statusText.textSize =
+                15f
+
+            statusText.background =
+                getDrawable(
+                    R.drawable.table_cell_border
+                )
+
+
+            // Vehicle Details
+            vehicleText.setOnClickListener {
+
+                val intent =
+                    Intent(
+                        this,
+                        VehicleInfo::class.java
+                    )
+
+                intent.putExtra(
+                    "vehicleNumber",
+                    vehicleNumber
+                )
+
+                startActivity(intent)
+            }
+
+
+            row.addView(srText)
+
+            row.addView(vehicleText)
+
+            row.addView(statusText)
+
+            tableVehicleReport.addView(row)
+        }
+    }
+    private fun updateSelectedCard(
+        selected: TextView
+    ) {
+
+        val cards = listOf(
+            txtVehicleCount,
+            txtRepoMarked,
+            txtParked,
+            txtReleased
+        )
+
+        cards.forEach { card ->
+
+            card.background =
+                getDrawable(
+                    R.drawable.yard_summary_card
+                )
+
+            card.setTextColor(
+                Color.WHITE
+            )
+        }
+
+        selected.background =
+            getDrawable(
+                R.drawable.yard_summary_card_selected
+            )
+
+        selected.setTextColor(
+            Color.BLACK
+        )
+    }
     override fun onSupportNavigateUp(): Boolean {
 
         finish()

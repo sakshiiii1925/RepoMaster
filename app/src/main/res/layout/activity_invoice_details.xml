@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+        <Button
+            android:id="@+id/btnGeneratePdf"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Generate Invoice PDF"
+            android:textAllCaps="false" />
+        <!-- Loading -->
+        <ProgressBar
+            android:id="@+id/progressInvoiceDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:layout_marginBottom="12dp"/>
+
+        <TextView
+            android:id="@+id/txtInvoiceTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Invoice Details"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:paddingBottom="16dp"/>
+
+        <TextView
+            android:id="@+id/txtInvoiceNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Invoice Number:"
+            android:textSize="18sp"
+            android:padding="8dp"/>
+
+        <TextView
+            android:id="@+id/txtInvoiceDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Invoice Date:"
+            android:padding="8dp"/>
+
+        <TextView
+            android:id="@+id/txtCustomerName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Customer Name:"
+            android:padding="8dp"/>
+
+        <TextView
+            android:id="@+id/txtVehicleNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Vehicle Number:"
+            android:padding="8dp"/>
+
+        <TextView
+            android:id="@+id/txtLoanNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Loan Number:"
+            android:padding="8dp"/>
+
+        <TextView
+            android:id="@+id/txtVehicleType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Vehicle Type:"
+            android:padding="8dp"/>
+
+        <TextView
+            android:id="@+id/txtVehicleMake"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Vehicle Make:"
+            android:padding="8dp"/>
+
+        <TextView
+            android:id="@+id/txtVehicleModel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Vehicle Model:"
+            android:padding="8dp"/>
+
+        <TextView
+            android:id="@+id/txtEngineNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Engine Number:"
+            android:padding="8dp"/>
+
+        <TextView
+            android:id="@+id/txtChassisNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Chassis Number:"
+            android:padding="8dp"/>
+
+        <TextView
+            android:id="@+id/txtBasicAmount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Basic Amount:"
+            android:padding="8dp"/>
+
+        <TextView
+            android:id="@+id/txtCgst"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CGST:"
+            android:padding="8dp"/>
+
+        <TextView
+            android:id="@+id/txtSgst"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="SGST:"
+            android:padding="8dp"/>
+
+        <TextView
+            android:id="@+id/txtIgst"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="IGST:"
+            android:padding="8dp"/>
+
+        <TextView
+            android:id="@+id/txtGst"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="GST:"
+            android:padding="8dp"/>
+
+        <TextView
+            android:id="@+id/txtInvoiceTotal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Invoice Total:"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:padding="8dp"/>
+
+        <TextView
+            android:id="@+id/txtPaymentStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Payment Status:"
+            android:padding="8dp"/>
+
+        <TextView
+            android:id="@+id/txtPaymentDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Payment Date:"
+            android:padding="8dp"/>
+
+        <TextView
+            android:id="@+id/txtPaymentReceived"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Payment Received:"
+            android:padding="8dp"/>
+
+        <TextView
+            android:id="@+id/txtRemarks"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Remarks:"
+            android:padding="8dp"/>
+
+    </LinearLayout>
+
+</ScrollView>

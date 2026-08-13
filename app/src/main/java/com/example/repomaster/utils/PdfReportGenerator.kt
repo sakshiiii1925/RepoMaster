@@ -33,6 +33,7 @@ import com.itextpdf.layout.element.Image
 import com.itextpdf.kernel.colors.ColorConstants
 import com.itextpdf.kernel.events.PdfDocumentEvent
 import com.example.repomaster.R
+import com.example.repomaster.models.Invoice
 class PdfReportGenerator(
     private val context: Context
 ) {
@@ -304,6 +305,499 @@ class PdfReportGenerator(
 
         }
 
+    }
+    fun generateInvoicePdf(invoice: Invoice) {
+
+        try {
+
+            val fileName =
+                "Invoice_${invoice.invoiceNumber ?: invoice.id ?: "Unknown"}.pdf"
+
+            val pdfFile =
+                createOutputStream(fileName)
+
+            val writer =
+                PdfWriter(pdfFile.outputStream)
+
+            val pdfDocument =
+                PdfDocument(writer)
+
+            val document =
+                Document(pdfDocument)
+
+            // -----------------------------
+            // LOGO
+            // -----------------------------
+
+            val bitmap =
+                BitmapFactory.decodeResource(
+                    context.resources,
+                    R.drawable.launchlogo1
+                )
+
+            val stream =
+                ByteArrayOutputStream()
+
+            bitmap.compress(
+                android.graphics.Bitmap.CompressFormat.PNG,
+                100,
+                stream
+            )
+
+            val imageData =
+                ImageDataFactory.create(
+                    stream.toByteArray()
+                )
+
+            val logo =
+                Image(imageData)
+
+            logo.setWidth(70f)
+            logo.setHeight(70f)
+            logo.setHorizontalAlignment(
+                com.itextpdf.layout.properties.HorizontalAlignment.CENTER
+            )
+
+            document.add(logo)
+
+            // -----------------------------
+            // TITLE
+            // -----------------------------
+
+            document.add(
+                Paragraph("REPO MASTER")
+                    .setBold()
+                    .setFontSize(22f)
+                    .setFontColor(ColorConstants.WHITE)
+                    .setBackgroundColor(ColorConstants.ORANGE)
+                    .setPadding(8f)
+            )
+
+            document.add(
+                Paragraph("INVOICE")
+                    .setBold()
+                    .setFontSize(20f)
+                    .setMarginTop(15f)
+            )
+
+            document.add(
+                Paragraph(
+                    "Invoice Number: ${invoice.invoiceNumber ?: "N/A"}"
+                )
+            )
+
+            document.add(
+                Paragraph(
+                    "Invoice Date: ${invoice.invoiceDate ?: "N/A"}"
+                )
+            )
+
+            document.add(
+                Paragraph(
+                    "Generated: ${currentDate()}"
+                )
+            )
+
+            // -----------------------------
+            // CUSTOMER DETAILS
+            // -----------------------------
+
+            document.add(
+                Paragraph("CUSTOMER DETAILS")
+                    .setBold()
+                    .setFontSize(15f)
+                    .setMarginTop(15f)
+            )
+
+            val customerTable =
+                Table(2)
+
+            customerTable.addCell(
+                Cell().add(
+                    Paragraph("Customer Name").setBold()
+                )
+            )
+
+            customerTable.addCell(
+                Cell().add(
+                    Paragraph(
+                        invoice.customerName ?: "N/A"
+                    )
+                )
+            )
+
+            customerTable.addCell(
+                Cell().add(
+                    Paragraph("Loan Number").setBold()
+                )
+            )
+
+            customerTable.addCell(
+                Cell().add(
+                    Paragraph(
+                        invoice.loanNumber ?: "N/A"
+                    )
+                )
+            )
+
+            customerTable.addCell(
+                Cell().add(
+                    Paragraph("Vehicle Number").setBold()
+                )
+            )
+
+            customerTable.addCell(
+                Cell().add(
+                    Paragraph(
+                        invoice.vehicleNumber ?: "N/A"
+                    )
+                )
+            )
+
+            customerTable.addCell(
+                Cell().add(
+                    Paragraph("Vehicle Type").setBold()
+                )
+            )
+
+            customerTable.addCell(
+                Cell().add(
+                    Paragraph(
+                        invoice.vehicleType ?: "N/A"
+                    )
+                )
+            )
+
+            customerTable.addCell(
+                Cell().add(
+                    Paragraph("Vehicle Make").setBold()
+                )
+            )
+
+            customerTable.addCell(
+                Cell().add(
+                    Paragraph(
+                        invoice.vehicleMake ?: "N/A"
+                    )
+                )
+            )
+
+            customerTable.addCell(
+                Cell().add(
+                    Paragraph("Vehicle Model").setBold()
+                )
+            )
+
+            customerTable.addCell(
+                Cell().add(
+                    Paragraph(
+                        invoice.vehicleModel ?: "N/A"
+                    )
+                )
+            )
+
+            customerTable.addCell(
+                Cell().add(
+                    Paragraph("Engine Number").setBold()
+                )
+            )
+
+            customerTable.addCell(
+                Cell().add(
+                    Paragraph(
+                        invoice.engineNumber ?: "N/A"
+                    )
+                )
+            )
+
+            customerTable.addCell(
+                Cell().add(
+                    Paragraph("Chassis Number").setBold()
+                )
+            )
+
+            customerTable.addCell(
+                Cell().add(
+                    Paragraph(
+                        invoice.chassisNumber ?: "N/A"
+                    )
+                )
+            )
+
+            document.add(customerTable)
+
+            // -----------------------------
+            // AMOUNT DETAILS
+            // -----------------------------
+
+            document.add(
+                Paragraph("AMOUNT DETAILS")
+                    .setBold()
+                    .setFontSize(15f)
+                    .setMarginTop(15f)
+            )
+
+            val amountTable =
+                Table(2)
+
+            amountTable.addCell(
+                Cell().add(
+                    Paragraph("Description 1").setBold()
+                )
+            )
+
+            amountTable.addCell(
+                Cell().add(
+                    Paragraph(
+                        invoice.description1 ?: "N/A"
+                    )
+                )
+            )
+
+            amountTable.addCell(
+                Cell().add(
+                    Paragraph("Basic Amount 1").setBold()
+                )
+            )
+
+            amountTable.addCell(
+                Cell().add(
+                    Paragraph(
+                        "₹${invoice.basic1Amount ?: 0.0}"
+                    )
+                )
+            )
+
+            amountTable.addCell(
+                Cell().add(
+                    Paragraph("Description 2").setBold()
+                )
+            )
+
+            amountTable.addCell(
+                Cell().add(
+                    Paragraph(
+                        invoice.description2 ?: "N/A"
+                    )
+                )
+            )
+
+            amountTable.addCell(
+                Cell().add(
+                    Paragraph("Basic Amount 2").setBold()
+                )
+            )
+
+            amountTable.addCell(
+                Cell().add(
+                    Paragraph(
+                        "₹${invoice.basic2Amount ?: 0.0}"
+                    )
+                )
+            )
+
+            amountTable.addCell(
+                Cell().add(
+                    Paragraph("Total Basic").setBold()
+                )
+            )
+
+            amountTable.addCell(
+                Cell().add(
+                    Paragraph(
+                        "₹${invoice.totalBasic ?: 0.0}"
+                    )
+                )
+            )
+
+            amountTable.addCell(
+                Cell().add(
+                    Paragraph("CGST").setBold()
+                )
+            )
+
+            amountTable.addCell(
+                Cell().add(
+                    Paragraph(
+                        "₹${invoice.cgst ?: 0.0}"
+                    )
+                )
+            )
+
+            amountTable.addCell(
+                Cell().add(
+                    Paragraph("SGST").setBold()
+                )
+            )
+
+            amountTable.addCell(
+                Cell().add(
+                    Paragraph(
+                        "₹${invoice.sgst ?: 0.0}"
+                    )
+                )
+            )
+
+            amountTable.addCell(
+                Cell().add(
+                    Paragraph("IGST").setBold()
+                )
+            )
+
+            amountTable.addCell(
+                Cell().add(
+                    Paragraph(
+                        "₹${invoice.igst ?: 0.0}"
+                    )
+                )
+            )
+
+            amountTable.addCell(
+                Cell().add(
+                    Paragraph("GST").setBold()
+                )
+            )
+
+            amountTable.addCell(
+                Cell().add(
+                    Paragraph(
+                        "₹${invoice.gst ?: 0.0}"
+                    )
+                )
+            )
+
+            amountTable.addCell(
+                Cell().add(
+                    Paragraph("INVOICE TOTAL").setBold()
+                )
+            )
+
+            amountTable.addCell(
+                Cell().add(
+                    Paragraph(
+                        "₹${invoice.invoiceTotal ?: 0.0}"
+                    ).setBold()
+                )
+            )
+
+            document.add(amountTable)
+
+            // -----------------------------
+            // PAYMENT DETAILS
+            // -----------------------------
+
+            document.add(
+                Paragraph("PAYMENT DETAILS")
+                    .setBold()
+                    .setFontSize(15f)
+                    .setMarginTop(15f)
+            )
+
+            val paymentTable =
+                Table(2)
+
+            paymentTable.addCell(
+                Cell().add(
+                    Paragraph("Payment Status").setBold()
+                )
+            )
+
+            paymentTable.addCell(
+                Cell().add(
+                    Paragraph(
+                        invoice.paymentStatus ?: "N/A"
+                    )
+                )
+            )
+
+            paymentTable.addCell(
+                Cell().add(
+                    Paragraph("Payment Date").setBold()
+                )
+            )
+
+            paymentTable.addCell(
+                Cell().add(
+                    Paragraph(
+                        invoice.paymentDate ?: "N/A"
+                    )
+                )
+            )
+
+            paymentTable.addCell(
+                Cell().add(
+                    Paragraph("Payment Received").setBold()
+                )
+            )
+
+            paymentTable.addCell(
+                Cell().add(
+                    Paragraph(
+                        "₹${invoice.paymentReceived ?: 0.0}"
+                    )
+                )
+            )
+
+            document.add(paymentTable)
+
+            // -----------------------------
+            // REMARKS
+            // -----------------------------
+
+            document.add(
+                Paragraph("Remarks")
+                    .setBold()
+                    .setFontSize(15f)
+                    .setMarginTop(15f)
+            )
+
+            document.add(
+                Paragraph(
+                    invoice.remarks ?: "N/A"
+                )
+            )
+
+            document.add(
+                Paragraph(" ")
+            )
+
+            document.add(
+                Paragraph(
+                    "This is a system generated invoice."
+                )
+                    .setFontSize(9f)
+            )
+
+            // -----------------------------
+            // CLOSE
+            // -----------------------------
+
+            document.close()
+
+            pdfFile.outputStream.close()
+
+            // Notification
+            showNotification(
+                pdfFile.uri,
+                fileName
+            )
+
+            Toast.makeText(
+                context,
+                "$fileName saved in Downloads",
+                Toast.LENGTH_LONG
+            ).show()
+
+        } catch (e: Exception) {
+
+            e.printStackTrace()
+
+            Toast.makeText(
+                context,
+                "PDF generation failed: ${e.message}",
+                Toast.LENGTH_LONG
+            ).show()
+        }
     }
 
 }
