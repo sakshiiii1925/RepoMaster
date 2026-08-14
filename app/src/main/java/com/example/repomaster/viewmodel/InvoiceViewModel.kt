@@ -134,13 +134,14 @@ class InvoiceViewModel(
 
                 if (response.isSuccessful) {
 
-                    _invoice.value =
-                        response.body()
+                    val invoice = response.body()
+
+                    _invoice.value = invoice
 
                 } else {
 
                     _error.value =
-                        "Invoice not found"
+                        "Invoice not found. HTTP ${response.code()}"
                 }
 
             } catch (e: Exception) {
@@ -155,10 +156,12 @@ class InvoiceViewModel(
         }
     }
 
+    private val _deleteSuccess =
+        MutableLiveData<Boolean>()
 
-    fun deleteInvoice(
-        id: Long
-    ) {
+    val deleteSuccess: LiveData<Boolean> =
+        _deleteSuccess
+    fun deleteInvoice(id: Long) {
 
         viewModelScope.launch {
 
@@ -169,10 +172,15 @@ class InvoiceViewModel(
                 val response =
                     repository.deleteInvoice(id)
 
-                if (!response.isSuccessful) {
+                if (response.isSuccessful) {
+
+                    _deleteSuccess.value = true
+
+                } else {
 
                     _error.value =
-                        "Failed to delete invoice"
+                        "Failed to delete invoice. HTTP ${response.code()}"
+
                 }
 
             } catch (e: Exception) {

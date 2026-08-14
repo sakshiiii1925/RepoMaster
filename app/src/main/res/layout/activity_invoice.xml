@@ -27,7 +27,14 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:visibility="gone"/>
-
+    <EditText
+        android:id="@+id/edtSearchInvoice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        android:hint="Search Invoice Number"
+        android:inputType="text"
+        android:padding="12dp" />
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerInvoices"
         android:layout_width="match_parent"

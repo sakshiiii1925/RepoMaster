@@ -13,6 +13,7 @@ import com.example.repomaster.utils.Constants
 import com.example.repomaster.viewmodel.InvoiceViewModel
 import com.example.repomaster.viewmodel.InvoiceViewModelFactory
 import retrofit2.Retrofit
+import androidx.appcompat.app.AlertDialog
 import retrofit2.converter.gson.GsonConverterFactory
 import com.example.repomaster.models.Invoice
 import android.content.Intent
@@ -33,7 +34,7 @@ class InvoiceDetailsActivity : AppCompatActivity() {
     private lateinit var invoiceViewModel: InvoiceViewModel
 
     private lateinit var progressInvoiceDetails: View
-
+    private var currentInvoice: Invoice? = null
     private var invoiceId: Long = -1L
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,6 +43,32 @@ class InvoiceDetailsActivity : AppCompatActivity() {
         setContentView(
             R.layout.activity_invoice_details
         )
+        val btnGeneratePdf =
+            findViewById<Button>(R.id.btnGeneratePdf)
+
+        btnGeneratePdf.setOnClickListener {
+
+            Toast.makeText(
+                this,
+                "Generate PDF button clicked",
+                Toast.LENGTH_SHORT
+            ).show()
+
+            val invoice = currentInvoice
+
+            if (invoice == null) {
+
+                Toast.makeText(
+                    this,
+                    "Invoice data not loaded",
+                    Toast.LENGTH_LONG
+                ).show()
+
+                return@setOnClickListener
+            }
+
+            generateInvoicePdf(invoice)
+        }
 
         progressInvoiceDetails =
             findViewById(R.id.progressInvoiceDetails)
@@ -65,7 +92,7 @@ class InvoiceDetailsActivity : AppCompatActivity() {
         }
 
         setupViewModel()
-
+        setupDeleteButton()
         observeInvoice()
 
         loadInvoice()
@@ -105,34 +132,57 @@ class InvoiceDetailsActivity : AppCompatActivity() {
 
     private fun observeInvoice() {
 
-        invoiceViewModel.loading.observe(
-            this
-        ) { loading ->
+        invoiceViewModel.loading.observe(this) { loading ->
 
             progressInvoiceDetails.visibility =
-                if (loading)
+                if (loading) {
                     View.VISIBLE
-                else
+                } else {
                     View.GONE
-        }
-
-        invoiceViewModel.invoice.observe(
-            this
-        ) { invoice ->
-
-            if (invoice != null) {
-
-                displayInvoice(invoice)
-                findViewById<Button>(R.id.btnGeneratePdf).setOnClickListener {
-
-                    generateInvoicePdf(invoice)
                 }
+        }
+        invoiceViewModel.deleteSuccess.observe(
+                this
+                ) { success ->
+
+            if (success == true) {
+
+                Toast.makeText(
+                    this,
+                    "Invoice deleted successfully",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                finish()
             }
         }
 
-        invoiceViewModel.error.observe(
-            this
-        ) { error ->
+        invoiceViewModel.invoice.observe(this) { invoice ->
+
+            if (invoice != null) {
+
+                // IMPORTANT
+                currentInvoice = invoice
+
+                displayInvoice(invoice)
+
+                Toast.makeText(
+                    this,
+                    "Invoice loaded successfully",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+            } else {
+
+                Toast.makeText(
+                    this,
+                    "Invoice received as NULL",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
+        invoiceViewModel.error.observe(this) { error ->
 
             if (!error.isNullOrEmpty()) {
 
@@ -144,7 +194,6 @@ class InvoiceDetailsActivity : AppCompatActivity() {
             }
         }
     }
-
     private fun displayInvoice(
         invoice: Invoice
     ) {
@@ -253,8 +302,58 @@ class InvoiceDetailsActivity : AppCompatActivity() {
     //generate pdf
     private fun generateInvoicePdf(invoice: Invoice) {
 
+        Toast.makeText(
+            this,
+            "Starting PDF generation...",
+            Toast.LENGTH_SHORT
+        ).show()
+
         PdfReportGenerator(this)
             .generateInvoicePdf(invoice)
     }
+    //elete invoice
+    private fun setupDeleteButton() {
 
+        findViewById<Button>(
+            R.id.btnDeleteInvoice
+        ).setOnClickListener {
+
+            showDeleteConfirmation()
+        }
+    }
+    //diaglogue box
+    private fun showDeleteConfirmation() {
+
+        AlertDialog.Builder(this)
+            .setTitle("Delete Invoice")
+            .setMessage(
+                "Are you sure you want to delete this invoice?"
+            )
+            .setPositiveButton("Delete") { _, _ ->
+
+                deleteInvoice()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+    private fun deleteInvoice() {
+
+        if (invoiceId == -1L) {
+
+            Toast.makeText(
+                this,
+                "Invalid invoice ID",
+                Toast.LENGTH_SHORT
+            ).show()
+
+            return
+        }
+
+        invoiceViewModel.deleteInvoice(invoiceId)
+    }
+    override fun onResume() {
+        super.onResume()
+
+        loadInvoice()
+    }
 }

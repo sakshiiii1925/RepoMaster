@@ -2,7 +2,7 @@ package com.example.repomaster.activities
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,6 +16,9 @@ import com.example.repomaster.viewmodel.InvoiceViewModel
 import com.example.repomaster.viewmodel.InvoiceViewModelFactory
 import retrofit2.Retrofit
 import android.content.Intent
+import android.text.Editable
+import android.text.TextWatcher
+import com.example.repomaster.models.Invoice
 import retrofit2.converter.gson.GsonConverterFactory
 import com.example.repomaster.adapter.InvoiceAdapter
 class InvoiceActivity : AppCompatActivity() {
@@ -23,7 +26,7 @@ class InvoiceActivity : AppCompatActivity() {
     private lateinit var recyclerInvoices: RecyclerView
     private lateinit var invoiceAdapter: InvoiceAdapter
     private lateinit var invoiceViewModel: InvoiceViewModel
-
+    private var allInvoices: List<Invoice> = emptyList()
     private lateinit var progressInvoice: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,7 +65,7 @@ class InvoiceActivity : AppCompatActivity() {
         setupViewModel()
 
         observeInvoices()
-
+        setupInvoiceSearch()
         loadInvoices()
     }
 
@@ -127,6 +130,8 @@ class InvoiceActivity : AppCompatActivity() {
         invoiceViewModel.invoices
             .observe(this) { invoices ->
 
+                allInvoices = invoices
+
                 invoiceAdapter.updateList(invoices)
 
                 Toast.makeText(
@@ -148,5 +153,71 @@ class InvoiceActivity : AppCompatActivity() {
                     ).show()
                 }
             }
+    }
+    //search
+    private fun setupInvoiceSearch() {
+
+        val edtSearchInvoice =
+            findViewById<EditText>(R.id.edtSearchInvoice)
+
+        edtSearchInvoice.addTextChangedListener(
+            object : TextWatcher {
+
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+                    // Nothing
+                }
+
+                override fun onTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    before: Int,
+                    count: Int
+                ) {
+
+                    val searchText = s
+                        ?.toString()
+                        ?.trim()
+                        ?.lowercase()
+                        ?: ""
+
+                    if (searchText.isEmpty()) {
+
+                        invoiceAdapter.updateList(
+                            allInvoices
+                        )
+
+                    } else {
+
+                        val filteredInvoices =
+                            allInvoices.filter { invoice ->
+
+                                val invoiceNumber =
+                                    invoice.invoiceNumber
+                                        ?.lowercase()
+                                        ?: ""
+
+                                invoiceNumber.contains(
+                                    searchText
+                                )
+                            }
+
+                        invoiceAdapter.updateList(
+                            filteredInvoices
+                        )
+                    }
+                }
+
+                override fun afterTextChanged(
+                    s: Editable?
+                ) {
+                    // Nothing
+                }
+            }
+        )
     }
 }

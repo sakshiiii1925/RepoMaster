@@ -15,8 +15,15 @@
             android:id="@+id/btnGeneratePdf"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="40dp"
             android:text="Generate Invoice PDF"
+            android:textAllCaps="false" />
+        <Button
+            android:id="@+id/btnDeleteInvoice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:text="Delete Invoice"
             android:textAllCaps="false" />
         <!-- Loading -->
         <ProgressBar
