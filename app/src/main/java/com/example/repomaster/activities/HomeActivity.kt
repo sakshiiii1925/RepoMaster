@@ -11,6 +11,7 @@ import android.text.TextWatcher
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import com.example.repomaster.viewmodel.HomeViewModelFactory
 import androidx.appcompat.app.AlertDialog
 
 import androidx.appcompat.app.AppCompatActivity
@@ -98,9 +99,19 @@ class HomeActivity : AppCompatActivity() {
 
         setupNavigation()
 
-        homeViewModel =
-            ViewModelProvider(this)[HomeViewModel::class.java]
+        val factory =
+            HomeViewModelFactory(applicationContext)
 
+        homeViewModel =
+            ViewModelProvider(
+                this,
+                factory
+            )[HomeViewModel::class.java]
+        val agencyId =
+            SessionManager(this).getAgencyId()
+        homeViewModel.syncVehicles(
+            agencyId
+        )
         setupUserDetails()
 
         observeVehicle()

@@ -10,7 +10,7 @@ import com.example.repomaster.adapters.RecentSearchAdapter
 import com.example.repomaster.utils.SessionManager
 import com.example.repomaster.viewmodel.HomeViewModel
 import com.google.android.material.textfield.TextInputEditText
-
+import com.example.repomaster.viewmodel.HomeViewModelFactory
 
 class SearchVehicleActivity : AppCompatActivity() {
     private lateinit var toolbar:
@@ -35,9 +35,13 @@ class SearchVehicleActivity : AppCompatActivity() {
 
 
 
-        homeViewModel =
-            ViewModelProvider(this)[HomeViewModel::class.java]
+        val factory = HomeViewModelFactory(applicationContext)
 
+        homeViewModel =
+            ViewModelProvider(
+                this,
+                factory
+            )[HomeViewModel::class.java]
         setupRecyclerViews()
 
         loadRecentSearches()

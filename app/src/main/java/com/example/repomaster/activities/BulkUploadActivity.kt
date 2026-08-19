@@ -5,6 +5,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.example.repomaster.R
 import android.widget.*
+import android.util.Log
 import android.net.Uri
 import androidx.activity.result.contract.ActivityResultContracts
 import android.provider.OpenableColumns
@@ -337,7 +338,21 @@ class BulkUploadActivity : AppCompatActivity() {
             requestFile
         )
         val agencyId = SessionManager(this).getAgencyId()
+        Log.d("UPLOAD_DEBUG", "Sending Agency ID = '$agencyId'")
+        Log.d(
+            "UPLOAD_DEBUG",
+            "Session email = '${SessionManager(this).getUserEmail()}'"
+        )
 
+        Log.d(
+            "UPLOAD_DEBUG",
+            "Session role = '${SessionManager(this).getRole()}'"
+        )
+
+        Log.d(
+            "UPLOAD_DEBUG",
+            "Session agencyId = '${SessionManager(this).getAgencyId()}'"
+        )
         if (agencyId.isNullOrBlank()) {
 
             Toast.makeText(
@@ -349,13 +364,10 @@ class BulkUploadActivity : AppCompatActivity() {
             return
         }
 
-        val agencyIdBody = agencyId.toRequestBody(
-            "text/plain".toMediaType()
-        )
 
         homeViewModel.uploadExcel(
             body,
-            agencyIdBody
+            agencyId
         ).observe(this) { response ->
 
             btnUpload.isEnabled = true

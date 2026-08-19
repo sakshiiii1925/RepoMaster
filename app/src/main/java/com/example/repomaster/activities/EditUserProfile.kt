@@ -141,7 +141,7 @@ class EditUserProfile : AppCompatActivity() {
                             "Profile Updated Successfully",
                             Toast.LENGTH_SHORT
                         ).show()
-                        val intent= Intent(this, AdminDashboardActivity::class.java)
+                        val intent= Intent(this, ProfileActivity::class.java)
                         startActivity(intent)
 
                     }

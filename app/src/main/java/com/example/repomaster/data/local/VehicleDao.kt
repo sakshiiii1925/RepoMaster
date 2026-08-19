@@ -1,0 +1,54 @@
+package com.example.repomaster.data.local
+
+
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+
+@Dao
+interface VehicleDao {
+
+    // Search exact vehicle number
+    @Query("""
+        SELECT * FROM vehicles
+        WHERE vehicleNumber = :vehicleNumber
+        LIMIT 1
+    """)
+    suspend fun getVehicle(
+        vehicleNumber: String
+    ): VehicleEntity?
+
+    // Search vehicles for suggestions
+    @Query("""
+        SELECT * FROM vehicles
+        WHERE vehicleNumber LIKE '%' || :keyword || '%'
+        ORDER BY vehicleNumber
+    """)
+    suspend fun searchVehicles(
+        keyword: String
+    ): List<VehicleEntity>
+
+    // Save/update one vehicle
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertVehicle(
+        vehicle: VehicleEntity
+    )
+
+    // Save/update multiple vehicles
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertVehicles(
+        vehicles: List<VehicleEntity>
+    )
+
+    // Delete all local vehicles
+    @Query("DELETE FROM vehicles")
+    suspend fun deleteAll()
+
+    // Count local vehicles
+    @Query("SELECT COUNT(*) FROM vehicles")
+    suspend fun getVehicleCount(): Int
+    @Query("SELECT * FROM vehicles")
+    suspend fun getAllVehicles(): List<VehicleEntity>
+    
+}

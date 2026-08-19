@@ -360,7 +360,7 @@ private lateinit var toolbar: MaterialToolbar
             "Vehicle Details"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val repository = VehicleRepository()
+        val repository = VehicleRepository(applicationContext)
 
         val factory =
             VehicleDetailsViewModelFactory(repository)

@@ -12,10 +12,12 @@ import okhttp3.ResponseBody
 import retrofit2.Response
 import com.example.repomaster.network.RetrofitClient
 import okhttp3.RequestBody
-class HomeViewModel : ViewModel() {
+class HomeViewModel(
+    private val appContext: android.content.Context
+) : ViewModel() {
 
-    private val repository = VehicleRepository()
-
+    private val repository =
+        VehicleRepository(appContext.applicationContext)
     val vehicle = MutableLiveData<Vehicle?>()
     val statusUpdated = MutableLiveData<Boolean>()
 
@@ -68,11 +70,15 @@ class HomeViewModel : ViewModel() {
     }
     fun uploadExcel(
         file: MultipartBody.Part,
-        agencyId: RequestBody
+        agencyId: String
     ) = liveData {
 
-        emit(repository.uploadExcel(file, agencyId))
-
+        emit(
+            repository.uploadExcel(
+                file,
+                agencyId
+            )
+        )
     }
     fun searchVehicles(keyword: String) = liveData {
         emit(repository.searchVehicles(keyword))
@@ -130,5 +136,13 @@ class HomeViewModel : ViewModel() {
 
         emit(repository.getSearchHistory(agencyId))
 
+    }
+    fun syncVehicles(agencyId: String) {
+
+        viewModelScope.launch {
+
+            repository.syncAllVehicles(agencyId)
+
+        }
     }
 }

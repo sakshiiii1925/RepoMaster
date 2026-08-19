@@ -49,23 +49,17 @@ class VehicleInfo : AppCompatActivity() {
             "Vehicle Details"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val repository = VehicleRepository()
+        val repository = VehicleRepository(applicationContext)
 
         val factory =
             VehicleDetailsViewModelFactory(repository)
-
-
         viewModel =
             ViewModelProvider(
                 this,
                 factory
             )[VehicleDetailsViewModel::class.java]
 
-
-
         initializeViews()
-
-
         val vehicleNumber =
             intent.getStringExtra("vehicleNumber") ?: ""
 
