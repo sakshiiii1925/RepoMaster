@@ -17,6 +17,7 @@ object DatabaseProvider {
                 AppDatabase::class.java,
                 "repomaster_database"
             )
+                .fallbackToDestructiveMigration()
                 .build()
 
             INSTANCE = instance

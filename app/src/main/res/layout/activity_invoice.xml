@@ -1,45 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:layout_height="match_parent">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Invoice Report"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:padding="10dp"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-    <Button
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Invoice Report"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:padding="10dp"/>
+
+        <ProgressBar
+            android:id="@+id/progressInvoice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
+
+        <EditText
+            android:id="@+id/edtSearchInvoice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:hint="Search Invoice Number"
+            android:inputType="text"
+            android:padding="12dp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerInvoices"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:paddingTop="10dp"
+            android:clipToPadding="false"
+            android:paddingBottom="90dp"/>
+
+    </LinearLayout>
+
+
+    <!-- Floating Create Invoice Button -->
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnCreateInvoice"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="+ Create Invoice"/>
-
-    <ProgressBar
-        android:id="@+id/progressInvoice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone"/>
-    <EditText
-        android:id="@+id/edtSearchInvoice"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="12dp"
-        android:hint="Search Invoice Number"
-        android:inputType="text"
-        android:padding="12dp" />
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerInvoices"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:paddingTop="10dp"/>
+        android:layout_gravity="bottom|end"
+        android:layout_margin="20dp"
+        android:contentDescription="Create Invoice"
+        android:src="@drawable/baseline_add_24"
+        app:backgroundTint="#002147"
+        app:tint="@android:color/white"
+        app:elevation="8dp"/>
 
-</LinearLayout>
+</FrameLayout>

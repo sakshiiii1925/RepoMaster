@@ -13,7 +13,7 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.android.material.textfield.TextInputEditText
-
+import com.example.repomaster.viewmodel.HomeViewModelFactory
 
 class AddVehicleActivity : AppCompatActivity() {
 
@@ -95,7 +95,14 @@ private lateinit var toolbar: MaterialToolbar
             "Add Vehicle"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
+        val factory =
+            HomeViewModelFactory(applicationContext)
+
+        viewModel =
+            ViewModelProvider(
+                this,
+                factory
+            )[HomeViewModel::class.java]
 
         // Basic Details
 

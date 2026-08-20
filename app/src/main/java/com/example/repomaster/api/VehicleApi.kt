@@ -110,4 +110,5 @@ interface VehicleApi {
 
     @GET("api/admin/download-template")
     fun downloadTemplate(): Call<ResponseBody>
+
 }

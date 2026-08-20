@@ -12,6 +12,7 @@ import android.widget.*
 import com.google.android.material.textfield.TextInputEditText
 import android.text.TextWatcher
 import android.text.Editable
+import com.example.repomaster.viewmodel.HomeViewModelFactory
 import android.app.DatePickerDialog
 import java.util.Calendar
 import com.example.repomaster.viewmodel.UserViewModel
@@ -183,7 +184,14 @@ class AdminSearchHistoryActivity : AppCompatActivity() {
         adapter = AdminSearchHistoryAdapter(emptyList())
         recyclerView.adapter = adapter
 //viewmodels
-        homeViewModel = ViewModelProvider(this)[HomeViewModel::class.java]
+        val homeFactory =
+            HomeViewModelFactory(applicationContext)
+
+        homeViewModel =
+            ViewModelProvider(
+                this,
+                homeFactory
+            )[HomeViewModel::class.java]
         userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
         loadUsers()
         loadSearchHistory()

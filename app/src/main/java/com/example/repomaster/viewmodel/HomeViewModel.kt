@@ -1,5 +1,5 @@
 package com.example.repomaster.viewmodel
-
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,6 +8,7 @@ import com.example.repomaster.repository.VehicleRepository
 import kotlinx.coroutines.launch
 import androidx.lifecycle.liveData
 import okhttp3.MultipartBody
+import com.example.repomaster.repository.StatusSaveResult
 import okhttp3.ResponseBody
 import retrofit2.Response
 import com.example.repomaster.network.RetrofitClient
@@ -30,6 +31,11 @@ class HomeViewModel(
         }
 
     }
+    private val _statusSaveResult =
+        MutableLiveData<StatusSaveResult>()
+
+    val statusSaveResult: LiveData<StatusSaveResult> =
+        _statusSaveResult
     fun updateVehicleStatus(
         vehicleNumber: String,
         status: String
@@ -37,12 +43,11 @@ class HomeViewModel(
 
         viewModelScope.launch {
 
-            statusUpdated.value =
+            _statusSaveResult.value =
                 repository.updateStatus(
                     vehicleNumber,
                     status
                 )
-
         }
     }
     fun addVehicle(vehicle: Vehicle) = liveData {

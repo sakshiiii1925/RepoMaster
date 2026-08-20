@@ -73,7 +73,7 @@ dependencies {
     implementation(
         "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
     )
-
+    implementation("androidx.work:work-runtime-ktx:2.10.1")
     // PDF
     implementation(
         "com.itextpdf:itext7-core:7.2.5"

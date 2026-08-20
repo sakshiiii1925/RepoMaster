@@ -166,15 +166,175 @@ class VehicleRepository(
     suspend fun updateStatus(
         vehicleNumber: String,
         status: String
-    ): Boolean {
+    ): StatusSaveResult {
 
-        val response =
-            api.updateStatus(
-                vehicleNumber,
-                StatusUpdateRequest(status)
+        val number = vehicleNumber
+            .trim()
+            .replace("-", "")
+            .replace("/", "")
+            .replace(".", "")
+            .replace(" ", "")
+            .uppercase()
+
+        return try {
+
+            // ============================================
+            // 1. ALWAYS SAVE TO ROOM FIRST
+            // ============================================
+
+            vehicleDao.updateStatusOffline(
+                number,
+                status
             )
 
-        return response.isSuccessful
+            Log.d(
+                "STATUS_UPDATE",
+                "Status saved locally: $number -> $status"
+            )
+
+            // ============================================
+            // 2. NO INTERNET
+            // ============================================
+
+            if (!isNetworkAvailable()) {
+
+                Log.d(
+                    "STATUS_UPDATE",
+                    "Offline - status marked pending"
+                )
+
+                return StatusSaveResult.SAVED_OFFLINE
+            }
+
+            // ============================================
+            // 3. INTERNET AVAILABLE → TRY API
+            // ============================================
+
+            try {
+
+                val response =
+                    api.updateStatus(
+                        number,
+                        StatusUpdateRequest(status)
+                    )
+
+                if (response.isSuccessful) {
+
+                    vehicleDao.markStatusSynced(number)
+
+                    Log.d(
+                        "STATUS_UPDATE",
+                        "Status synced successfully"
+                    )
+
+                    StatusSaveResult.SAVED_AND_SYNCED
+
+                } else {
+
+                    Log.e(
+                        "STATUS_UPDATE",
+                        "API failed: ${response.code()}"
+                    )
+
+                    // Local data is still safe
+                    StatusSaveResult.SAVED_OFFLINE
+                }
+
+            } catch (e: Exception) {
+
+                Log.e(
+                    "STATUS_UPDATE",
+                    "API failed, keeping local status",
+                    e
+                )
+
+                // Local save succeeded
+                StatusSaveResult.SAVED_OFFLINE
+            }
+
+        } catch (e: Exception) {
+
+            Log.e(
+                "STATUS_UPDATE",
+                "Local Room save failed",
+                e
+            )
+
+            StatusSaveResult.FAILED
+        }
+    }
+    suspend fun syncPendingStatuses(): Boolean {
+
+        if (!isNetworkAvailable()) {
+            return false
+        }
+
+        val pendingVehicles =
+            vehicleDao.getPendingStatusUpdates()
+
+        if (pendingVehicles.isEmpty()) {
+            Log.d(
+                "STATUS_SYNC",
+                "No pending status updates"
+            )
+
+            return true
+        }
+
+        var allSuccessful = true
+
+        for (vehicle in pendingVehicles) {
+
+            val status =
+                vehicle.repoStatus ?: continue
+
+            try {
+
+                Log.d(
+                    "STATUS_SYNC",
+                    "Syncing ${vehicle.vehicleNumber} -> $status"
+                )
+
+                val response =
+                    api.updateStatus(
+                        vehicle.vehicleNumber,
+                        StatusUpdateRequest(status)
+                    )
+
+                if (response.isSuccessful) {
+
+                    vehicleDao.markStatusSynced(
+                        vehicle.vehicleNumber
+                    )
+
+                    Log.d(
+                        "STATUS_SYNC",
+                        "Synced: ${vehicle.vehicleNumber}"
+                    )
+
+                } else {
+
+                    allSuccessful = false
+
+                    Log.e(
+                        "STATUS_SYNC",
+                        "Failed ${vehicle.vehicleNumber}: ${response.code()}"
+                    )
+                }
+
+            } catch (e: Exception) {
+
+                allSuccessful = false
+
+                Log.e(
+                    "STATUS_SYNC",
+                    "Sync error: ${vehicle.vehicleNumber}",
+                    e
+                )
+            }
+        }
+
+        return allSuccessful
     }
 
 

@@ -6,6 +6,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.widget.Toast
 
+import com.example.repomaster.viewmodel.HomeViewModelFactory
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -107,9 +108,13 @@ class ViewVehicleActivity : AppCompatActivity() {
                 DividerItemDecoration.VERTICAL
             )
         )
+        val factory = HomeViewModelFactory(applicationContext)
 
         homeViewModel =
-            ViewModelProvider(this)[HomeViewModel::class.java]
+            ViewModelProvider(
+                this,
+                factory
+            )[HomeViewModel::class.java]
 
 
         adapter =

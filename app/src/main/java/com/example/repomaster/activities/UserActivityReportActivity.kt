@@ -19,6 +19,7 @@ import com.example.repomaster.viewmodel.HomeViewModel
 import com.example.repomaster.viewmodel.UserViewModel
 import com.google.android.material.button.MaterialButton
 import java.util.Calendar
+import com.example.repomaster.viewmodel.HomeViewModelFactory
 
 class UserActivityReportActivity : AppCompatActivity() {
 
@@ -38,7 +39,14 @@ class UserActivityReportActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_report)
-        homeViewModel = ViewModelProvider(this)[HomeViewModel::class.java]
+        val factory =
+            HomeViewModelFactory(applicationContext)
+
+        homeViewModel =
+            ViewModelProvider(
+                this,
+                factory
+            )[HomeViewModel::class.java]
         toolbar = findViewById(R.id.toolbar)
         recyclerView = findViewById(R.id.rvUserActivity)
         btnDownloadPdf = findViewById(R.id.btnDownloadPdf)

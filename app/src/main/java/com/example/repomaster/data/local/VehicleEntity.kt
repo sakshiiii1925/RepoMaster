@@ -64,5 +64,7 @@ data class VehicleEntity(
     val uploadDate: String?,
 
     val yardId: Long?,
-    val yardName: String?
+    val yardName: String?,
+    val statusSyncPending: Boolean = false,
+    val statusUpdatedOffline: Boolean = false
 )

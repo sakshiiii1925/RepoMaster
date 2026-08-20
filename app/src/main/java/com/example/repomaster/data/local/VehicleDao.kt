@@ -50,5 +50,41 @@ interface VehicleDao {
     suspend fun getVehicleCount(): Int
     @Query("SELECT * FROM vehicles")
     suspend fun getAllVehicles(): List<VehicleEntity>
+    @Query("""
+    UPDATE vehicles
+    SET repoStatus = :status,
+        statusSyncPending = 1,
+        statusUpdatedOffline = 1
+    WHERE vehicleNumber = :vehicleNumber
+""")
+    suspend fun updateStatusOffline(
+        vehicleNumber: String,
+        status: String
+    )
+    @Query("""
+    SELECT * FROM vehicles
+    WHERE statusSyncPending = 1
+""")
+    suspend fun getPendingStatusUpdates(): List<VehicleEntity>
+    @Query("""
+    UPDATE vehicles
+    SET statusSyncPending = 0,
+        statusUpdatedOffline = 0
+    WHERE vehicleNumber = :vehicleNumber
+""")
+    suspend fun markStatusSynced(
+        vehicleNumber: String
+    )
+    @Query("""
+    UPDATE vehicles
+    SET repoStatus = :status,
+        statusSyncPending = 0,
+        statusUpdatedOffline = 0
+    WHERE vehicleNumber = :vehicleNumber
+""")
+    suspend fun updateStatusFromServer(
+        vehicleNumber: String,
+        status: String
+    )
     
 }

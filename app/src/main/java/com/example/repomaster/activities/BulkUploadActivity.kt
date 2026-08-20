@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.repomaster.R
 import android.widget.*
 import android.util.Log
+import com.example.repomaster.viewmodel.HomeViewModelFactory
 import android.net.Uri
 import androidx.activity.result.contract.ActivityResultContracts
 import android.provider.OpenableColumns
@@ -51,6 +52,7 @@ class BulkUploadActivity : AppCompatActivity() {
     private lateinit var progressBar: ProgressBar
     private lateinit var homeViewModel: HomeViewModel
     private var selectedFileUri: Uri? = null
+
     private lateinit var toolbar: MaterialToolbar
     private val filePickerLauncher =
         registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
@@ -82,7 +84,14 @@ class BulkUploadActivity : AppCompatActivity() {
         supportActionBar?.title =
             "Upload File"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        homeViewModel = ViewModelProvider(this)[HomeViewModel::class.java]
+        val factory =
+            HomeViewModelFactory(applicationContext)
+
+        homeViewModel =
+            ViewModelProvider(
+                this,
+                factory
+            )[HomeViewModel::class.java]
         btnChooseFile = findViewById(R.id.btnChooseFile)
         btnUpload = findViewById(R.id.btnUpload)
         txtFileName = findViewById(R.id.txtFileName)

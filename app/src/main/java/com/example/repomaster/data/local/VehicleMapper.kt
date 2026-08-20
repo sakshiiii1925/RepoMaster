@@ -63,7 +63,9 @@ fun Vehicle.toEntity(): VehicleEntity {
         uploadDate = uploadDate,
 
         yardId = yardId,
-        yardName = yardName
+        yardName = yardName,
+        statusSyncPending = false,
+        statusUpdatedOffline = false
     )
 }
     fun VehicleEntity.toVehicle(): Vehicle {

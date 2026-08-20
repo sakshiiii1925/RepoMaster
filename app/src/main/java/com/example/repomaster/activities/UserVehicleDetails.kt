@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.*
+import com.example.repomaster.repository.StatusSaveResult
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
@@ -135,26 +136,39 @@ private lateinit var toolbar: MaterialToolbar
 
         setupStatusDropdown()
 
-        viewModel.statusUpdated.observe(this){ success ->
+        viewModel.statusSaveResult.observe(this) { result ->
 
-            if(success){
+            when (result) {
 
-                Toast.makeText(
-                    this,
-                    "Status Updated Successfully",
-                    Toast.LENGTH_SHORT
-                ).show()
+                StatusSaveResult.SAVED_AND_SYNCED -> {
 
-            }else{
+                    Toast.makeText(
+                        this,
+                        "Status Updated Successfully",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
 
-                Toast.makeText(
-                    this,
-                    "Status Update Failed",
-                    Toast.LENGTH_SHORT
-                ).show()
+                StatusSaveResult.SAVED_OFFLINE -> {
 
+                    Toast.makeText(
+                        this,
+                        "Status saved offline. It will sync when internet is available.",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+
+                StatusSaveResult.FAILED -> {
+
+                    Toast.makeText(
+                        this,
+                        "Unable to save status",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+                null -> Unit
             }
-
         }
         btnCallAgency2.setOnClickListener {
             val mobile1 = txtAgencyMobile.text.toString().trim()

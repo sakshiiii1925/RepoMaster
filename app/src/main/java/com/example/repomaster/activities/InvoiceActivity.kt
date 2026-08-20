@@ -21,6 +21,8 @@ import android.text.TextWatcher
 import com.example.repomaster.models.Invoice
 import retrofit2.converter.gson.GsonConverterFactory
 import com.example.repomaster.adapter.InvoiceAdapter
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+
 class InvoiceActivity : AppCompatActivity() {
 
     private lateinit var recyclerInvoices: RecyclerView
@@ -67,6 +69,11 @@ class InvoiceActivity : AppCompatActivity() {
         observeInvoices()
         setupInvoiceSearch()
         loadInvoices()
+        val createinvoicebtn=findViewById<FloatingActionButton>(R.id.btnCreateInvoice)
+        createinvoicebtn.setOnClickListener {
+            val intent= Intent(this, CreateInvoice::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun setupViewModel() {

@@ -13,7 +13,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.example.repomaster.viewmodel.HomeViewModelFactory
 import androidx.appcompat.app.AlertDialog
-
+import com.example.repomaster.worker.StatusSyncScheduler
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -107,6 +107,7 @@ class HomeActivity : AppCompatActivity() {
                 this,
                 factory
             )[HomeViewModel::class.java]
+        StatusSyncScheduler.start(this)
         val agencyId =
             SessionManager(this).getAgencyId()
         homeViewModel.syncVehicles(
@@ -352,10 +353,6 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-
-
-
-
     private fun setupRecyclerViews() {
 
         recentSearchAdapter =
@@ -380,39 +377,70 @@ class HomeActivity : AppCompatActivity() {
 
     private fun setupSearchSuggestion() {
 
-
         rvSuggestions.layoutManager =
             LinearLayoutManager(this)
 
+        suggestionAdapter =
+            SearchSuggestionAdapter(emptyList()) { vehicle ->
 
+                rvSuggestions.visibility = View.GONE
 
-        suggestionAdapter = SearchSuggestionAdapter(emptyList()) { vehicle ->
+                val vehicleNumber =
+                    vehicle.vehicleNumber
+                        ?.trim()
+                        ?.replace("-", "")
+                        ?.replace("/", "")
+                        ?.replace(".", "")
+                        ?.replace(" ", "")
+                        ?.uppercase()
+                        ?: return@SearchSuggestionAdapter
 
-            rvSuggestions.visibility = View.GONE
-            etVehicleNumber.setText(vehicle.vehicleNumber)
+                etVehicleNumber.setText(vehicleNumber)
 
-            val session = SessionManager(this)
+                etVehicleNumber.setSelection(
+                    etVehicleNumber.text?.length ?: 0
+                )
 
-            homeViewModel.saveSearchHistory(
-                vehicle.vehicleNumber ?: "",
-                session.getUserEmail(),
-                session.getUserName(),
-                session.getAgencyId()
-            ).observe(this) {
+                // Open details
+                val intent =
+                    Intent(
+                        this,
+                        UserVehicleDetails::class.java
+                    )
 
-                loadRecentSearches()
+                intent.putExtra(
+                    "vehicleNumber",
+                    vehicleNumber
+                )
 
-                val intent = Intent(this, UserVehicleDetails::class.java)
-                intent.putExtra("vehicleNumber", vehicle.vehicleNumber)
                 startActivity(intent)
+
+                // Save search history
+                val session =
+                    SessionManager(this)
+
+                homeViewModel.saveSearchHistory(
+                    vehicleNumber,
+                    session.getUserEmail(),
+                    session.getUserName(),
+                    session.getAgencyId()
+                ).observe(this) {
+
+                    loadRecentSearches()
+
+                }
             }
-        }
+
         rvSuggestions.adapter =
             suggestionAdapter
 
+
+        // ----------------------------------------
+        // SEARCH SUGGESTIONS WHILE TYPING
+        // ----------------------------------------
+
         etVehicleNumber.addTextChangedListener(
             object : TextWatcher {
-
 
                 override fun beforeTextChanged(
                     s: CharSequence?,
@@ -422,13 +450,6 @@ class HomeActivity : AppCompatActivity() {
                 ) {
                 }
 
-
-                override fun afterTextChanged(
-                    s: Editable?
-                ) {
-                }
-
-
                 override fun onTextChanged(
                     s: CharSequence?,
                     start: Int,
@@ -436,72 +457,69 @@ class HomeActivity : AppCompatActivity() {
                     count: Int
                 ) {
 
-
                     val keyword =
-                        s.toString()
-                            .trim()
+                        s?.toString()
+                            ?.trim()
+                            ?.replace("-", "")
+                            ?.replace("/", "")
+                            ?.replace(".", "")
+                            ?.replace(" ", "")
+                            ?.uppercase()
+                            ?: ""
 
-
-
-                    if (keyword.isEmpty()) {
-
+                    if (keyword.length < 2) {
 
                         rvSuggestions.visibility =
                             View.GONE
-
 
                         return
 
                     }
 
-
-
                     homeViewModel
                         .searchVehicles(keyword)
-                        .observe(this@HomeActivity) {
+                        .observe(
+                            this@HomeActivity
+                        ) { response ->
 
-
-                                response ->
-
-
-                            if (response.isSuccessful &&
+                            if (
+                                response.isSuccessful &&
                                 response.body() != null
                             ) {
 
-
-                                val list =
+                                val vehicles =
                                     response.body()!!
 
+                                if (vehicles.isNotEmpty()) {
 
+                                    suggestionAdapter
+                                        .updateList(vehicles)
 
-                                suggestionAdapter
-                                    .updateList(list)
-
-
-
-                                rvSuggestions.visibility =
-                                    if (list.isEmpty())
-                                        View.GONE
-                                    else
+                                    rvSuggestions.visibility =
                                         View.VISIBLE
 
+                                } else {
 
+                                    rvSuggestions.visibility =
+                                        View.GONE
+
+                                }
+
+                            } else {
+
+                                rvSuggestions.visibility =
+                                    View.GONE
                             }
-
-
                         }
-
-
                 }
 
-
+                override fun afterTextChanged(
+                    s: Editable?
+                ) {
+                }
             }
         )
-
-
     }
-
-
     private fun setupSearchButton() {
 
 
