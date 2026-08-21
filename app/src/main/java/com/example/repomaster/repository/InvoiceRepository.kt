@@ -1,9 +1,9 @@
 package com.example.repomaster.repository
 
-
+import com.example.repomaster.models.PaymentCreateRequest
 import com.example.repomaster.api.InvoiceApi
 import com.example.repomaster.models.Invoice
-
+import com.example.repomaster.models.PaymentUpdateRequest
 class InvoiceRepository(
     private val invoiceApi: InvoiceApi
 ) {
@@ -23,4 +23,30 @@ class InvoiceRepository(
     suspend fun deleteInvoice(
         id: Long
     ) = invoiceApi.deleteInvoice(id)
+    suspend fun updatePayment(
+        id: Long,
+        request: PaymentUpdateRequest
+    ) =
+        invoiceApi.updatePayment(
+            id,
+            request
+        )
+    suspend fun addPayment(
+        id: Long,
+        request: PaymentCreateRequest
+    ) =
+        invoiceApi.addPayment(
+            id,
+            request
+        )
+    suspend fun getPaymentHistory(
+        id: Long
+    ) =
+        invoiceApi.getPaymentHistory(
+            id
+        )
+    suspend fun deletePayment(
+        id: Long
+    ) =
+        invoiceApi.deletePayment(id)
 }

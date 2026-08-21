@@ -21,10 +21,11 @@ import android.text.TextWatcher
 import com.example.repomaster.models.Invoice
 import retrofit2.converter.gson.GsonConverterFactory
 import com.example.repomaster.adapter.InvoiceAdapter
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class InvoiceActivity : AppCompatActivity() {
-
+    private lateinit var toolbar: MaterialToolbar
     private lateinit var recyclerInvoices: RecyclerView
     private lateinit var invoiceAdapter: InvoiceAdapter
     private lateinit var invoiceViewModel: InvoiceViewModel
@@ -35,7 +36,17 @@ class InvoiceActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_invoice)
+        toolbar =
+            findViewById(R.id.toolbar)
 
+        setSupportActionBar(toolbar)
+
+        toolbar.setTitleTextColor(
+            getColor(R.color.black)
+        )
+        supportActionBar?.title =
+            "Invoices"
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         recyclerInvoices =
             findViewById(R.id.recyclerInvoices)
 

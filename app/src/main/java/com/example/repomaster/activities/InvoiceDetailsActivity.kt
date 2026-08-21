@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import android.widget.*
+import com.example.repomaster.models.PaymentUpdateRequest
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.repomaster.R
@@ -16,33 +17,59 @@ import retrofit2.Retrofit
 import androidx.appcompat.app.AlertDialog
 import retrofit2.converter.gson.GsonConverterFactory
 import com.example.repomaster.models.Invoice
-import android.content.Intent
-import android.graphics.Color
-import android.net.Uri
-import android.os.Environment
-import androidx.core.content.FileProvider
-import com.itextpdf.kernel.pdf.PdfDocument
-import com.itextpdf.kernel.pdf.PdfWriter
-import com.itextpdf.layout.Document
-import com.itextpdf.layout.element.Paragraph
-import com.itextpdf.layout.element.Table
-import com.itextpdf.layout.properties.TextAlignment
+import android.text.TextWatcher
+import android.app.DatePickerDialog
+import com.google.android.material.textfield.TextInputEditText
+import com.example.repomaster.models.PaymentCreateRequest
+import com.example.repomaster.utils.SessionManager
+import java.util.Calendar
+import java.util.Locale
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.repomaster.adapter.PaymentHistoryAdapter
 import com.example.repomaster.utils.PdfReportGenerator
-import java.io.File
+import android.text.Editable
 class InvoiceDetailsActivity : AppCompatActivity() {
 
     private lateinit var invoiceViewModel: InvoiceViewModel
-
+    private lateinit var recyclerPaymentHistory: RecyclerView
+    private lateinit var paymentHistoryAdapter: PaymentHistoryAdapter
     private lateinit var progressInvoiceDetails: View
     private var currentInvoice: Invoice? = null
     private var invoiceId: Long = -1L
-
+    private lateinit var paymentHistorySection: LinearLayout
+    private lateinit var btnPaymentHistory: Button
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(
             R.layout.activity_invoice_details
         )
+        paymentHistorySection =
+            findViewById(R.id.paymentHistorySection)
+
+        btnPaymentHistory =
+            findViewById(R.id.btnPaymentHistory)
+
+        paymentHistorySection.visibility =
+            View.GONE
+        recyclerPaymentHistory =
+            findViewById(R.id.recyclerPaymentHistory)
+
+        recyclerPaymentHistory.layoutManager =
+            LinearLayoutManager(this)
+
+        paymentHistoryAdapter =
+            PaymentHistoryAdapter(emptyList()) { payment ->
+
+                payment.id?.let { id ->
+
+                    showDeletePaymentConfirmation(id)
+                }
+            }
+
+        recyclerPaymentHistory.adapter =
+            paymentHistoryAdapter
         val btnGeneratePdf =
             findViewById<Button>(R.id.btnGeneratePdf)
 
@@ -91,10 +118,13 @@ class InvoiceDetailsActivity : AppCompatActivity() {
             return
         }
 
+
         setupViewModel()
         setupDeleteButton()
         observeInvoice()
-
+        setupPaymentButton()
+        setupAddPaymentButton()
+        setupPaymentHistoryButton()
         loadInvoice()
     }
 
@@ -191,6 +221,71 @@ class InvoiceDetailsActivity : AppCompatActivity() {
                     error,
                     Toast.LENGTH_LONG
                 ).show()
+            }
+        }
+        invoiceViewModel.paymentUpdated.observe(this) { invoice ->
+
+            if (invoice != null) {
+
+                currentInvoice = invoice
+
+                displayInvoice(invoice)
+
+                Toast.makeText(
+                    this,
+                    "Payment updated successfully",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+        invoiceViewModel.payments.observe(this) { payments ->
+
+            paymentHistoryAdapter.updateList(
+                payments
+            )
+        }
+        invoiceViewModel.paymentAdded.observe(this) { payment ->
+
+            if (payment != null) {
+
+                Toast.makeText(
+                    this,
+                    "Payment added successfully",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                invoiceViewModel.getInvoiceById(
+                    invoiceId
+                )
+
+                if (paymentHistorySection.visibility == View.VISIBLE) {
+
+                    invoiceViewModel.getPaymentHistory(
+                        invoiceId
+                    )
+                }
+            }
+        }
+        invoiceViewModel.paymentDeleted.observe(this) { deleted ->
+
+            if (deleted == true) {
+
+                Toast.makeText(
+                    this,
+                    "Payment deleted successfully",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                invoiceViewModel.getInvoiceById(
+                    invoiceId
+                )
+
+                if (paymentHistorySection.visibility == View.VISIBLE) {
+
+                    invoiceViewModel.getPaymentHistory(
+                        invoiceId
+                    )
+                }
             }
         }
     }
@@ -292,7 +387,31 @@ class InvoiceDetailsActivity : AppCompatActivity() {
             R.id.txtPaymentReceived
         ).text =
             "Payment Received: ₹${invoice.paymentReceived ?: 0.0}"
+        val invoiceTotal =
+            invoice.invoiceTotal ?: 0.0
 
+        val paymentReceived =
+            invoice.paymentReceived ?: 0.0
+
+        val remainingAmount =
+            (invoiceTotal - paymentReceived)
+                .coerceAtLeast(0.0)
+        findViewById<TextView>(
+            R.id.txtPaymentInvoiceTotal
+        ).text =
+            "₹%.2f".format(
+                invoice.invoiceTotal ?: 0.0
+            )
+        findViewById<TextView>(
+            R.id.txtPaymentStatus
+        ).text =
+            invoice.paymentStatus ?: "Pending"
+        findViewById<TextView>(
+            R.id.txtRemainingAmount
+        ).text =
+            "Remaining Amount: ₹%.2f".format(
+                remainingAmount
+            )
         findViewById<TextView>(
             R.id.txtRemarks
         ).text =
@@ -351,9 +470,466 @@ class InvoiceDetailsActivity : AppCompatActivity() {
 
         invoiceViewModel.deleteInvoice(invoiceId)
     }
+    private fun setupPaymentButton() {
+
+        findViewById<Button>(
+            R.id.btnUpdatePayment
+        ).setOnClickListener {
+
+            val invoice = currentInvoice
+
+            if (invoice == null) {
+
+                Toast.makeText(
+                    this,
+                    "Invoice data not loaded",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                return@setOnClickListener
+            }
+
+            showPaymentDialog(invoice)
+        }
+    }
+    private fun showPaymentDialog(
+        invoice: Invoice
+    ) {
+
+        val dialogView =
+            layoutInflater.inflate(
+                R.layout.dialog_update_payment,
+                null
+            )
+
+        val txtDialogInvoiceTotal =
+            dialogView.findViewById<TextView>(
+                R.id.txtDialogInvoiceTotal
+            )
+
+        val txtRemainingAmount =
+            dialogView.findViewById<TextView>(
+                R.id.txtRemainingAmount
+            )
+
+        val etPaymentReceived =
+            dialogView.findViewById<EditText>(
+                R.id.etPaymentReceived
+            )
+
+        val etPaymentDate =
+            dialogView.findViewById<EditText>(
+                R.id.etPaymentDate
+            )
+        val txtPaymentStatusPreview =
+            dialogView.findViewById<TextView>(
+                R.id.txtPaymentStatusPreview
+            )
+
+
+
+        val invoiceTotal =
+            invoice.invoiceTotal ?: 0.0
+
+        val alreadyPaid =
+            invoice.paymentReceived ?: 0.0
+
+
+        txtDialogInvoiceTotal.text =
+            "Invoice Total: ₹%.2f".format(
+                invoiceTotal
+            )
+
+
+        val remaining =
+            invoiceTotal - alreadyPaid
+
+        txtRemainingAmount.text =
+            "Remaining: ₹%.2f".format(
+                remaining.coerceAtLeast(0.0)
+            )
+
+
+        etPaymentReceived.setText(
+            if (alreadyPaid > 0)
+                alreadyPaid.toString()
+            else
+                ""
+        )
+        etPaymentReceived.addTextChangedListener(
+            object : TextWatcher {
+
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {}
+
+                override fun onTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    before: Int,
+                    count: Int
+                ) {
+
+                    val payment =
+                        s?.toString()
+                            ?.toDoubleOrNull()
+                            ?: 0.0
+
+                    val remaining =
+                        invoiceTotal - payment
+
+                    txtRemainingAmount.text =
+                        "Remaining: ₹%.2f".format(
+                            remaining.coerceAtLeast(0.0)
+                        )
+                }
+
+                override fun afterTextChanged(
+                    s: Editable?
+                ) {}
+            }
+        )
+
+
+        etPaymentDate.setText(
+            invoice.paymentDate ?: ""
+        )
+
+
+
+
+
+        val dialog =
+            AlertDialog.Builder(this)
+                .setTitle("Update Payment")
+                .setView(dialogView)
+                .setNegativeButton(
+                    "Cancel",
+                    null
+                )
+                .setPositiveButton(
+                    "Save Payment",
+                    null
+                )
+                .create()
+
+
+        dialog.setOnShowListener {
+
+            val saveButton =
+                dialog.getButton(
+                    AlertDialog.BUTTON_POSITIVE
+                )
+
+            saveButton.setOnClickListener {
+
+                val payment =
+                    etPaymentReceived.text
+                        .toString()
+                        .toDoubleOrNull()
+
+                if (payment == null) {
+
+                    etPaymentReceived.error =
+                        "Enter payment amount"
+
+                    return@setOnClickListener
+                }
+
+
+                if (payment < 0) {
+
+                    etPaymentReceived.error =
+                        "Invalid payment amount"
+
+                    return@setOnClickListener
+                }
+
+
+                if (payment > invoiceTotal) {
+
+                    etPaymentReceived.error =
+                        "Payment cannot exceed invoice total"
+
+                    return@setOnClickListener
+                }
+
+
+                val paymentDate =
+                    etPaymentDate.text
+                        .toString()
+                        .trim()
+
+
+                val status =
+                    when {
+                        payment == 0.0 ->
+                            "Pending"
+
+                        payment < invoiceTotal ->
+                            "Partial"
+
+                        payment == invoiceTotal ->
+                            "Paid"
+
+                        else ->
+                            "Pending"
+                    }
+                txtPaymentStatusPreview.text =
+                    "Status: $status"
+
+                val request =
+                    PaymentUpdateRequest(
+                        paymentReceived =
+                            payment,
+
+                        paymentDate =
+                            paymentDate.ifEmpty {
+                                null
+                            },
+
+                        paymentStatus =
+                            status
+                    )
+
+
+                invoiceViewModel.updatePayment(
+                    invoiceId,
+                    request
+                )
+
+
+                dialog.dismiss()
+            }
+        }
+
+
+        dialog.show()
+    }
+    private fun showAddPaymentDialog() {
+
+        val dialogView =
+            layoutInflater.inflate(
+                R.layout.dialog_add_payment,
+                null
+            )
+
+        val etPaymentDate =
+            dialogView.findViewById<TextInputEditText>(
+                R.id.etPaymentDate
+            )
+
+        val etPaymentAmount =
+            dialogView.findViewById<TextInputEditText>(
+                R.id.etPaymentAmount
+            )
+
+        val etPaymentRemarks =
+            dialogView.findViewById<TextInputEditText>(
+                R.id.etPaymentRemarks
+            )
+
+        // Default today's date
+        val calendar = Calendar.getInstance()
+
+        etPaymentDate.setText(
+            String.format(
+                Locale.getDefault(),
+                "%04d-%02d-%02d",
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH) + 1,
+                calendar.get(Calendar.DAY_OF_MONTH)
+            )
+        )
+
+        // Date picker
+        etPaymentDate.setOnClickListener {
+
+            DatePickerDialog(
+                this,
+                { _, year, month, day ->
+
+                    val date =
+                        String.format(
+                            Locale.getDefault(),
+                            "%04d-%02d-%02d",
+                            year,
+                            month + 1,
+                            day
+                        )
+
+                    etPaymentDate.setText(date)
+                },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+            ).show()
+        }
+
+        val dialog =
+            AlertDialog.Builder(this)
+                .setView(dialogView)
+                .setNegativeButton(
+                    "Cancel",
+                    null
+                )
+                .setPositiveButton(
+                    "Add Payment",
+                    null
+                )
+                .create()
+
+        dialog.setOnShowListener {
+
+            dialog.getButton(
+                AlertDialog.BUTTON_POSITIVE
+            ).setOnClickListener {
+
+                val amount =
+                    etPaymentAmount.text
+                        ?.toString()
+                        ?.trim()
+                        ?.toDoubleOrNull()
+
+                if (amount == null || amount <= 0) {
+
+                    etPaymentAmount.error =
+                        "Enter valid payment amount"
+
+                    return@setOnClickListener
+                }
+
+                val paymentDate =
+                    etPaymentDate.text
+                        ?.toString()
+                        ?.trim()
+
+                if (paymentDate.isNullOrEmpty()) {
+
+                    etPaymentDate.error =
+                        "Select payment date"
+
+                    return@setOnClickListener
+                }
+
+                val remarks =
+                    etPaymentRemarks.text
+                        ?.toString()
+                        ?.trim()
+
+                val session =
+                    SessionManager(this)
+
+                val request =
+                    PaymentCreateRequest(
+                        paymentDate = paymentDate,
+                        paymentAmount = amount,
+                        remarks = remarks,
+                        createdBy =
+                            session.getUserEmail()
+                    )
+
+                invoiceViewModel.addPayment(
+                    invoiceId,
+                    request
+                )
+
+                dialog.dismiss()
+            }
+        }
+
+        dialog.show()
+    }
+    private fun setupAddPaymentButton() {
+
+        findViewById<Button>(
+            R.id.btnAddPayment
+        ).setOnClickListener {
+
+            val invoice = currentInvoice
+
+            if (invoice == null) {
+
+                Toast.makeText(
+                    this,
+                    "Invoice data not loaded",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                return@setOnClickListener
+            }
+
+            showAddPaymentDialog()
+        }
+    }
+    private fun showDeletePaymentConfirmation(
+        paymentId: Long
+    ) {
+
+        AlertDialog.Builder(this)
+            .setTitle("Delete Payment")
+            .setMessage(
+                "Are you sure you want to delete this payment?"
+            )
+            .setPositiveButton("Delete") { _, _ ->
+
+                invoiceViewModel.deletePayment(
+                    paymentId
+                )
+            }
+            .setNegativeButton(
+                "Cancel",
+                null
+            )
+            .show()
+    }
+
+    private fun setupPaymentHistoryButton() {
+
+        btnPaymentHistory.setOnClickListener {
+
+            if (paymentHistorySection.visibility == View.GONE) {
+
+                // Show section
+                paymentHistorySection.visibility =
+                    View.VISIBLE
+
+                btnPaymentHistory.text =
+                    "Hide Payment History"
+
+                // Load history only when user opens it
+                invoiceViewModel.getPaymentHistory(
+                    invoiceId
+                )
+
+            } else {
+
+                // Hide section
+                paymentHistorySection.visibility =
+                    View.GONE
+
+                btnPaymentHistory.text =
+                    "Payment History"
+            }
+        }
+    }
     override fun onResume() {
         super.onResume()
 
-        loadInvoice()
+        if (::invoiceViewModel.isInitialized && invoiceId != -1L) {
+
+            loadInvoice()
+
+            // Only reload payment history if the section is visible
+            if (paymentHistorySection.visibility == View.VISIBLE) {
+
+                invoiceViewModel.getPaymentHistory(
+                    invoiceId
+                )
+            }
+        }
     }
 }
