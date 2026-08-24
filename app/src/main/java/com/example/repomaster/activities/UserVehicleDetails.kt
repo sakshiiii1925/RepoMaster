@@ -16,9 +16,59 @@ import com.example.repomaster.repository.VehicleRepository
 import com.example.repomaster.viewmodel.VehicleDetailsViewModelFactory
 import androidx.appcompat.app.AlertDialog
 import com.google.android.material.appbar.MaterialToolbar
-
+import androidx.activity.result.contract.ActivityResultContracts
 class UserVehicleDetails : AppCompatActivity() {
+    private val repoImageUploadLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
 
+            if (result.resultCode == RESULT_OK) {
+
+                val status =
+                    result.data?.getStringExtra("status")
+
+                if (!status.isNullOrEmpty()) {
+
+                    // Update displayed status
+                    updateStatusColor(status)
+
+                    // Set dropdown value
+                    autoStatus.setText(
+                        status,
+                        false
+                    )
+
+                    Toast.makeText(
+                        this,
+                        "Status updated successfully",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    // Refresh vehicle details
+                    val vehicleNumber =
+                        intent.getStringExtra(
+                            "vehicleNumber"
+                        ) ?: ""
+
+                    if (vehicleNumber.isNotEmpty()) {
+
+                        viewModel.getVehicle(
+                            vehicleNumber
+                        )
+                    }
+                }
+
+            } else {
+
+                // User came back without completing upload
+
+                autoStatus.setText(
+                    "",
+                    false
+                )
+            }
+        }
 
     private lateinit var viewModel: VehicleDetailsViewModel
 
@@ -37,12 +87,11 @@ class UserVehicleDetails : AppCompatActivity() {
     private lateinit var txtChassis: TextView
     private lateinit var txtVehicleType: TextView
 
-    private lateinit var txtAgency: TextView
-    private lateinit var txtAgencyManager: TextView
+
     private lateinit var txtAgencyMobile: TextView
     private lateinit var txtAgencyMobile2: TextView
     private lateinit var txtAgencyId: TextView
-    private lateinit var txtFianceAgencyId: TextView
+
 
 
     private lateinit var btnCallAgency: TextView
@@ -116,12 +165,11 @@ private lateinit var toolbar: MaterialToolbar
                 txtVehicleType.text = vehicle.vehicleType
 
 
-                txtAgency.text = vehicle.agencyName
-                txtAgencyManager.text = vehicle.agencyManager
+
                 txtAgencyMobile.text = vehicle.agencyMobile
                 txtAgencyMobile2.text = vehicle.agencyMobile2
                 txtAgencyId.text = vehicle.agencyId
-                txtFianceAgencyId.text=vehicle.agencyIdGiveByFinance
+
 
 
 
@@ -246,34 +294,83 @@ private lateinit var toolbar: MaterialToolbar
     }
 
 
-
         btnSaveStatus.setOnClickListener {
 
-
             val status =
-                autoStatus.text.toString()
+                autoStatus.text.toString().trim()
 
 
-            if(status.isEmpty()){
+            if (status.isEmpty()) {
 
-                autoStatus.error="Select Status"
+                autoStatus.error =
+                    "Select Status"
+
                 return@setOnClickListener
-
             }
 
+
+            // -----------------------------------------
+            // Repo Mark / Parked
+            //
+            // These statuses are already handled
+            // immediately when selected.
+            // -----------------------------------------
+
+            if (
+                status == "repo mark" ||
+                status == "Parked"
+            ) {
+
+                Toast.makeText(
+                    this,
+                    "Images are required for $status",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                return@setOnClickListener
+            }
+
+
+            // -----------------------------------------
+            // NORMAL STATUS
+            //
+            // open list / Contacted / Released
+            // -----------------------------------------
 
             viewModel.updateRepoStatus(
                 vehicleNumber,
                 status
             )
-
-
         }
+
+
 
 
     }
 
+    private fun openRepoImageUpload(
+        vehicleNumber: String,
+        status: String
+    ) {
 
+        val intent =
+            Intent(
+                this,
+                RepoImageUploadActivity::class.java
+            )
+
+        intent.putExtra(
+            "vehicleNumber",
+            vehicleNumber
+        )
+
+        intent.putExtra(
+            "status",
+            status
+        )
+
+        repoImageUploadLauncher.launch(intent)
+    }
 
     private fun initializeViews(){
 
@@ -295,12 +392,11 @@ private lateinit var toolbar: MaterialToolbar
         txtVehicleType=findViewById(R.id.txtVehicleType)
 
 
-        txtAgency=findViewById(R.id.txtAgency)
-        txtAgencyManager=findViewById(R.id.txtAgencyManager)
+
         txtAgencyMobile=findViewById(R.id.txtAgencyMobile)
         txtAgencyMobile2=findViewById(R.id.txtAgencyMobile2)
         txtAgencyId=findViewById(R.id.txtAgencyId)
-        txtFianceAgencyId=findViewById(R.id.txtfifAgencyId)
+
 
 
         btnCallAgency=findViewById(R.id.btncall)
@@ -312,9 +408,9 @@ private lateinit var toolbar: MaterialToolbar
 
 
 
-    private fun setupStatusDropdown(){
+    private fun setupStatusDropdown() {
 
-        val statusList=listOf(
+        val statusList = listOf(
             "open list",
             "Contacted",
             "repo mark",
@@ -331,6 +427,51 @@ private lateinit var toolbar: MaterialToolbar
             )
         )
 
+
+        // -----------------------------------------
+        // STATUS SELECTED
+        // -----------------------------------------
+
+        autoStatus.setOnItemClickListener { _, _, position, _ ->
+
+            val selectedStatus =
+                statusList[position]
+
+
+            val vehicleNumber =
+                intent.getStringExtra(
+                    "vehicleNumber"
+                ) ?: ""
+
+
+            if (vehicleNumber.isEmpty()) {
+
+                Toast.makeText(
+                    this,
+                    "Vehicle number not found",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                return@setOnItemClickListener
+            }
+
+
+            // -----------------------------------------
+            // REPO MARK / PARKED
+            // OPEN IMAGE UPLOAD IMMEDIATELY
+            // -----------------------------------------
+
+            if (
+                selectedStatus == "repo mark" ||
+                selectedStatus == "Parked"
+            ) {
+
+                openRepoImageUpload(
+                    vehicleNumber,
+                    selectedStatus
+                )
+            }
+        }
     }
 
 
