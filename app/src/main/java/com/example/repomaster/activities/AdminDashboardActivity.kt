@@ -271,6 +271,10 @@ class AdminDashboardActivity : AppCompatActivity(),NavigationView.OnNavigationIt
                 val intent= Intent(this, InvoiceActivity::class.java)
                 startActivity(intent)
             }
+            R.id.nav_uploded_images -> {
+                val intent= Intent(this, UploadedImagesActivity::class.java)
+                startActivity(intent)
+            }
 
 
             R.id.nav_logout -> {

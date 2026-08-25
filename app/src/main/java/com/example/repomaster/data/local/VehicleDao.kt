@@ -86,5 +86,34 @@ interface VehicleDao {
         vehicleNumber: String,
         status: String
     )
-    
+    @Query("""
+    SELECT * FROM vehicles
+    WHERE vehicleNumber = :vehicleNumber
+    LIMIT 1
+""")
+    suspend fun getVehicleByNumber(
+        vehicleNumber: String
+    ): VehicleEntity?
+    @Query("""
+    UPDATE vehicles
+    SET imageUploadPending = 1
+    WHERE vehicleNumber = :vehicleNumber
+""")
+    suspend fun markImageUploadPending(
+        vehicleNumber: String
+    )
+    @Query("""
+    SELECT * FROM vehicles
+    WHERE imageUploadPending = 1
+    ORDER BY vehicleNumber
+""")
+    suspend fun getPendingImageUploads(): List<VehicleEntity>
+    @Query("""
+    UPDATE vehicles
+    SET imageUploadPending = 0
+    WHERE vehicleNumber = :vehicleNumber
+""")
+    suspend fun markImageUploadCompleted(
+        vehicleNumber: String
+    )
 }

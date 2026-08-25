@@ -4,7 +4,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.util.Log
-
+import com.example.repomaster.models.UploadedImage
 import com.example.repomaster.data.local.DatabaseProvider
 import com.example.repomaster.data.local.toEntity
 import com.example.repomaster.data.local.toVehicle
@@ -12,9 +12,10 @@ import com.example.repomaster.models.StatusUpdateRequest
 import com.example.repomaster.models.Vehicle
 import com.example.repomaster.models.UploadResponse
 import com.example.repomaster.network.RetrofitClient
-
+import com.example.repomaster.data.local.PendingImageUploadEntity
 import okhttp3.MultipartBody
 import retrofit2.Response
+import com.example.repomaster.models.UploadedImageDetails
 
 
 class VehicleRepository(
@@ -27,7 +28,10 @@ class VehicleRepository(
         DatabaseProvider
             .getDatabase(context)
             .vehicleDao()
-
+    private val pendingImageUploadDao =
+        DatabaseProvider
+            .getDatabase(context)
+            .pendingImageUploadDao()
 
     // =========================================================
     // SEARCH VEHICLE - ONLINE + OFFLINE
@@ -179,7 +183,7 @@ class VehicleRepository(
         return try {
 
             // ============================================
-            // 1. ALWAYS SAVE TO ROOM FIRST
+            // 1. ALWAYS SAVE STATUS TO ROOM FIRST
             // ============================================
 
             vehicleDao.updateStatusOffline(
@@ -193,7 +197,7 @@ class VehicleRepository(
             )
 
             // ============================================
-            // 2. NO INTERNET
+            // 2. CHECK INTERNET
             // ============================================
 
             if (!isNetworkAvailable()) {
@@ -203,11 +207,48 @@ class VehicleRepository(
                     "Offline - status marked pending"
                 )
 
+                // ----------------------------------------
+                // Repo Mark / Parked
+                // Create pending image upload
+                // ----------------------------------------
+
+                if (
+                    status == "repo mark" ||
+                    status == "Parked"
+                ) {
+
+                    val existing =
+                        pendingImageUploadDao
+                            .getPendingForVehicle(number)
+
+                    if (existing == null) {
+
+                        pendingImageUploadDao.insert(
+                            PendingImageUploadEntity(
+                                vehicleNumber = number,
+                                status = status
+                            )
+                        )
+
+                        Log.d(
+                            "IMAGE_UPLOAD",
+                            "Pending image upload created: $number"
+                        )
+
+                    } else {
+
+                        Log.d(
+                            "IMAGE_UPLOAD",
+                            "Pending image upload already exists: $number"
+                        )
+                    }
+                }
+
                 return StatusSaveResult.SAVED_OFFLINE
             }
 
             // ============================================
-            // 3. INTERNET AVAILABLE → TRY API
+            // 3. INTERNET AVAILABLE → API
             // ============================================
 
             try {
@@ -227,7 +268,7 @@ class VehicleRepository(
                         "Status synced successfully"
                     )
 
-                    StatusSaveResult.SAVED_AND_SYNCED
+                    return StatusSaveResult.SAVED_AND_SYNCED
 
                 } else {
 
@@ -236,8 +277,35 @@ class VehicleRepository(
                         "API failed: ${response.code()}"
                     )
 
-                    // Local data is still safe
-                    StatusSaveResult.SAVED_OFFLINE
+                    // ------------------------------------
+                    // API failed although internet exists
+                    // Keep status pending.
+                    //
+                    // Also create pending image record
+                    // for Repo Mark / Parked.
+                    // ------------------------------------
+
+                    if (
+                        status == "repo mark" ||
+                        status == "Parked"
+                    ) {
+
+                        val existing =
+                            pendingImageUploadDao
+                                .getPendingForVehicle(number)
+
+                        if (existing == null) {
+
+                            pendingImageUploadDao.insert(
+                                PendingImageUploadEntity(
+                                    vehicleNumber = number,
+                                    status = status
+                                )
+                            )
+                        }
+                    }
+
+                    return StatusSaveResult.SAVED_OFFLINE
                 }
 
             } catch (e: Exception) {
@@ -248,8 +316,32 @@ class VehicleRepository(
                     e
                 )
 
-                // Local save succeeded
-                StatusSaveResult.SAVED_OFFLINE
+                // ----------------------------------------
+                // API failed
+                // Keep status locally.
+                // ----------------------------------------
+
+                if (
+                    status == "repo mark" ||
+                    status == "Parked"
+                ) {
+
+                    val existing =
+                        pendingImageUploadDao
+                            .getPendingForVehicle(number)
+
+                    if (existing == null) {
+
+                        pendingImageUploadDao.insert(
+                            PendingImageUploadEntity(
+                                vehicleNumber = number,
+                                status = status
+                            )
+                        )
+                    }
+                }
+
+                return StatusSaveResult.SAVED_OFFLINE
             }
 
         } catch (e: Exception) {
@@ -263,6 +355,10 @@ class VehicleRepository(
             StatusSaveResult.FAILED
         }
     }
+
+
+
+
     suspend fun syncPendingStatuses(): Boolean {
 
         if (!isNetworkAvailable()) {
@@ -399,17 +495,48 @@ class VehicleRepository(
 
                     if (vehicle != null) {
 
-                        // Save/update vehicle in Room
-                        vehicleDao.insertVehicle(
-                            vehicle.toEntity()
-                        )
+                        val localVehicle =
+                            vehicleDao.getVehicle(number)
 
-                        Log.d(
-                            "VEHICLE_GET",
-                            "Vehicle saved to Room"
-                        )
+                        if (
+                            localVehicle != null &&
+                            localVehicle.statusSyncPending
+                        ) {
 
-                        return vehicle
+                            Log.d(
+                                "VEHICLE_GET",
+                                "Local pending status found. Preserving local status."
+                            )
+
+                            val serverEntity =
+                                vehicle.toEntity()
+
+                            val mergedEntity =
+                                serverEntity.copy(
+                                    repoStatus =
+                                        localVehicle.repoStatus,
+
+                                    statusSyncPending =
+                                        true,
+
+                                    statusUpdatedOffline =
+                                        true
+                                )
+
+                            vehicleDao.insertVehicle(
+                                mergedEntity
+                            )
+
+                            return mergedEntity.toVehicle()
+
+                        } else {
+
+                            vehicleDao.insertVehicle(
+                                vehicle.toEntity()
+                            )
+
+                            return vehicle
+                        }
                     }
                 }
 
@@ -798,4 +925,123 @@ class VehicleRepository(
             emptyList()
         }
     }
+    suspend fun markImageUploadPending(
+        vehicleNumber: String,
+        status: String
+    ) {
+
+        val number =
+            vehicleNumber
+                .trim()
+                .replace("-", "")
+                .replace("/", "")
+                .replace(".", "")
+                .replace(" ", "")
+                .uppercase()
+
+        val existing =
+            pendingImageUploadDao
+                .getPendingForVehicle(number)
+
+        if (existing == null) {
+
+            pendingImageUploadDao.insert(
+                PendingImageUploadEntity(
+                    vehicleNumber = number,
+                    status = status,
+                    uploadStatus = "PENDING"
+                )
+            )
+
+            Log.d(
+                "IMAGE_PENDING",
+                "Image upload added to queue: $number"
+            )
+
+        } else {
+
+            Log.d(
+                "IMAGE_PENDING",
+                "Image upload already pending: $number"
+            )
+        }
+    }
+    suspend fun getPendingImageUploads(): List<Vehicle> {
+
+        val pendingUploads =
+            pendingImageUploadDao.getPendingUploads()
+
+        return pendingUploads.mapNotNull { pending ->
+
+            vehicleDao
+                .getVehicle(pending.vehicleNumber)
+                ?.toVehicle()
+        }
+    }
+    suspend fun markImageUploadCompleted(
+        vehicleNumber: String
+    ) {
+
+        vehicleDao.markImageUploadCompleted(
+            vehicleNumber
+        )
+    }
+    suspend fun getUploadedImages(): List<UploadedImage> {
+
+        val response =
+            RetrofitClient.repoImageApi.getUploadedImages()
+
+        if (response.isSuccessful) {
+
+            return response.body()?.data
+                ?: emptyList()
+
+        } else {
+
+            throw Exception(
+                "Failed to load uploaded images: ${response.code()}"
+            )
+        }
+    }
+    suspend fun getUploadedImage(
+        id: Int
+    ): UploadedImageDetails? {
+
+        val response =
+            RetrofitClient.repoImageApi.getUploadedImage(id)
+
+        if (response.isSuccessful) {
+
+            return response.body()?.data
+
+        } else {
+
+            throw Exception(
+                "Failed to load uploaded image details: ${response.code()}"
+            )
+        }
+    }
+    suspend fun deleteUploadedImage(
+        id: Int
+    ): Boolean {
+
+        val response =
+            RetrofitClient.repoImageApi.deleteUploadedImage(id)
+
+        if (response.isSuccessful) {
+
+            return response.body()?.success == true
+
+        } else {
+
+            val error =
+                response.errorBody()?.string()
+
+            throw Exception(
+                "Delete failed (${response.code()}): $error"
+            )
+        }
+    }
+
+
 }

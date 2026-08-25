@@ -1,6 +1,5 @@
 package com.example.repomaster.activities
 
-
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -22,13 +21,11 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-
 import com.example.repomaster.R
 import com.example.repomaster.adapters.RecentSearchAdapter
 import com.example.repomaster.adapters.SearchSuggestionAdapter
 import com.example.repomaster.utils.SessionManager
 import com.example.repomaster.viewmodel.HomeViewModel
-
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.textfield.TextInputEditText
@@ -96,7 +93,6 @@ class HomeActivity : AppCompatActivity() {
             }
         }
         setupToolbar()
-
         setupNavigation()
 
         val factory =
@@ -125,43 +121,25 @@ class HomeActivity : AppCompatActivity() {
 
         setupSearchButton()
 
-
     }
-
     private fun initializeViews() {
 
         drawerLayout =
             findViewById(R.id.drawerLayout)
-
-
         navigationView =
             findViewById(R.id.navigationView)
-
-
         toolbar =
             findViewById(R.id.toolbar)
-
-
         etVehicleNumber =
             findViewById(R.id.etVehicleNumber)
-
-
         btnSearch =
             findViewById(R.id.btnSearch)
-
-
         rvSuggestions =
             findViewById(R.id.rvSuggestions)
 
-
     }
-
     private fun setupToolbar() {
-
-
         setSupportActionBar(toolbar)
-
-
         toolbar.setNavigationOnClickListener {
 
             drawerLayout.openDrawer(
@@ -169,27 +147,16 @@ class HomeActivity : AppCompatActivity() {
             )
 
         }
-
-
         toolbar.setTitleTextColor(
             resources.getColor(R.color.white)
         )
-
-
         supportActionBar?.title =
             "Repo Master"
-
-
     }
-
     private fun setupNavigation() {
-
-
         navigationView.setNavigationItemSelectedListener {
 
             when (it.itemId) {
-
-
                 R.id.nav_home -> {
 
                     drawerLayout.closeDrawer(
@@ -197,8 +164,6 @@ class HomeActivity : AppCompatActivity() {
                     )
 
                 }
-
-
                 R.id.nav_profile -> {
 
                     startActivity(
@@ -209,7 +174,6 @@ class HomeActivity : AppCompatActivity() {
                     )
 
                 }
-
 
                 R.id.nav_logout -> {
 
@@ -239,12 +203,19 @@ class HomeActivity : AppCompatActivity() {
                         .setNegativeButton("No", null)
                         .show()
                 }
-
                 R.id.nav_recentSearches -> {
                     startActivity(
                         Intent(
                             this,
                             SearchVehicleActivity::class.java
+                        )
+                    )
+                }
+                R.id.nav_Pending_image_upload -> {
+                    startActivity(
+                        Intent(
+                            this,
+                            PendingImageUploadActivity::class.java
                         )
                     )
                 }
@@ -255,21 +226,15 @@ class HomeActivity : AppCompatActivity() {
                     )
                     )
                 }
-
             }
-
             drawerLayout.closeDrawer(
                 GravityCompat.START
             )
 
-
             true
-
         }
 
-
     }
-
     private fun loadRecentSearches() {
 
         val agencyId = SessionManager(this).getAgencyId()
@@ -284,24 +249,15 @@ class HomeActivity : AppCompatActivity() {
                 }
             }
     }
-
     private fun setupUserDetails() {
-
-
         val session =
             SessionManager(this)
-
-
         val header =
             navigationView.getHeaderView(0)
-
-
         val txtUserName =
             header.findViewById<TextView>(
                 R.id.txtUserName
             )
-
-
         val txtUserEmail =
             header.findViewById<TextView>(
                 R.id.txtUserEmail
@@ -313,7 +269,6 @@ class HomeActivity : AppCompatActivity() {
 
         txtUserName.text = "$userName"
 
-
         txtUserEmail.text =
             session.getUserEmail()
         txtProfileLetter.text =
@@ -322,10 +277,7 @@ class HomeActivity : AppCompatActivity() {
                 ?.firstOrNull()
                 ?.uppercase()
                 ?: "A"
-
-
     }
-
     private fun observeVehicle() {
 
         homeViewModel.vehicle.observe(this) { vehicle ->
@@ -359,22 +311,14 @@ class HomeActivity : AppCompatActivity() {
             RecentSearchAdapter(emptyList()) {
 
                     history ->
-
-
                 etVehicleNumber.setText(
                     history.vehicleNumber
                 )
-
-
                 homeViewModel.searchVehicle(
                     history.vehicleNumber
                 )
-
             }
-
-
     }
-
     private fun setupSearchSuggestion() {
 
         rvSuggestions.layoutManager =
@@ -382,9 +326,7 @@ class HomeActivity : AppCompatActivity() {
 
         suggestionAdapter =
             SearchSuggestionAdapter(emptyList()) { vehicle ->
-
                 rvSuggestions.visibility = View.GONE
-
                 val vehicleNumber =
                     vehicle.vehicleNumber
                         ?.trim()
@@ -400,7 +342,6 @@ class HomeActivity : AppCompatActivity() {
                 etVehicleNumber.setSelection(
                     etVehicleNumber.text?.length ?: 0
                 )
-
                 // Open details
                 val intent =
                     Intent(
@@ -427,13 +368,11 @@ class HomeActivity : AppCompatActivity() {
                 ).observe(this) {
 
                     loadRecentSearches()
-
                 }
             }
 
         rvSuggestions.adapter =
             suggestionAdapter
-
 
         // ----------------------------------------
         // SEARCH SUGGESTIONS WHILE TYPING
@@ -449,7 +388,6 @@ class HomeActivity : AppCompatActivity() {
                     after: Int
                 ) {
                 }
-
                 override fun onTextChanged(
                     s: CharSequence?,
                     start: Int,
@@ -466,7 +404,6 @@ class HomeActivity : AppCompatActivity() {
                             ?.replace(" ", "")
                             ?.uppercase()
                             ?: ""
-
                     if (keyword.length < 2) {
 
                         rvSuggestions.visibility =
@@ -475,7 +412,6 @@ class HomeActivity : AppCompatActivity() {
                         return
 
                     }
-
                     homeViewModel
                         .searchVehicles(keyword)
                         .observe(
@@ -521,10 +457,7 @@ class HomeActivity : AppCompatActivity() {
         )
     }
     private fun setupSearchButton() {
-
-
         btnSearch.setOnClickListener {
-
 
             val vehicleNumber =
                 etVehicleNumber.text
@@ -535,29 +468,17 @@ class HomeActivity : AppCompatActivity() {
                     .replace(".", "")
                     .replace(" ", "")
                     .uppercase()
-
-
-
             if (vehicleNumber.isEmpty()) {
-
 
                 etVehicleNumber.error =
                     "Enter Vehicle Number"
 
-
                 return@setOnClickListener
 
             }
-
-
-
             homeViewModel
                 .searchVehicle(vehicleNumber)
-
-
         }
-
-
     }
 
 }

@@ -18,6 +18,13 @@
 
     </item>
     <item
+        android:id="@+id/nav_Pending_image_upload"
+        android:icon="@drawable/outline_image_24"
+        android:iconTint="@color/black"
+        android:title="Pending_images_upload">
+
+    </item>
+    <item
         android:id="@+id/nav_userReport"
         android:icon="@drawable/outline_analytics_24"
         android:iconTint="@color/black"

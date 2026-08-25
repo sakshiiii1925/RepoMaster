@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+   xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Toolbar -->
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            android:background="@android:color/transparent"
+            android:title="User Activity Report"
+            android:titleTextColor="@android:color/black"
+            android:paddingTop="35dp"
+            app:navigationIcon="@drawable/baseline_arrow_back_24"/>
+
+        <!-- Loading -->
+
+        <ProgressBar
+            android:id="@+id/progressDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="visible" />
+
+
+        <!-- Vehicle information -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/txtVehicleNumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="MH12CD6666"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black" />
+
+            <TextView
+                android:id="@+id/txtUserName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="User: user" />
+
+            <TextView
+                android:id="@+id/txtUserEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Email: user@gmail.com" />
+
+            <TextView
+                android:id="@+id/txtStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Status: Parked" />
+
+        </LinearLayout>
+
+
+        <!-- Inventory -->
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Inventory Images"
+            android:textSize="19sp"
+            android:textStyle="bold"
+            android:padding="16dp" />
+
+        <ImageView
+            android:id="@+id/imageInventory1"
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:layout_margin="8dp"
+            android:scaleType="centerCrop"
+            android:contentDescription="Inventory Image 1" />
+
+        <ImageView
+            android:id="@+id/imageInventory2"
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:layout_margin="8dp"
+            android:scaleType="centerCrop"
+            android:contentDescription="Inventory Image 2" />
+
+
+        <!-- Vehicle -->
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Vehicle Images"
+            android:textSize="19sp"
+            android:textStyle="bold"
+            android:padding="16dp" />
+
+        <ImageView
+            android:id="@+id/imageVehicle1"
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:layout_margin="8dp"
+            android:scaleType="centerCrop"
+            android:contentDescription="Vehicle Image 1" />
+
+        <ImageView
+            android:id="@+id/imageVehicle2"
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:layout_margin="8dp"
+            android:scaleType="centerCrop"
+            android:contentDescription="Vehicle Image 2" />
+
+        <ImageView
+            android:id="@+id/imageVehicle3"
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:layout_margin="8dp"
+            android:scaleType="centerCrop"
+            android:contentDescription="Vehicle Image 3" />
+
+        <ImageView
+            android:id="@+id/imageVehicle4"
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:layout_margin="8dp"
+            android:scaleType="centerCrop"
+            android:contentDescription="Vehicle Image 4" />
+
+        <ImageView
+            android:id="@+id/imageVehicle5"
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:layout_margin="8dp"
+            android:scaleType="centerCrop"
+            android:contentDescription="Vehicle Image 5" />
+
+    </LinearLayout>
+
+</ScrollView>

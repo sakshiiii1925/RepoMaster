@@ -25,12 +25,16 @@ class VehicleDetailsViewModel(
     val statusSaveResult: LiveData<StatusSaveResult> =
         _statusSaveResult
 
-    fun getVehicle(vehicleNumber: String) {
+    fun getVehicle(
+        vehicleNumber: String
+    ) {
 
         viewModelScope.launch {
 
             _vehicle.value =
-                repository.getVehicle(vehicleNumber)
+                repository.getVehicle(
+                    vehicleNumber
+                )
         }
     }
 
@@ -41,16 +45,46 @@ class VehicleDetailsViewModel(
 
         viewModelScope.launch {
 
+            // =============================================
+            // SAVE STATUS
+            // =============================================
+
             val result =
                 repository.updateStatus(
                     vehicleNumber,
                     status
                 )
 
-            _statusSaveResult.value = result
+            // =============================================
+            // IMAGE UPLOAD REQUIRED
+            // =============================================
 
-            // Reload vehicle from Room/API
-            getVehicle(vehicleNumber)
+            if (
+                status == "repo mark" ||
+                status == "Parked"
+            ) {
+
+                repository.markImageUploadPending(
+                    vehicleNumber,
+                    status
+                )
+            }
+
+            // =============================================
+            // RESULT
+            // =============================================
+
+            _statusSaveResult.value =
+                result
+
+            // =============================================
+            // RELOAD VEHICLE
+            // =============================================
+
+            _vehicle.value =
+                repository.getVehicle(
+                    vehicleNumber
+                )
         }
     }
 }

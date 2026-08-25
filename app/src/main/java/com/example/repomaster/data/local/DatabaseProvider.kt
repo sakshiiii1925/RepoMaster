@@ -2,8 +2,31 @@ package com.example.repomaster.data.local
 
 import android.content.Context
 import androidx.room.Room
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 
 object DatabaseProvider {
+
+    private val MIGRATION_2_3 =
+        object : Migration(2, 3) {
+
+            override fun migrate(
+                database: SupportSQLiteDatabase
+            ) {
+
+                database.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS pending_image_uploads (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        vehicleNumber TEXT NOT NULL,
+                        status TEXT NOT NULL,
+                        uploadStatus TEXT NOT NULL,
+                        createdAt INTEGER NOT NULL
+                    )
+                    """.trimIndent()
+                )
+            }
+        }
 
     @Volatile
     private var INSTANCE: AppDatabase? = null
@@ -17,7 +40,7 @@ object DatabaseProvider {
                 AppDatabase::class.java,
                 "repomaster_database"
             )
-                .fallbackToDestructiveMigration()
+                .addMigrations(MIGRATION_2_3)
                 .build()
 
             INSTANCE = instance

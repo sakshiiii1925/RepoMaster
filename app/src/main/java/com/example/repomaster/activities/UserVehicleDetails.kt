@@ -1,5 +1,5 @@
 package com.example.repomaster.activities
-
+import com.example.repomaster.utils.NetworkUtils
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -183,28 +183,61 @@ private lateinit var toolbar: MaterialToolbar
 
 
         setupStatusDropdown()
-
         viewModel.statusSaveResult.observe(this) { result ->
 
             when (result) {
 
+                // =========================================
+                // ONLINE
+                // =========================================
                 StatusSaveResult.SAVED_AND_SYNCED -> {
 
-                    Toast.makeText(
-                        this,
-                        "Status Updated Successfully",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    val status =
+                        autoStatus.text.toString().trim()
+
+                    updateStatusColor(status)
+
+                    if (
+                        status == "repo mark" ||
+                        status == "Parked"
+                    ) {
+
+                        openRepoImageUpload(
+                            vehicleNumber,
+                            status
+                        )
+
+                    } else {
+
+                        Toast.makeText(
+                            this,
+                            "Status Updated Successfully",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        viewModel.getVehicle(vehicleNumber)
+                    }
                 }
+
+
+
+
+                // =========================================
+                // OFFLINE
+                // =========================================
 
                 StatusSaveResult.SAVED_OFFLINE -> {
 
                     Toast.makeText(
                         this,
-                        "Status saved offline. It will sync when internet is available.",
+                        "Status saved offline. Images can be uploaded when you are online.",
                         Toast.LENGTH_LONG
                     ).show()
                 }
+
+                // =========================================
+                // FAILED
+                // =========================================
 
                 StatusSaveResult.FAILED -> {
 
@@ -215,9 +248,12 @@ private lateinit var toolbar: MaterialToolbar
                     ).show()
                 }
 
+
                 null -> Unit
             }
         }
+
+
         btnCallAgency2.setOnClickListener {
             val mobile1 = txtAgencyMobile.text.toString().trim()
             val mobile2 = txtAgencyMobile2.text.toString().trim()
@@ -292,13 +328,10 @@ private lateinit var toolbar: MaterialToolbar
             }
 
     }
-
-
         btnSaveStatus.setOnClickListener {
 
             val status =
                 autoStatus.text.toString().trim()
-
 
             if (status.isEmpty()) {
 
@@ -308,42 +341,11 @@ private lateinit var toolbar: MaterialToolbar
                 return@setOnClickListener
             }
 
-
-            // -----------------------------------------
-            // Repo Mark / Parked
-            //
-            // These statuses are already handled
-            // immediately when selected.
-            // -----------------------------------------
-
-            if (
-                status == "repo mark" ||
-                status == "Parked"
-            ) {
-
-                Toast.makeText(
-                    this,
-                    "Images are required for $status",
-                    Toast.LENGTH_SHORT
-                ).show()
-
-                return@setOnClickListener
-            }
-
-
-            // -----------------------------------------
-            // NORMAL STATUS
-            //
-            // open list / Contacted / Released
-            // -----------------------------------------
-
             viewModel.updateRepoStatus(
                 vehicleNumber,
                 status
             )
         }
-
-
 
 
     }
@@ -405,9 +407,6 @@ private lateinit var toolbar: MaterialToolbar
         btnSaveStatus=findViewById(R.id.btnSaveStatus)
 
     }
-
-
-
     private fun setupStatusDropdown() {
 
         val statusList = listOf(
@@ -418,7 +417,6 @@ private lateinit var toolbar: MaterialToolbar
             "Released"
         )
 
-
         autoStatus.setAdapter(
             ArrayAdapter(
                 this,
@@ -427,22 +425,14 @@ private lateinit var toolbar: MaterialToolbar
             )
         )
 
-
-        // -----------------------------------------
-        // STATUS SELECTED
-        // -----------------------------------------
-
         autoStatus.setOnItemClickListener { _, _, position, _ ->
 
             val selectedStatus =
                 statusList[position]
 
-
             val vehicleNumber =
-                intent.getStringExtra(
-                    "vehicleNumber"
-                ) ?: ""
-
+                intent.getStringExtra("vehicleNumber")
+                    ?: ""
 
             if (vehicleNumber.isEmpty()) {
 
@@ -455,18 +445,53 @@ private lateinit var toolbar: MaterialToolbar
                 return@setOnItemClickListener
             }
 
-
-            // -----------------------------------------
+            // =========================================
             // REPO MARK / PARKED
-            // OPEN IMAGE UPLOAD IMMEDIATELY
-            // -----------------------------------------
+            // =========================================
 
             if (
                 selectedStatus == "repo mark" ||
                 selectedStatus == "Parked"
             ) {
 
-                openRepoImageUpload(
+                if (NetworkUtils.isInternetAvailable(this)) {
+
+                    // -------------------------------------
+                    // ONLINE
+                    // -------------------------------------
+                    // Save status first.
+                    // After successful status save,
+                    // open image upload screen.
+                    // -------------------------------------
+
+                    viewModel.updateRepoStatus(
+                        vehicleNumber,
+                        selectedStatus
+                    )
+
+                } else {
+
+                    // -------------------------------------
+                    // OFFLINE
+                    // -------------------------------------
+                    // Save status locally.
+                    // Do NOT open image upload screen.
+                    // Add vehicle to pending image list.
+                    // -------------------------------------
+
+                    viewModel.updateRepoStatus(
+                        vehicleNumber,
+                        selectedStatus
+                    )
+                }
+
+            } else {
+
+                // =========================================
+                // NORMAL STATUS
+                // =========================================
+
+                viewModel.updateRepoStatus(
                     vehicleNumber,
                     selectedStatus
                 )
