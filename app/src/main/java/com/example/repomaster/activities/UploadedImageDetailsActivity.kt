@@ -15,6 +15,8 @@ import android.util.Log
 import com.example.repomaster.utils.Constants
 import com.example.repomaster.viewmodel.UploadedImageDetailsViewModel
 import com.example.repomaster.repository.VehicleRepository
+import com.google.android.material.appbar.MaterialToolbar
+
 class UploadedImageDetailsActivity : AppCompatActivity() {
 
     private lateinit var viewModel: UploadedImageDetailsViewModel
@@ -34,7 +36,7 @@ class UploadedImageDetailsActivity : AppCompatActivity() {
     private lateinit var imageVehicle3: ImageView
     private lateinit var imageVehicle4: ImageView
     private lateinit var imageVehicle5: ImageView
-
+    private lateinit var toolbar: MaterialToolbar
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -43,14 +45,16 @@ class UploadedImageDetailsActivity : AppCompatActivity() {
         )
 
         // -----------------------------------------
-        // Back button
+        // toolbar
         // -----------------------------------------
+        toolbar = findViewById(R.id.toolbar)
 
-        findViewById<ImageButton>(
-            R.id.btnBack
-        ).setOnClickListener {
-            finish()
-        }
+        setSupportActionBar(toolbar)
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        supportActionBar?.title = "View Images"
+
 
         // -----------------------------------------
         // Views
@@ -264,6 +268,11 @@ class UploadedImageDetailsActivity : AppCompatActivity() {
             )
             .into(imageView)
     }
+    override fun onSupportNavigateUp(): Boolean {
 
+        finish()
+
+        return true
+    }
 
 }

@@ -48,4 +48,13 @@ interface PendingImageUploadDao {
     suspend fun delete(
         id: Int
     )
+    @Query("""
+    UPDATE pending_image_uploads
+    SET uploadStatus = 'UPLOADED'
+    WHERE vehicleNumber = :vehicleNumber
+    AND uploadStatus = 'PENDING'
+""")
+    suspend fun markUploadedByVehicle(
+        vehicleNumber: String
+    )
 }

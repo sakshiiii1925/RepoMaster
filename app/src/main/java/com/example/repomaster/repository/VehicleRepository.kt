@@ -101,7 +101,6 @@ class VehicleRepository(
                 )
             }
         }
-
         // -----------------------------------------------------
         // 2. OFFLINE OR API FAILED
         // -----------------------------------------------------
@@ -132,13 +131,9 @@ class VehicleRepository(
         return null
     }
 
-
     // =========================================================
     // INTERNET CHECK
     // =========================================================
-
-
-
 
     private fun isNetworkAvailable(): Boolean {
 
@@ -966,24 +961,36 @@ class VehicleRepository(
             )
         }
     }
-    suspend fun getPendingImageUploads(): List<Vehicle> {
-
-        val pendingUploads =
-            pendingImageUploadDao.getPendingUploads()
-
-        return pendingUploads.mapNotNull { pending ->
-
-            vehicleDao
-                .getVehicle(pending.vehicleNumber)
-                ?.toVehicle()
-        }
+    suspend fun getPendingImageUploads(): List<PendingImageUploadEntity> {
+        return pendingImageUploadDao.getPendingUploads()
     }
+
     suspend fun markImageUploadCompleted(
         vehicleNumber: String
     ) {
 
-        vehicleDao.markImageUploadCompleted(
+        val number =
             vehicleNumber
+                .trim()
+                .replace("-", "")
+                .replace("/", "")
+                .replace(".", "")
+                .replace(" ", "")
+                .uppercase()
+
+        // Mark pending image upload as completed
+        pendingImageUploadDao.markUploadedByVehicle(
+            number
+        )
+
+        // Mark vehicle image upload completed
+        vehicleDao.markImageUploadCompleted(
+            number
+        )
+
+        Log.d(
+            "IMAGE_UPLOAD",
+            "Image upload completed: $number"
         )
     }
     suspend fun getUploadedImages(): List<UploadedImage> {
@@ -1043,5 +1050,31 @@ class VehicleRepository(
         }
     }
 
+    suspend fun removePendingImageUpload(
+        vehicleNumber: String
+    ) {
+        val number =
+            vehicleNumber
+                .trim()
+                .replace("-", "")
+                .replace("/", "")
+                .replace(".", "")
+                .replace(" ", "")
+                .uppercase()
 
+        val pending =
+            pendingImageUploadDao.getPendingForVehicle(number)
+
+        if (pending != null) {
+
+            pendingImageUploadDao.delete(
+                pending.id
+            )
+
+            Log.d(
+                "IMAGE_PENDING",
+                "Pending image removed: $number"
+            )
+        }
+    }
 }

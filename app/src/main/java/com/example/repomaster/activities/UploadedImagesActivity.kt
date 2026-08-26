@@ -17,6 +17,8 @@ import android.content.Intent
 import com.example.repomaster.adapters.UploadedImageAdapter
 import com.example.repomaster.viewmodel.UploadedImagesViewModel
 import com.example.repomaster.repository.VehicleRepository
+import com.google.android.material.appbar.MaterialToolbar
+
 class UploadedImagesActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
@@ -24,7 +26,7 @@ class UploadedImagesActivity : AppCompatActivity() {
     private lateinit var txtEmpty: TextView
 
     private lateinit var adapter: UploadedImageAdapter
-
+    private lateinit var toolbar: MaterialToolbar
     private lateinit var viewModel: UploadedImagesViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,6 +35,15 @@ class UploadedImagesActivity : AppCompatActivity() {
         setContentView(
             R.layout.activity_uploaded_images
         )
+        //toolbar
+
+        toolbar = findViewById(R.id.toolbar)
+
+        setSupportActionBar(toolbar)
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        supportActionBar?.title = "Add Images"
 
         // -----------------------------------------
         // Views
@@ -186,5 +197,21 @@ class UploadedImagesActivity : AppCompatActivity() {
                 )
             }
             .show()
+    }
+    override fun onResume() {
+        super.onResume()
+
+        if (::viewModel.isInitialized) {
+
+            progressBar.visibility = View.VISIBLE
+
+            viewModel.loadUploadedImages()
+        }
+    }
+    override fun onSupportNavigateUp(): Boolean {
+
+        finish()
+
+        return true
     }
 }

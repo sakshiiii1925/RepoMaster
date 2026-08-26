@@ -9,6 +9,8 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Response
 import java.io.File
+import android.util.Log
+import com.example.repomaster.data.local.DatabaseProvider
 import com.example.repomaster.network.RetrofitClient
 class RepoImageRepository(
     private val context: Context
@@ -122,6 +124,32 @@ class RepoImageRepository(
             partName,
             file.name,
             requestBody
+        )
+    }
+    private val pendingImageUploadDao =
+        DatabaseProvider
+            .getDatabase(context)
+            .pendingImageUploadDao()
+    suspend fun markImageUploadCompleted(
+        vehicleNumber: String
+    ) {
+
+        val number =
+            vehicleNumber
+                .trim()
+                .replace("-", "")
+                .replace("/", "")
+                .replace(".", "")
+                .replace(" ", "")
+                .uppercase()
+
+        pendingImageUploadDao.markUploadedByVehicle(
+            number
+        )
+
+        Log.d(
+            "IMAGE_UPLOAD",
+            "Pending upload completed: $number"
         )
     }
 }

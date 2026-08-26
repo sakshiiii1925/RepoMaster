@@ -3,11 +3,11 @@ package com.example.repomaster.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.repomaster.R
 import com.example.repomaster.data.local.PendingImageUploadEntity
+import com.google.android.material.button.MaterialButton
 
 class PendingImageUploadAdapter(
     private var uploads: List<PendingImageUploadEntity>,
@@ -25,7 +25,7 @@ class PendingImageUploadAdapter(
         val txtStatus: TextView =
             itemView.findViewById(R.id.txtStatus)
 
-        val btnAdd: ImageButton =
+        val btnAdd: MaterialButton =
             itemView.findViewById(R.id.btnAdd)
     }
 
@@ -50,8 +50,7 @@ class PendingImageUploadAdapter(
         position: Int
     ) {
 
-        val upload =
-            uploads[position]
+        val upload = uploads[position]
 
         holder.txtVehicleNumber.text =
             upload.vehicleNumber

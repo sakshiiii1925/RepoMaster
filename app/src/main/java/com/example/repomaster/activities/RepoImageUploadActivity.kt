@@ -1346,6 +1346,20 @@ class RepoImageUploadActivity : AppCompatActivity() {
 
             if (result != null) {
 
+                val vehicleNumber =
+                    intent.getStringExtra(
+                        "vehicleNumber"
+                    ) ?: ""
+
+                // -----------------------------------------
+                // IMPORTANT:
+                // Remove vehicle from pending image queue
+                // -----------------------------------------
+
+                viewModel.markUploadCompleted(
+                    vehicleNumber
+                )
+
                 Toast.makeText(
                     this,
                     result.message
@@ -1353,26 +1367,23 @@ class RepoImageUploadActivity : AppCompatActivity() {
                     Toast.LENGTH_LONG
                 ).show()
 
-
                 val resultIntent =
                     Intent()
-
 
                 resultIntent.putExtra(
                     "status",
                     result.status
                 )
 
-
                 setResult(
                     RESULT_OK,
                     resultIntent
                 )
 
-
                 finish()
             }
         }
+
 
 
         viewModel.error.observe(

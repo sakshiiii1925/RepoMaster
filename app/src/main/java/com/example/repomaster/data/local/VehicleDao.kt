@@ -107,7 +107,7 @@ interface VehicleDao {
     WHERE imageUploadPending = 1
     ORDER BY vehicleNumber
 """)
-    suspend fun getPendingImageUploads(): List<VehicleEntity>
+    suspend fun getVehiclesWithPendingImageUpload(): List<VehicleEntity>
     @Query("""
     UPDATE vehicles
     SET imageUploadPending = 0

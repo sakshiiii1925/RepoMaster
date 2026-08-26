@@ -101,4 +101,15 @@ class RepoImageUploadViewModel(
             }
         }
     }
+    fun markUploadCompleted(
+        vehicleNumber: String
+    ) {
+
+        viewModelScope.launch {
+
+            repository.markImageUploadCompleted(
+                vehicleNumber
+            )
+        }
+    }
 }

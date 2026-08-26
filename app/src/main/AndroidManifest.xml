@@ -23,6 +23,9 @@
         android:theme="@style/Theme.RepoMaster"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".activities.AdminNotificationActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.UploadedImageDetailsActivity"
             android:exported="false" />
         <activity

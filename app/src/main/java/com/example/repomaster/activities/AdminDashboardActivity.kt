@@ -5,6 +5,10 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import com.example.repomaster.repository.AdminNotificationRepository
+import com.example.repomaster.viewmodel.AdminNotificationViewModel
+import com.example.repomaster.viewmodel.AdminNotificationViewModelFactory
+import com.example.repomaster.network.RetrofitClient
 import androidx.appcompat.app.AppCompatActivity
 import com.example.repomaster.R
 import com.google.android.material.appbar.MaterialToolbar
@@ -34,6 +38,7 @@ import com.google.android.material.badge.ExperimentalBadgeUtils
 
 class AdminDashboardActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelectedListener  {
     private lateinit var userViewModel: UserViewModel
+    private lateinit var adminNotificationViewModel: AdminNotificationViewModel
     private lateinit var toolbar: MaterialToolbar
 
     private lateinit var cardAddVehicle: MaterialCardView
@@ -47,7 +52,8 @@ class AdminDashboardActivity : AppCompatActivity(),NavigationView.OnNavigationIt
     private lateinit var badge: BadgeDrawable
     private lateinit var txtBadge: TextView
     private lateinit var notificationLayout: FrameLayout
-
+    private var pendingUserCount = 0
+    private var adminNotificationCount = 0
     private val handler = Handler(Looper.getMainLooper())
 
     private val refreshTime = 10000L   //10 seconds
@@ -56,12 +62,15 @@ class AdminDashboardActivity : AppCompatActivity(),NavigationView.OnNavigationIt
         override fun run() {
 
             if (::txtBadge.isInitialized) {
-                loadPendingUsers()
+
+                loadNotificationCounts()
             }
 
-            handler.postDelayed(this, refreshTime)
+            handler.postDelayed(
+                this,
+                refreshTime
+            )
         }
-
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -107,7 +116,21 @@ class AdminDashboardActivity : AppCompatActivity(),NavigationView.OnNavigationIt
 
         val sessionManager =
             SessionManager(this)
+        val notificationRepository =
+            AdminNotificationRepository(
+                RetrofitClient.userApi
+            )
 
+        val notificationFactory =
+            AdminNotificationViewModelFactory(
+                notificationRepository
+            )
+
+        adminNotificationViewModel =
+            ViewModelProvider(
+                this,
+                notificationFactory
+            )[AdminNotificationViewModel::class.java]
         navigationView = findViewById(R.id.navigationView)
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -171,20 +194,23 @@ class AdminDashboardActivity : AppCompatActivity(),NavigationView.OnNavigationIt
         cardReports = findViewById(R.id.cardReports)
         userViewModel.pendingUsers().observe(this) { response ->
 
-            if (!::txtBadge.isInitialized) return@observe
-
             if (response.isSuccessful) {
 
-                val count = response.body()?.size ?: 0
+                pendingUserCount =
+                    response.body()?.size ?: 0
 
-                if (count > 0) {
-                    txtBadge.visibility = View.VISIBLE
-                    txtBadge.text = count.toString()
-                } else {
-                    txtBadge.visibility = View.GONE
-                }
+                updateNotificationBadge()
             }
         }
+        adminNotificationViewModel
+            .unreadCount
+            .observe(this) { count ->
+
+                adminNotificationCount =
+                    count ?: 0
+
+                updateNotificationBadge()
+            }
          cardAddVehicle.setOnClickListener {
 
                 animateCard(cardAddVehicle)
@@ -350,35 +376,111 @@ class AdminDashboardActivity : AppCompatActivity(),NavigationView.OnNavigationIt
 
         }
 
-        loadPendingUsers()
+        loadNotificationCounts()
         handler.post(refreshRunnable)
-
         return true
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
-        when(item.itemId){
+        when (item.itemId) {
 
-            R.id.menu_notification ->{
-                startActivity(
-                    Intent(this, PendingUsersActivity::class.java)
-                )
+            R.id.menu_notification -> {
+
+                showNotificationChooser()
+
                 return true
             }
-
         }
 
         return super.onOptionsItemSelected(item)
     }
-    private fun loadPendingUsers() {
+    private fun showNotificationChooser() {
+
+        val options = arrayOf(
+            "Pending User Requests",
+            "Vehicle Notifications"
+        )
+
+        AlertDialog.Builder(this)
+            .setTitle("Notifications")
+            .setItems(options) { _, which ->
+
+                when (which) {
+
+                    0 -> {
+                        // Pending user requests
+                        startActivity(
+                            Intent(
+                                this,
+                                PendingUsersActivity::class.java
+                            )
+                        )
+                    }
+
+                    1 -> {
+                        // Vehicle status notifications
+                        startActivity(
+                            Intent(
+                                this,
+                                AdminNotificationActivity::class.java
+                            )
+                        )
+                    }
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+    private fun loadNotificationCounts() {
+
         if (!::txtBadge.isInitialized) {
             return
         }
 
-        val agencyId = SessionManager(this).getAgencyId() ?: return
+        val agencyId =
+            SessionManager(this).getAgencyId()
 
-        userViewModel.loadPendingUsers(agencyId)
+        if (agencyId.isNullOrEmpty()) {
+            return
+        }
 
+        // Pending user requests
+        userViewModel.loadPendingUsers(
+            agencyId
+        )
+
+        // Vehicle status notifications
+        adminNotificationViewModel.loadUnreadCount(
+            agencyId
+        )
+    }
+    private fun updateNotificationBadge() {
+
+        if (!::txtBadge.isInitialized) {
+            return
+        }
+
+        val totalCount =
+            pendingUserCount +
+                    adminNotificationCount
+
+        if (totalCount > 0) {
+
+            txtBadge.visibility =
+                View.VISIBLE
+
+            txtBadge.text =
+                if (totalCount > 99) {
+                    "99+"
+                } else {
+                    totalCount.toString()
+                }
+
+        } else {
+
+            txtBadge.visibility =
+                View.GONE
+        }
     }
     override fun onDestroy() {
 
@@ -388,10 +490,12 @@ class AdminDashboardActivity : AppCompatActivity(),NavigationView.OnNavigationIt
 
     }
     override fun onResume() {
+
         super.onResume()
 
         if (::txtBadge.isInitialized) {
-            loadPendingUsers()
+
+            loadNotificationCounts()
         }
     }
 }

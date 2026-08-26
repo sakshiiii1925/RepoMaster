@@ -6,7 +6,10 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.http.GET
+import com.example.repomaster.models.NotificationCountresponse
+import com.example.repomaster.models.AdminNotification
 import retrofit2.http.PUT
+import com.example.repomaster.models.NotificationListResponse
 import retrofit2.http.Path
 import retrofit2.http.Query
 import com.example.repomaster.models.EmailVerifyResponse
@@ -182,5 +185,16 @@ interface UserApi {
     suspend fun downloadUserReportExcel(
         @Query("userEmail") userEmail: String
     ): ResponseBody
-
+    @GET("api/admin/notifications")
+    suspend fun getAdminNotifications(
+        @Query("agencyId") agencyId: String
+    ): Response<NotificationListResponse>
+    @GET("api/admin/notifications/unread-count")
+    suspend fun getAdminNotificationCount(
+        @Query("agencyId") agencyId: String
+    ): Response<NotificationCountresponse>
+    @PUT("api/admin/notifications/{id}/read")
+    suspend fun markNotificationRead(
+        @Path("id") id: Int
+    ): Response<Any>
 }
