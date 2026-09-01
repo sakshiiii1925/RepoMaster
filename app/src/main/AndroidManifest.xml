@@ -23,6 +23,12 @@
         android:theme="@style/Theme.RepoMaster"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".activities.AdminPaymentActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.PaymentRatesActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.AdminNotificationActivity"
             android:exported="false" />
         <activity

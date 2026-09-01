@@ -301,7 +301,15 @@ class AdminDashboardActivity : AppCompatActivity(),NavigationView.OnNavigationIt
                 val intent= Intent(this, UploadedImagesActivity::class.java)
                 startActivity(intent)
             }
+R.id.nav_manage_rates->{
+    val intent= Intent(this, PaymentRatesActivity::class.java)
+    startActivity(intent)
 
+}
+            R.id.nav_manage_user_payments -> {
+                val intent= Intent(this, AdminPaymentActivity::class.java)
+                startActivity(intent)
+            }
 
             R.id.nav_logout -> {
 

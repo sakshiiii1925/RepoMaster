@@ -31,7 +31,16 @@
             android:icon="@drawable/outline_image_24"
             android:title="Uploded Images"
             android:iconTint="@color/black"/>
-
+        <item
+            android:id="@+id/nav_manage_rates"
+            android:icon="@drawable/outline_money_24"
+            android:title="Manage vehicle rate"
+            android:iconTint="@color/black"/>
+        <item
+            android:id="@+id/nav_manage_user_payments"
+            android:icon="@drawable/outline_money_24"
+            android:title="Manage User Payments"
+            android:iconTint="@color/black"/>
         <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/baseline_logout_24"
