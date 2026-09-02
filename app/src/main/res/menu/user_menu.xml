@@ -31,6 +31,13 @@
         android:title="My Report">
 
     </item>
+    <item
+        android:id="@+id/nav_userPayment"
+        android:icon="@drawable/outline_money_24"
+        android:iconTint="@color/black"
+        android:title="My Payment History">
+
+    </item>
 
     <item
         android:id="@+id/nav_logout"

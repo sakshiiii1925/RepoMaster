@@ -269,5 +269,16 @@ class UserViewModel : ViewModel() {
     )= liveData {
         emit(repository.downloadUserReportExcel(userEmail))
     }
+    fun updateUserStatus(
+        id: Long,
+        status: String
+    ) = liveData {
 
+        emit(
+            repository.updateUserStatus(
+                id,
+                status
+            )
+        )
+    }
 }

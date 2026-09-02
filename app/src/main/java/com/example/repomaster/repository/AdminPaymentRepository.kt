@@ -26,20 +26,22 @@ class AdminPaymentRepository(
 
 
     // =========================================================
-    // CALCULATE PAYMENT
-    // =========================================================
+// CALCULATE PAYMENT
+// =========================================================
 
     suspend fun calculatePayment(
         userId: Int,
         repoYear: String,
         repoMonth: String,
-        loanNumber: String
+        loanNumber: String,
+        workType: String
     ) =
         api.calculatePayment(
             userId = userId,
             repoYear = repoYear,
             repoMonth = repoMonth,
-            loanNumber = loanNumber
+            loanNumber = loanNumber,
+            workType = workType
         )
 
 
@@ -95,5 +97,11 @@ class AdminPaymentRepository(
             id = id,
             agencyId = agencyId
         )
+    // =========================================================
+// PAYMENT HISTORY
+// =========================================================
+
+    suspend fun getPaymentHistory(userId: Int) =
+        api.getPaymentHistory(userId)
 }
 

@@ -160,10 +160,9 @@ class AdminPaymentViewModel(
         }
     }
 
-
-    // =========================================================
-    // CALCULATION
-    // =========================================================
+// =========================================================
+// CALCULATION
+// =========================================================
 
     private val _calculation =
         MutableLiveData<PaymentCalculation?>()
@@ -177,6 +176,13 @@ class AdminPaymentViewModel(
         vehicle: AdminPaymentVehicle
     ) {
 
+        val workType = vehicle.work_type
+
+        if (workType.isNullOrBlank()) {
+            _error.value = "Work type is missing"
+            return
+        }
+
         viewModelScope.launch {
 
             try {
@@ -189,7 +195,8 @@ class AdminPaymentViewModel(
                         userId = userId,
                         repoYear = vehicle.repo_year,
                         repoMonth = vehicle.repo_month,
-                        loanNumber = vehicle.loan_number
+                        loanNumber = vehicle.loan_number,
+                        workType = workType
                     )
 
                 if (response.isSuccessful) {
@@ -227,6 +234,8 @@ class AdminPaymentViewModel(
             }
         }
     }
+
+
 
 
     // =========================================================
@@ -327,6 +336,56 @@ class AdminPaymentViewModel(
 
             } catch (_: Exception) {
                 // Summary is supplementary.
+            }
+        }
+    }
+    private val _paymentHistory =
+        MutableLiveData<List<AdminPayment>>()
+
+    val paymentHistory: LiveData<List<AdminPayment>>
+        get() = _paymentHistory
+    fun loadPaymentHistory(userId: Int) {
+
+        viewModelScope.launch {
+
+            try {
+
+                _loading.value = true
+                _error.value = null
+
+                val response =
+                    repository.getPaymentHistory(userId)
+
+                if (response.isSuccessful) {
+
+                    val body = response.body()
+
+                    if (body?.success == true) {
+
+                        _paymentHistory.value =
+                            body.data ?: emptyList()
+
+                    } else {
+
+                        _error.value =
+                            body?.message
+                                ?: "Unable to load payment history"
+                    }
+
+                } else {
+
+                    _error.value =
+                        "Server error: ${response.code()}"
+                }
+
+            } catch (e: Exception) {
+
+                _error.value =
+                    e.message ?: "Network error"
+
+            } finally {
+
+                _loading.value = false
             }
         }
     }

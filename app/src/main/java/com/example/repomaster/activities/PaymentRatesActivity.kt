@@ -35,7 +35,9 @@ class PaymentRatesActivity : AppCompatActivity() {
     private lateinit var txtNoRates: TextView
     private lateinit var txtAgency: TextView
     private lateinit var txtFormTitle: TextView
+    private lateinit var edtSearchRate: TextInputEditText
 
+    private var allRates: List<PaymentRate> = emptyList()
     private var editingRateId: Long? = null
 
     private var agencyId: String = ""
@@ -93,7 +95,8 @@ class PaymentRatesActivity : AppCompatActivity() {
 
         txtFormTitle =
             findViewById(R.id.txtFormTitle)
-
+        edtSearchRate =
+            findViewById(R.id.edtSearchRate)
 
         // -----------------------------------------------------
         // Get logged-in admin agency
@@ -139,7 +142,7 @@ class PaymentRatesActivity : AppCompatActivity() {
         // -----------------------------------------------------
         // Load existing rates
         // -----------------------------------------------------
-
+        setupRateSearch()
         loadRates()
     }
 
@@ -176,11 +179,14 @@ class PaymentRatesActivity : AppCompatActivity() {
                         !body.data.isNullOrEmpty()
                     ) {
 
-                        displayRates(
+                        allRates =
                             body.data
-                        )
 
-                    } else {
+                        displayRates(
+                            allRates
+                        )
+                    }
+                    else {
 
                         ratesContainer.removeAllViews()
 
@@ -223,6 +229,17 @@ class PaymentRatesActivity : AppCompatActivity() {
     ) {
 
         ratesContainer.removeAllViews()
+
+        if (rates.isEmpty()) {
+
+            txtNoRates.text =
+                "No payment rate found"
+
+            txtNoRates.visibility =
+                View.VISIBLE
+
+            return
+        }
 
         txtNoRates.visibility =
             View.GONE
@@ -737,6 +754,61 @@ class PaymentRatesActivity : AppCompatActivity() {
 
         btnCancelEdit.visibility =
             View.GONE
+    }
+    private fun setupRateSearch() {
+
+        edtSearchRate.addTextChangedListener(
+            object : android.text.TextWatcher {
+
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+                }
+
+                override fun onTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    before: Int,
+                    count: Int
+                ) {
+
+                    filterRates(
+                        s?.toString()?.trim() ?: ""
+                    )
+                }
+
+                override fun afterTextChanged(
+                    s: android.text.Editable?
+                ) {
+                }
+            }
+        )
+    }
+    private fun filterRates(
+        query: String
+    ) {
+
+        if (query.isEmpty()) {
+
+            displayRates(allRates)
+
+            return
+        }
+
+        val filteredRates =
+            allRates.filter { rate ->
+
+                rate.vehicle_type
+                    .contains(
+                        query,
+                        ignoreCase = true
+                    )
+            }
+
+        displayRates(filteredRates)
     }
 }
 

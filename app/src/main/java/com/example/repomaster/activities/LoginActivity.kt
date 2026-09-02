@@ -159,6 +159,9 @@ class LoginActivity : AppCompatActivity() {
                                 result.fullName ?: "",
                                 result.email ?: ""
                             )
+                            sessionManager.saveUserId(
+                                result.id ?: 0
+                            )
                             //save admin role
                             sessionManager.saveRole(result.role)
 
@@ -196,7 +199,9 @@ class LoginActivity : AppCompatActivity() {
                                 result.fullName ?: "",
                                 result.email ?: ""
                             )
-
+                            sessionManager.saveUserId(
+                                result.id ?: 0
+                            )
                             sessionManager.saveRole(result.role)
 
                             sessionManager.saveAgencyId(

@@ -1,7 +1,5 @@
 package com.example.repomaster.models
 
-
-
 data class AdminPaymentVehicle(
     val repo_year: String,
     val repo_month: String,
@@ -13,6 +11,10 @@ data class AdminPaymentVehicle(
     val repo_marked_at: String?,
     val parked_by: Int?,
     val parked_at: String?,
-    val total_charges: String?
-)
+    val total_charges: String?,
 
+    // Backend should return these for the selected work
+    val completed_by: Int?,
+    val completed_at: String?,
+    val work_type: String?
+)

@@ -226,6 +226,13 @@ class HomeActivity : AppCompatActivity() {
                     )
                     )
                 }
+                R.id.nav_userPayment ->{
+                    startActivity(
+                        Intent(
+                            this, UserPaymentHistoryActivity::class.java
+                        )
+                    )
+                }
             }
             drawerLayout.closeDrawer(
                 GravityCompat.START

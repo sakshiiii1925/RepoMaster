@@ -8,6 +8,7 @@ data class LoginResponse(
     val success: Boolean,
     val message: String,
     val fullName: String?,
+    val id: Int?,
     val email: String?,
     val role: String?,
     val status: String?,

@@ -1,232 +1,65 @@
-
 package com.example.repomaster.activities
 
 import android.os.Bundle
-import android.view.View
-import android.widget.*
-
+import android.widget.ArrayAdapter
+import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
-
-import com.example.repomaster.R
+import androidx.core.view.isVisible
+import android.content.Intent
+import com.example.repomaster.databinding.ActivityAdminPaymentBinding
 import com.example.repomaster.models.*
 import com.example.repomaster.network.RetrofitClient
 import com.example.repomaster.repository.AdminPaymentRepository
 import com.example.repomaster.viewmodel.AdminPaymentViewModel
 import com.example.repomaster.viewmodel.AdminPaymentViewModelFactory
 
-import com.google.android.material.appbar.MaterialToolbar
-
-
 class AdminPaymentActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: AdminPaymentViewModel
+    private lateinit var binding: ActivityAdminPaymentBinding
 
-    private lateinit var spinnerUser: AutoCompleteTextView
-    private lateinit var spinnerVehicle: AutoCompleteTextView
-    private lateinit var spinnerPaymentMethod: AutoCompleteTextView
+    private val repository by lazy {
+        AdminPaymentRepository(
+            RetrofitClient.adminPaymentApi
+        )
+    }
+    private val viewModel: AdminPaymentViewModel by viewModels {
+        AdminPaymentViewModelFactory(repository)
+    }
 
-    private lateinit var txtVehicleNumber: TextView
-    private lateinit var txtVehicleType: TextView
-    private lateinit var txtWorkType: TextView
-    private lateinit var txtAmount: TextView
 
-    private lateinit var txtCompletedWork: TextView
-    private lateinit var txtTotalDue: TextView
-    private lateinit var txtTotalPaid: TextView
-    private lateinit var txtRemaining: TextView
-
-    private lateinit var edtRemarks: EditText
-    private lateinit var btnCreatePayment: Button
-    private lateinit var progressBar: ProgressBar
-
-    private var users =
-        emptyList<AdminPaymentUser>()
+    private var users = emptyList<AdminPaymentUser>()
 
     private var vehicles =
         emptyList<AdminPaymentVehicle>()
 
-    private var selectedUser:
-            AdminPaymentUser? = null
+    private var selectedUser: AdminPaymentUser? = null
 
-    private var selectedVehicle:
-            AdminPaymentVehicle? = null
+    private var selectedVehicle: AdminPaymentVehicle? = null
 
-    private var calculation:
-            PaymentCalculation? = null
+    private var userAdapter:
+            ArrayAdapter<String>? = null
+
+    private var vehicleAdapter:
+            ArrayAdapter<String>? = null
 
 
-    override fun onCreate(
-        savedInstanceState: Bundle?
-    ) {
-
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(
-            R.layout.activity_admin_payment
-        )
+        binding =
+            ActivityAdminPaymentBinding.inflate(layoutInflater)
 
+        setContentView(binding.root)
 
-        setupToolbar()
-        initializeViews()
-        setupViewModel()
-        setupPaymentMethod()
-        observeViewModel()
+        setupPaymentMethods()
+        setupUserSearch()
+        setupVehicleDropdown()
+        setupObservers()
+        setupButtons()
+        setupPaymentHistoryButton()
 
-        loadUsers()
-    }
-
-
-    // =========================================================
-    // TOOLBAR
-    // =========================================================
-
-    private fun setupToolbar() {
-
-        val toolbar =
-            findViewById<MaterialToolbar>(
-                R.id.toolbar
-            )
-
-        setSupportActionBar(toolbar)
-
-        supportActionBar?.title =
-            "Admin Payment"
-
-        toolbar.setNavigationOnClickListener {
-            finish()
-        }
-    }
-
-
-    // =========================================================
-    // VIEWS
-    // =========================================================
-
-    private fun initializeViews() {
-
-        spinnerUser =
-            findViewById(R.id.spinnerUser)
-
-        spinnerVehicle =
-            findViewById(R.id.spinnerVehicle)
-
-        spinnerPaymentMethod =
-            findViewById(R.id.spinnerPaymentMethod)
-
-
-        txtVehicleNumber =
-            findViewById(R.id.txtVehicleNumber)
-
-        txtVehicleType =
-            findViewById(R.id.txtVehicleType)
-
-        txtWorkType =
-            findViewById(R.id.txtWorkType)
-
-        txtAmount =
-            findViewById(R.id.txtAmount)
-
-
-        txtCompletedWork =
-            findViewById(R.id.txtCompletedWork)
-
-        txtTotalDue =
-            findViewById(R.id.txtTotalDue)
-
-        txtTotalPaid =
-            findViewById(R.id.txtTotalPaid)
-
-        txtRemaining =
-            findViewById(R.id.txtRemaining)
-
-
-        edtRemarks =
-            findViewById(R.id.edtRemarks)
-
-        btnCreatePayment =
-            findViewById(R.id.btnCreatePayment)
-
-        progressBar =
-            findViewById(R.id.progressBar)
-
-
-        btnCreatePayment.isEnabled =
-            false
-
-
-        spinnerUser.setOnItemClickListener {
-                _, _, position, _ ->
-
-            if (
-                position >= 0 &&
-                position < users.size
-            ) {
-
-                selectedUser =
-                    users[position]
-
-                loadUserVehicles(
-                    selectedUser!!.id
-                )
-
-                loadSummary(
-                    selectedUser!!.id
-                )
-            }
-        }
-
-
-        spinnerVehicle.setOnItemClickListener {
-                _, _, position, _ ->
-
-            if (
-                position >= 0 &&
-                position < vehicles.size
-            ) {
-
-                selectedVehicle =
-                    vehicles[position]
-
-                selectedUser?.let { user ->
-
-                    calculatePayment(
-                        user.id,
-                        selectedVehicle!!
-                    )
-                }
-            }
-        }
-
-
-        btnCreatePayment.setOnClickListener {
-
-            createPayment()
-        }
-    }
-
-
-    // =========================================================
-    // VIEWMODEL
-    // =========================================================
-
-    private fun setupViewModel() {
-
-        val repository =
-            AdminPaymentRepository(
-                RetrofitClient.adminPaymentApi
-            )
-
-        val factory =
-            AdminPaymentViewModelFactory(
-                repository
-            )
-
-        viewModel =
-            ViewModelProvider(
-                this,
-                factory
-            )[AdminPaymentViewModel::class.java]
+        viewModel.loadUsers()
     }
 
 
@@ -234,15 +67,12 @@ class AdminPaymentActivity : AppCompatActivity() {
     // PAYMENT METHODS
     // =========================================================
 
-    private fun setupPaymentMethod() {
+    private fun setupPaymentMethods() {
 
         val methods =
             listOf(
                 "Cash",
                 "PhonePe",
-                "Google Pay",
-                "UPI",
-                "Bank Transfer",
                 "Other"
             )
 
@@ -253,9 +83,88 @@ class AdminPaymentActivity : AppCompatActivity() {
                 methods
             )
 
-        spinnerPaymentMethod.setAdapter(
-            adapter
+        binding.autoPaymentMethod.setAdapter(adapter)
+
+        binding.autoPaymentMethod.setText(
+            methods.first(),
+            false
         )
+    }
+
+
+    // =========================================================
+    // USER SEARCH
+    // =========================================================
+
+    private fun setupUserSearch() {
+
+        binding.autoUser.setOnClickListener {
+
+            binding.autoUser.showDropDown()
+        }
+
+        binding.autoUser.setOnItemClickListener { _, _, position, _ ->
+
+            val user =
+                users[position]
+
+            selectedUser = user
+
+            binding.autoUser.setText(
+                "${user.full_name} - ${user.mobile ?: user.email}",
+                false
+            )
+
+            selectedVehicle = null
+            vehicles = emptyList()
+
+            clearVehicleInformation()
+
+            viewModel.loadVehicles(user.id)
+
+            viewModel.loadSummary(user.id)
+
+            binding.autoVehicle.setText(
+                "",
+                false
+            )
+
+            binding.btnPaymentHistory.isEnabled =
+                true
+        }
+    }
+
+
+    // =========================================================
+    // VEHICLE DROPDOWN
+    // =========================================================
+
+    private fun setupVehicleDropdown() {
+
+        binding.autoVehicle.setOnClickListener {
+
+            if (vehicles.isNotEmpty()) {
+                binding.autoVehicle.showDropDown()
+            }
+        }
+
+        binding.autoVehicle.setOnItemClickListener { _, _, position, _ ->
+
+            val vehicle =
+                vehicles[position]
+
+            selectedVehicle = vehicle
+
+            showVehicleInformation(vehicle)
+
+            val user =
+                selectedUser ?: return@setOnItemClickListener
+
+            viewModel.calculatePayment(
+                userId = user.id,
+                vehicle = vehicle
+            )
+        }
     }
 
 
@@ -263,275 +172,343 @@ class AdminPaymentActivity : AppCompatActivity() {
     // OBSERVERS
     // =========================================================
 
-    private fun observeViewModel() {
+    private fun setupObservers() {
 
-        viewModel.users.observe(this) {
+        viewModel.loading.observe(this) {
 
-            users = it
-
-            val names =
-                users.map { user ->
-                    user.full_name
-                }
-
-            spinnerUser.setAdapter(
-                ArrayAdapter(
-                    this,
-                    android.R.layout.simple_dropdown_item_1line,
-                    names
-                )
-            )
+            binding.progressBar.isVisible =
+                it
         }
 
 
-        viewModel.vehicles.observe(this) {
+        viewModel.error.observe(this) { message ->
 
-            vehicles = it
+            if (!message.isNullOrBlank()) {
 
-            val vehicleNames =
-                vehicles.map { vehicle ->
-
-                    "${vehicle.vehicle_number} - " +
-                            "${vehicle.vehicle_type ?: "N/A"} - " +
-                            "${vehicle.repo_status ?: "N/A"}"
-                }
-
-            spinnerVehicle.setAdapter(
-                ArrayAdapter(
+                Toast.makeText(
                     this,
-                    android.R.layout.simple_dropdown_item_1line,
-                    vehicleNames
-                )
-            )
+                    message,
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         }
 
 
-        viewModel.calculation.observe(this) {
+        // -----------------------------------------------------
+        // USERS
+        // -----------------------------------------------------
 
-            calculation = it
+        viewModel.users.observe(this) { list ->
 
-            if (it != null) {
+            users = list
 
-                txtVehicleNumber.text =
-                    it.vehicle_number
+            setupUserAdapter(list)
+        }
 
-                txtVehicleType.text =
-                    it.vehicle_type
 
-                txtWorkType.text =
-                    it.repo_status
+        // -----------------------------------------------------
+        // VEHICLES
+        // -----------------------------------------------------
 
-                txtAmount.text =
-                    "₹ ${it.amount}"
+        viewModel.vehicles.observe(this) { list ->
 
-                btnCreatePayment.isEnabled =
+            vehicles = list
+
+            setupVehicleAdapter(list)
+        }
+
+
+        // -----------------------------------------------------
+        // SUMMARY
+        // -----------------------------------------------------
+
+        viewModel.summary.observe(this) { summary ->
+
+            if (summary == null) return@observe
+
+            // User summary is supplementary.
+            // Selected work calculation is displayed below.
+        }
+
+
+        // -----------------------------------------------------
+        // CALCULATION
+        // -----------------------------------------------------
+
+        viewModel.calculation.observe(this) { calculation ->
+
+            if (calculation == null) return@observe
+
+            binding.txtTotalAmount.text =
+                "Total Due: ₹${calculation.total_amount}"
+
+            binding.txtPaidAmount.text =
+                "Paid Till Date: ₹${calculation.paid_amount}"
+
+            binding.txtRemainingAmount.text =
+                "Remaining: ₹${calculation.remaining_amount}"
+
+            // Automatically suggest remaining amount.
+            if (!calculation.already_paid) {
+
+                binding.edtPaymentAmount.setText(
+                    calculation.remaining_amount
+                )
+
+            } else {
+
+                binding.edtPaymentAmount.setText("")
+
+                binding.edtPaymentAmount.isEnabled =
+                    false
+
+                binding.btnSubmitPayment.isEnabled =
+                    false
+            }
+
+            if (!calculation.already_paid) {
+
+                binding.edtPaymentAmount.isEnabled =
+                    true
+
+                binding.btnSubmitPayment.isEnabled =
                     true
             }
         }
 
 
-        viewModel.summary.observe(this) {
+        // -----------------------------------------------------
+        // PAYMENT CREATED
+        // -----------------------------------------------------
 
-            if (it != null) {
+        viewModel.paymentResult.observe(this) { result ->
 
-                txtCompletedWork.text =
-                    it.completed_work.toString()
+            if (result == null) return@observe
 
-                txtTotalDue.text =
-                    "₹ ${it.total_due}"
+            Toast.makeText(
+                this,
+                "Payment ₹${result.payment.amount} created successfully",
+                Toast.LENGTH_LONG
+            ).show()
 
-                txtTotalPaid.text =
-                    "₹ ${it.total_paid}"
+            binding.edtPaymentAmount.setText("")
 
-                txtRemaining.text =
-                    "₹ ${it.remaining}"
-            }
-        }
+            val user =
+                selectedUser
 
+            val vehicle =
+                selectedVehicle
 
-        viewModel.paymentResult.observe(this) {
+            if (user != null && vehicle != null) {
 
-            if (it != null) {
+                viewModel.calculatePayment(
+                    userId = user.id,
+                    vehicle = vehicle
+                )
 
-                val payment =
-                    it.payment
-
-                val summary =
-                    it.summary
-
-
-                Toast.makeText(
-                    this,
-                    "Payment created successfully",
-                    Toast.LENGTH_LONG
-                ).show()
-
-
-                // Update summary immediately
-                summary?.let { s ->
-
-                    txtCompletedWork.text =
-                        s.completed_work.toString()
-
-                    txtTotalDue.text =
-                        "₹ ${s.total_due}"
-
-                    txtTotalPaid.text =
-                        "₹ ${s.total_paid}"
-
-                    txtRemaining.text =
-                        "₹ ${s.remaining}"
-                }
-
-
-                // Clear selected vehicle
-                selectedVehicle = null
-                calculation = null
-
-                spinnerVehicle.text.clear()
-
-                txtVehicleNumber.text =
-                    "-"
-
-                txtVehicleType.text =
-                    "-"
-
-                txtWorkType.text =
-                    "-"
-
-                txtAmount.text =
-                    "₹ 0.00"
-
-                edtRemarks.text.clear()
-
-                btnCreatePayment.isEnabled =
-                    false
-
-
-                // Refresh vehicles
-                selectedUser?.let { user ->
-
-                    loadUserVehicles(
-                        user.id
-                    )
-
-                    loadSummary(
-                        user.id
-                    )
-                }
-            }
-        }
-
-
-        viewModel.loading.observe(this) {
-
-            progressBar.visibility =
-                if (it) {
-                    View.VISIBLE
-                } else {
-                    View.GONE
-                }
-        }
-
-
-        viewModel.error.observe(this) {
-
-            if (
-                !it.isNullOrEmpty()
-            ) {
-
-                Toast.makeText(
-                    this,
-                    it,
-                    Toast.LENGTH_LONG
-                ).show()
+                viewModel.loadSummary(
+                    user.id
+                )
             }
         }
     }
 
 
     // =========================================================
-    // LOAD USERS
+    // USER ADAPTER
     // =========================================================
 
-    private fun loadUsers() {
-
-        viewModel.loadUsers()
-    }
-
-
-    // =========================================================
-    // LOAD VEHICLES
-    // =========================================================
-
-    private fun loadUserVehicles(
-        userId: Int
+    private fun setupUserAdapter(
+        list: List<AdminPaymentUser>
     ) {
 
-        selectedVehicle = null
-        calculation = null
+        val names =
+            list.map {
 
-        spinnerVehicle.text.clear()
+                "${it.full_name} - ${
+                    it.mobile ?: it.email
+                }"
+            }
 
-        txtVehicleNumber.text = "-"
-        txtVehicleType.text = "-"
-        txtWorkType.text = "-"
-        txtAmount.text = "₹ 0.00"
+        userAdapter =
+            ArrayAdapter(
+                this,
+                android.R.layout.simple_dropdown_item_1line,
+                names
+            )
 
-        btnCreatePayment.isEnabled =
-            false
-
-        viewModel.loadVehicles(
-            userId
+        binding.autoUser.setAdapter(
+            userAdapter
         )
     }
 
 
     // =========================================================
-    // CALCULATE
+    // VEHICLE ADAPTER
     // =========================================================
 
-    private fun calculatePayment(
-        userId: Int,
+    private fun setupVehicleAdapter(
+        list: List<AdminPaymentVehicle>
+    ) {
+
+        val displayItems =
+            list.map {
+
+                "${it.vehicle_number} - " +
+                        "${it.vehicle_type ?: "-"} - " +
+                        "${it.work_type ?: "-"}"
+            }
+
+        vehicleAdapter =
+            ArrayAdapter(
+                this,
+                android.R.layout.simple_dropdown_item_1line,
+                displayItems
+            )
+
+        binding.autoVehicle.setAdapter(
+            vehicleAdapter
+        )
+
+        if (list.isNotEmpty()) {
+
+            binding.autoVehicle.showDropDown()
+
+        } else {
+
+            binding.autoVehicle.setText(
+                "",
+                false
+            )
+        }
+    }
+
+
+    // =========================================================
+    // VEHICLE INFORMATION
+    // =========================================================
+
+    private fun showVehicleInformation(
         vehicle: AdminPaymentVehicle
     ) {
 
-        viewModel.calculatePayment(
-            userId,
-            vehicle
-        )
+        binding.txtVehicleNumber.text =
+            "Vehicle: ${vehicle.vehicle_number}"
+
+        binding.txtVehicleType.text =
+            "Vehicle Type: ${
+                vehicle.vehicle_type ?: "-"
+            }"
+
+        binding.txtWorkType.text =
+            "Work Type: ${
+                vehicle.work_type ?: "-"
+            }"
+
+        binding.txtCompletedAt.text =
+            "Completed: ${
+                vehicle.completed_at ?: "-"
+            }"
+
+        binding.edtPaymentAmount.isEnabled =
+            true
+
+        binding.btnSubmitPayment.isEnabled =
+            true
     }
 
 
     // =========================================================
-    // SUMMARY
+    // CLEAR VEHICLE INFORMATION
     // =========================================================
 
-    private fun loadSummary(
-        userId: Int
-    ) {
+    private fun clearVehicleInformation() {
 
-        viewModel.loadSummary(
-            userId
-        )
+        binding.txtVehicleNumber.text =
+            "Vehicle: -"
+
+        binding.txtVehicleType.text =
+            "Vehicle Type: -"
+
+        binding.txtWorkType.text =
+            "Work Type: -"
+
+        binding.txtCompletedAt.text =
+            "Completed: -"
+
+        binding.txtTotalAmount.text =
+            "Total Due: ₹0.00"
+
+        binding.txtPaidAmount.text =
+            "Paid Till Date: ₹0.00"
+
+        binding.txtRemainingAmount.text =
+            "Remaining: ₹0.00"
+
+        binding.edtPaymentAmount.setText("")
+
+        binding.edtPaymentAmount.isEnabled =
+            false
+
+        binding.btnSubmitPayment.isEnabled =
+            false
     }
 
 
     // =========================================================
-    // CREATE PAYMENT
+    // BUTTONS
     // =========================================================
 
-    private fun createPayment() {
+    private fun setupButtons() {
+
+        binding.btnSubmitPayment.setOnClickListener {
+
+            submitPayment()
+        }
+
+
+        binding.btnPaymentHistory.setOnClickListener {
+
+            val user =
+                selectedUser
+
+            if (user == null) {
+
+                Toast.makeText(
+                    this,
+                    "Please select a user first",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                return@setOnClickListener
+            }
+
+            viewModel.loadPaymentHistory(
+                user.id
+            )
+
+            /*
+             * We will show the history in a dialog
+             * or a separate PaymentHistoryActivity.
+             *
+             * I recommend a separate Activity once
+             * the basic payment screen is working.
+             */
+        }
+    }
+
+
+    // =========================================================
+    // SUBMIT PAYMENT
+    // =========================================================
+
+    private fun submitPayment() {
 
         val user =
             selectedUser
 
         val vehicle =
             selectedVehicle
-
-        val calc =
-            calculation
-
 
         if (user == null) {
 
@@ -544,61 +521,96 @@ class AdminPaymentActivity : AppCompatActivity() {
             return
         }
 
-
         if (vehicle == null) {
 
             Toast.makeText(
                 this,
-                "Please select a vehicle",
+                "Please select vehicle/work",
                 Toast.LENGTH_SHORT
             ).show()
 
             return
         }
 
+        val workType =
+            vehicle.work_type
 
-        if (calc == null) {
+        if (workType.isNullOrBlank()) {
 
             Toast.makeText(
                 this,
-                "Please calculate payment first",
+                "Work type is missing",
                 Toast.LENGTH_SHORT
             ).show()
 
             return
+        }
+
+        val amountText =
+            binding.edtPaymentAmount
+                .text
+                ?.toString()
+                ?.trim()
+
+        val amount =
+            amountText?.toDoubleOrNull()
+
+        if (amount == null || amount <= 0) {
+
+            Toast.makeText(
+                this,
+                "Enter a valid payment amount",
+                Toast.LENGTH_SHORT
+            ).show()
+
+            return
+        }
+
+        val calculation =
+            viewModel.calculation.value
+
+        if (calculation != null) {
+
+            val remaining =
+                calculation.remaining_amount
+                    .toDoubleOrNull()
+                    ?: 0.0
+
+            if (remaining <= 0) {
+
+                Toast.makeText(
+                    this,
+                    "This work is already fully paid",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                return
+            }
+
+            if (amount > remaining) {
+
+                Toast.makeText(
+                    this,
+                    "Payment cannot be greater than remaining ₹$remaining",
+                    Toast.LENGTH_LONG
+                ).show()
+
+                return
+            }
         }
 
 
         val paymentMethod =
-            spinnerPaymentMethod.text
+            binding.autoPaymentMethod
+                .text
                 .toString()
                 .trim()
 
-
-        if (paymentMethod.isEmpty()) {
-
-            Toast.makeText(
-                this,
-                "Please select payment method",
-                Toast.LENGTH_SHORT
-            ).show()
-
-            return
-        }
-
-
-        val amount =
-            calc.amount.toDoubleOrNull()
-
-
-        if (
-            amount == null ||
-            amount <= 0
-        ) {
+        if (paymentMethod.isBlank()) {
 
             Toast.makeText(
                 this,
-                "Invalid payment amount",
+                "Select payment method",
                 Toast.LENGTH_SHORT
             ).show()
 
@@ -607,39 +619,63 @@ class AdminPaymentActivity : AppCompatActivity() {
 
 
         val remarks =
-            edtRemarks.text
-                .toString()
-                .trim()
+            binding.edtRemarks
+                .text
+                ?.toString()
+                ?.trim()
+
+
         val request =
             CreatePaymentRequest(
-
                 user_id = user.id,
-
-                repo_year = calc.repo_year,
-
-                repo_month = calc.repo_month,
-
-                loan_number = calc.loan_number,
-
-                work_type = calc.repo_status,
-
+                repo_year = vehicle.repo_year,
+                repo_month = vehicle.repo_month,
+                loan_number = vehicle.loan_number,
+                work_type = workType,
+                payment_amount = amount,
                 payment_method = paymentMethod,
-
-                remarks =
-                    if (remarks.isEmpty()) {
-                        null
-                    } else {
-                        remarks
-                    }
+                payment_date = null,
+                remarks = remarks
             )
-
-        btnCreatePayment.isEnabled =
-            false
-
 
         viewModel.createPayment(
             request
         )
     }
-}
+    private fun setupPaymentHistoryButton() {
 
+        binding.btnPaymentHistory.setOnClickListener {
+
+            val user = selectedUser
+
+            if (user == null) {
+
+                Toast.makeText(
+                    this,
+                    "Please select a user first",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                return@setOnClickListener
+            }
+
+            val intent =
+                Intent(
+                    this,
+                    PaymentHistoryActivity::class.java
+                )
+
+            intent.putExtra(
+                "user_id",
+                user.id
+            )
+
+            intent.putExtra(
+                "user_name",
+                user.full_name
+            )
+
+            startActivity(intent)
+        }
+    }
+}

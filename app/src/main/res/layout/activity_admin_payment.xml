@@ -1,392 +1,258 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true">
 
-    android:orientation="vertical"
-    android:background="@color/white">
-
-
-    <!-- =====================================================
-         TOOLBAR
-         ===================================================== -->
-
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar"
-
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:title="Admin Payment"
-        android:titleTextColor="@android:color/black"
-app:navigationIconTint="@color/black"
-        app:navigationIcon="@drawable/baseline_arrow_back_24"/>
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
 
+        <!-- ================================================= -->
+        <!-- TITLE -->
+        <!-- ================================================= -->
 
-    <androidx.core.widget.NestedScrollView
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Admin Payment"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp" />
 
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
+        <!-- ================================================= -->
+        <!-- SEARCH USER -->
+        <!-- ================================================= -->
 
-        android:layout_weight="1"
-
-        android:fillViewport="true">
-
-
-        <LinearLayout
-
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutUserSearch"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:hint="Search User">
 
-            android:orientation="vertical"
-
-            android:padding="16dp">
-
-
-            <!-- =================================================
-                 SELECT USER
-                 ================================================= -->
-
-            <TextView
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:text="Select User"
-                android:textStyle="bold"
-                android:textSize="15sp"
-
-                android:layout_marginBottom="6dp"/>
-
-
-            <com.google.android.material.textfield.TextInputLayout
-
+            <AutoCompleteTextView
+                android:id="@+id/autoUser"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="text"
+                android:completionThreshold="1" />
 
-                android:hint="Select user"
+        </com.google.android.material.textfield.TextInputLayout>
 
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+        <!-- ================================================= -->
+        <!-- SELECT VEHICLE / WORK -->
+        <!-- ================================================= -->
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutVehicle"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="Select Vehicle / Work">
 
-                <AutoCompleteTextView
+            <AutoCompleteTextView
+                android:id="@+id/autoVehicle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none" />
 
-                    android:id="@+id/spinnerUser"
+        </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- ================================================= -->
+        <!-- VEHICLE INFORMATION -->
+        <!-- ================================================= -->
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardVehicleInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/txtVehicleNumber"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:text="Vehicle: -" />
 
-                    android:inputType="none"/>
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-
-            <!-- =================================================
-                 USER SUMMARY
-                 ================================================= -->
-
-            <com.google.android.material.card.MaterialCardView
-
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-
-                android:layout_marginTop="16dp"
-
-                app:cardCornerRadius="14dp"
-                app:cardElevation="3dp">
-
-
-                <LinearLayout
-
+                <TextView
+                    android:id="@+id/txtVehicleType"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="Vehicle Type: -" />
 
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-
-                    <TextView
-
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-
-                        android:text="Payment Summary"
-                        android:textStyle="bold"
-                        android:textSize="17sp"/>
-
-
-                    <TextView
-                        android:id="@+id/txtCompletedWork"
-
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-
-                        android:layout_marginTop="12dp"
-
-                        android:text="Completed Work: 0"
-                        android:textSize="15sp"/>
-
-
-                    <TextView
-                        android:id="@+id/txtTotalDue"
-
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-
-                        android:layout_marginTop="6dp"
-
-                        android:text="₹ 0.00"
-                        android:textSize="15sp"/>
-
-
-                    <TextView
-                        android:id="@+id/txtTotalPaid"
-
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-
-                        android:layout_marginTop="6dp"
-
-                        android:text="₹ 0.00"
-                        android:textSize="15sp"/>
-
-
-                    <TextView
-                        android:id="@+id/txtRemaining"
-
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-
-                        android:layout_marginTop="6dp"
-
-                        android:text="₹ 0.00"
-                        android:textStyle="bold"
-                        android:textSize="17sp"/>
-
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-
-            <!-- =================================================
-                 SELECT VEHICLE
-                 ================================================= -->
-
-            <TextView
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="6dp"
-
-                android:text="Vehicle"
-                android:textStyle="bold"
-                android:textSize="15sp"/>
-
-
-            <com.google.android.material.textfield.TextInputLayout
-
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-
-                android:hint="Select completed vehicle"
-
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
-
-
-                <AutoCompleteTextView
-
-                    android:id="@+id/spinnerVehicle"
-
+                <TextView
+                    android:id="@+id/txtWorkType"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="Repo Status: -" />
 
-                    android:inputType="none"/>
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-
-            <!-- =================================================
-                 VEHICLE DETAILS
-                 ================================================= -->
-
-            <com.google.android.material.card.MaterialCardView
-
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-
-                android:layout_marginTop="16dp"
-
-                app:cardCornerRadius="14dp"
-                app:cardElevation="3dp">
-
-
-                <LinearLayout
-
+                <TextView
+                    android:id="@+id/txtCompletedAt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="Completed: -" />
 
-                    android:orientation="vertical"
-                    android:padding="16dp">
+            </LinearLayout>
 
+        </com.google.android.material.card.MaterialCardView>
 
-                    <TextView
-                        android:id="@+id/txtVehicleNumber"
+        <!-- ================================================= -->
+        <!-- PAYMENT CALCULATION -->
+        <!-- ================================================= -->
 
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardCalculation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="12dp">
 
-                        android:text="-"
-                        android:textStyle="bold"
-                        android:textSize="18sp"/>
-
-
-                    <TextView
-                        android:id="@+id/txtVehicleType"
-
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-
-                        android:layout_marginTop="8dp"
-
-                        android:text="Vehicle Type: -"
-                        android:textSize="15sp"/>
-
-
-                    <TextView
-                        android:id="@+id/txtWorkType"
-
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-
-                        android:layout_marginTop="6dp"
-
-                        android:text="Work Type: -"
-                        android:textSize="15sp"/>
-
-
-                    <TextView
-                        android:id="@+id/txtAmount"
-
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-
-                        android:layout_marginTop="12dp"
-
-                        android:text="₹ 0.00"
-
-                        android:textStyle="bold"
-                        android:textSize="24sp"/>
-
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-
-            <!-- =================================================
-                 PAYMENT METHOD
-                 ================================================= -->
-
-            <TextView
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="6dp"
-
-                android:text="Payment Method"
-                android:textStyle="bold"
-                android:textSize="15sp"/>
-
-
-            <com.google.android.material.textfield.TextInputLayout
-
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
 
-                android:hint="Select payment method"
-
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
-
-
-                <AutoCompleteTextView
-
-                    android:id="@+id/spinnerPaymentMethod"
-
+                <TextView
+                    android:id="@+id/txtTotalAmount"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:text="Total Due: ₹0.00"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
-                    android:inputType="none"/>
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-
-            <!-- =================================================
-                 REMARKS
-                 ================================================= -->
-
-            <com.google.android.material.textfield.TextInputLayout
-
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-
-                android:layout_marginTop="16dp"
-
-                android:hint="Remarks">
-
-
-                <com.google.android.material.textfield.TextInputEditText
-
-                    android:id="@+id/edtRemarks"
-
+                <TextView
+                    android:id="@+id/txtPaidAmount"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Paid Till Date: ₹0.00" />
 
-                    android:minLines="2"
-                    android:gravity="top"/>
+                <TextView
+                    android:id="@+id/txtRemainingAmount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Remaining: ₹0.00"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
 
-            </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
 
+        </com.google.android.material.card.MaterialCardView>
 
-            <!-- =================================================
-                 CREATE PAYMENT
-                 ================================================= -->
+        <!-- ================================================= -->
+        <!-- PAYMENT AMOUNT -->
+        <!-- ================================================= -->
 
-            <Button
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutPaymentAmount"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="Payment Amount">
 
-                android:id="@+id/btnCreatePayment"
-
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edtPaymentAmount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="numberDecimal" />
 
-                android:layout_marginTop="24dp"
+        </com.google.android.material.textfield.TextInputLayout>
 
-                android:text="Create Payment"
-                android:textAllCaps="false"/>
+        <!-- ================================================= -->
+        <!-- PAYMENT METHOD -->
+        <!-- ================================================= -->
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutPaymentMethod"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="Payment Method">
 
-            <ProgressBar
-
-                android:id="@+id/progressBar"
-
-                android:layout_width="wrap_content"
+            <AutoCompleteTextView
+                android:id="@+id/autoPaymentMethod"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="none" />
 
-                android:layout_gravity="center"
+        </com.google.android.material.textfield.TextInputLayout>
 
-                android:layout_marginTop="16dp"
+        <!-- ================================================= -->
+        <!-- REMARKS -->
+        <!-- ================================================= -->
 
-                android:visibility="gone"/>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutRemarks"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="Remarks">
 
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edtRemarks"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top"
+                android:minLines="3" />
 
-        </LinearLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
-    </androidx.core.widget.NestedScrollView>
+        <!-- ================================================= -->
+        <!-- SUBMIT -->
+        <!-- ================================================= -->
 
-</LinearLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSubmitPayment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Submit Payment" />
 
+        <!-- ================================================= -->
+        <!-- HISTORY BUTTON -->
+        <!-- ================================================= -->
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPaymentHistory"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="View User Payment History" />
+
+        <!-- ================================================= -->
+        <!-- LOADING -->
+        <!-- ================================================= -->
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+</ScrollView>

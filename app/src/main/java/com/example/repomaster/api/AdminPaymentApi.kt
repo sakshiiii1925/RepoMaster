@@ -37,7 +37,8 @@ interface AdminPaymentApi {
         @Query("user_id") userId: Int,
         @Query("repo_year") repoYear: String,
         @Query("repo_month") repoMonth: String,
-        @Query("loan_number") loanNumber: String
+        @Query("loan_number") loanNumber: String,
+        @Query("work_type") workType: String
     ): Response<ApiResponse<PaymentCalculation>>
 
 
@@ -95,5 +96,14 @@ interface AdminPaymentApi {
         @Path("id") id: Long,
         @Query("agency_id") agencyId: String
     ): Response<ApiMessageResponse>
+    // =========================================================
+// PAYMENT HISTORY FOR PARTICULAR USER
+// GET /api/admin/payment/history?user_id=2
+// =========================================================
+
+    @GET("api/admin/payment/history")
+    suspend fun getPaymentHistory(
+        @Query("user_id") userId: Int
+    ): Response<ApiResponse<List<AdminPayment>>>
 }
 

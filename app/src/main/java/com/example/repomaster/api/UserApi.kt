@@ -6,6 +6,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.http.GET
+import com.example.repomaster.models.UpdateUserStatusRequest
 import com.example.repomaster.models.NotificationCountresponse
 import com.example.repomaster.models.AdminNotification
 import retrofit2.http.PUT
@@ -197,4 +198,9 @@ interface UserApi {
     suspend fun markNotificationRead(
         @Path("id") id: Int
     ): Response<Any>
+    @PUT("api/users/{id}/status")
+    suspend fun updateUserStatus(
+        @Path("id") id: Long,
+        @Body request: UpdateUserStatusRequest
+    ): Response<User>
 }

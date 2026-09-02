@@ -10,6 +10,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import com.example.repomaster.api.RepoImageApi
 import retrofit2.converter.gson.GsonConverterFactory
+import com.example.repomaster.api.UserPaymentApi
 import com.example.repomaster.api.AdminPaymentApi
 object RetrofitClient {
 
@@ -49,6 +50,8 @@ object RetrofitClient {
     val adminPaymentApi: AdminPaymentApi by lazy {
         retrofit.create(AdminPaymentApi::class.java)
     }
-
+    val userPaymentApi: UserPaymentApi by lazy {
+        retrofit.create(UserPaymentApi::class.java)
+    }
 
 }

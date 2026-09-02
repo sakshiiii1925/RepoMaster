@@ -56,5 +56,13 @@ class SessionManager(context: Context) {
     fun getAgencyId(): String {
         return prefs.getString("agencyId", "") ?: ""
     }
+    fun saveUserId(userId: Int) {
+        prefs.edit()
+            .putInt("userId", userId)
+            .apply()
+    }
 
+    fun getUserId(): Int {
+        return prefs.getInt("userId", 0)
+    }
 }

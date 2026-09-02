@@ -81,9 +81,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:gravity="top"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
+            <Button
+                android:id="@+id/btnToggleStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Deactivate"
+                android:textAllCaps="false" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
 
             <ImageButton
                 android:id="@+id/btnDelete"
@@ -93,7 +104,7 @@
                 android:background="@drawable/bg_red_circle"
                 android:src="@drawable/outline_delete_24"
                 android:contentDescription="Delete"
-                app:tint="@android:color/white"/>
+                app:tint="@android:color/white" />
 
         </LinearLayout>
     </LinearLayout>
