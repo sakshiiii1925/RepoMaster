@@ -16,14 +16,15 @@ import com.example.repomaster.data.local.PendingImageUploadEntity
 import okhttp3.MultipartBody
 import retrofit2.Response
 import com.example.repomaster.models.UploadedImageDetails
-
+import com.example.repomaster.utils.SessionManager
 
 class VehicleRepository(
     private val context: Context
 ) {
 
     private val api = RetrofitClient.api
-
+    private val sessionManager =
+        SessionManager(context)
     private val vehicleDao =
         DatabaseProvider
             .getDatabase(context)
@@ -59,33 +60,39 @@ class VehicleRepository(
 
             try {
 
+                val userId =
+                    sessionManager.getUserId()
+
+                if (userId <= 0) {
+
+                    Log.e(
+                        "VEHICLE_SEARCH",
+                        "User not logged in"
+                    )
+
+                    return null
+                }
+
                 Log.d(
                     "VEHICLE_SEARCH",
-                    "Internet available - searching API"
+                    "Searching API for userId=$userId"
                 )
 
                 val response =
-                    api.getVehicle(number)
-
-                Log.d(
-                    "VEHICLE_SEARCH",
-                    "API response: ${response.code()}"
-                )
+                    api.getVehicle(
+                        number,
+                        userId
+                    )
 
                 if (response.isSuccessful) {
 
-                    val vehicle = response.body()
+                    val vehicle =
+                        response.body()
 
                     if (vehicle != null) {
 
-                        // SAVE VEHICLE LOCALLY
                         vehicleDao.insertVehicle(
                             vehicle.toEntity()
-                        )
-
-                        Log.d(
-                            "VEHICLE_SEARCH",
-                            "Vehicle saved to Room"
                         )
 
                         return vehicle
@@ -96,11 +103,15 @@ class VehicleRepository(
 
                 Log.e(
                     "VEHICLE_SEARCH",
-                    "API failed, trying Room",
+                    "API failed",
                     e
                 )
             }
         }
+
+
+
+
         // -----------------------------------------------------
         // 2. OFFLINE OR API FAILED
         // -----------------------------------------------------
@@ -110,8 +121,18 @@ class VehicleRepository(
             "Searching Room database"
         )
 
+        val agencyId =
+            sessionManager.getAgencyId()
+
+        if (agencyId.isBlank()) {
+            return null
+        }
+
         val localVehicle =
-            vehicleDao.getVehicle(number)
+            vehicleDao.getVehicle(
+                number,
+                agencyId
+            )
 
         if (localVehicle != null) {
 
@@ -181,9 +202,20 @@ class VehicleRepository(
             // 1. ALWAYS SAVE STATUS TO ROOM FIRST
             // ============================================
 
+            val agencyId = getCurrentAgencyId()
+
+            if (agencyId.isBlank()) {
+                Log.e(
+                    "STATUS_UPDATE",
+                    "Agency ID not found"
+                )
+                return StatusSaveResult.FAILED
+            }
+
             vehicleDao.updateStatusOffline(
                 number,
-                status
+                status,
+                agencyId
             )
 
             Log.d(
@@ -214,14 +246,18 @@ class VehicleRepository(
 
                     val existing =
                         pendingImageUploadDao
-                            .getPendingForVehicle(number)
-
+                            .getPendingForVehicle(
+                                number,
+                                agencyId
+                            )
                     if (existing == null) {
 
                         pendingImageUploadDao.insert(
                             PendingImageUploadEntity(
                                 vehicleNumber = number,
-                                status = status
+                                status = status,
+                                uploadStatus = "PENDING",
+                                agencyId = agencyId
                             )
                         )
 
@@ -256,7 +292,10 @@ class VehicleRepository(
 
                 if (response.isSuccessful) {
 
-                    vehicleDao.markStatusSynced(number)
+                    vehicleDao.markStatusSynced(
+                        number,
+                        agencyId
+                    )
 
                     Log.d(
                         "STATUS_UPDATE",
@@ -286,15 +325,18 @@ class VehicleRepository(
                     ) {
 
                         val existing =
-                            pendingImageUploadDao
-                                .getPendingForVehicle(number)
-
+                            pendingImageUploadDao.getPendingForVehicle(
+                                number,
+                                agencyId
+                            )
                         if (existing == null) {
 
                             pendingImageUploadDao.insert(
                                 PendingImageUploadEntity(
                                     vehicleNumber = number,
-                                    status = status
+                                    status = status,
+                                    agencyId = agencyId,
+                                    uploadStatus = "PENDING"
                                 )
                             )
                         }
@@ -322,15 +364,18 @@ class VehicleRepository(
                 ) {
 
                     val existing =
-                        pendingImageUploadDao
-                            .getPendingForVehicle(number)
-
+                        pendingImageUploadDao.getPendingForVehicle(
+                            number,
+                            agencyId
+                        )
                     if (existing == null) {
 
                         pendingImageUploadDao.insert(
                             PendingImageUploadEntity(
                                 vehicleNumber = number,
-                                status = status
+                                status = status,
+                                agencyId = agencyId,
+                                uploadStatus = "PENDING"
                             )
                         )
                     }
@@ -360,10 +405,23 @@ class VehicleRepository(
             return false
         }
 
+        val agencyId =
+            getCurrentAgencyId()
+
+        if (agencyId.isBlank()) {
+            Log.e(
+                "STATUS_SYNC",
+                "Agency ID not found"
+            )
+            return false
+        }
+
         val pendingVehicles =
-            vehicleDao.getPendingStatusUpdates()
+
+            vehicleDao.getPendingStatusUpdates(agencyId)
 
         if (pendingVehicles.isEmpty()) {
+
             Log.d(
                 "STATUS_SYNC",
                 "No pending status updates"
@@ -395,7 +453,8 @@ class VehicleRepository(
                 if (response.isSuccessful) {
 
                     vehicleDao.markStatusSynced(
-                        vehicle.vehicleNumber
+                        vehicle.vehicleNumber,
+                        agencyId
                     )
 
                     Log.d(
@@ -427,6 +486,10 @@ class VehicleRepository(
 
         return allSuccessful
     }
+
+
+
+
 
 
     // =========================================================
@@ -475,9 +538,18 @@ class VehicleRepository(
                     "Internet available - calling API"
                 )
 
-                val response =
-                    api.getVehicle(number)
+                val userId =
+                    sessionManager.getUserId()
 
+                if (userId <= 0) {
+                    return null
+                }
+
+                val response =
+                    api.getVehicle(
+                        number,
+                        userId
+                    )
                 Log.d(
                     "VEHICLE_GET",
                     "API response: ${response.code()}"
@@ -490,8 +562,17 @@ class VehicleRepository(
 
                     if (vehicle != null) {
 
+                        val agencyId = getCurrentAgencyId()
+
+                        if (agencyId.isBlank()) {
+                            return null
+                        }
+
                         val localVehicle =
-                            vehicleDao.getVehicle(number)
+                            vehicleDao.getVehicle(
+                                number,
+                                agencyId
+                            )
 
                         if (
                             localVehicle != null &&
@@ -554,8 +635,24 @@ class VehicleRepository(
             "Searching vehicle in Room"
         )
 
+        val agencyId =
+            getCurrentAgencyId()
+
+        if (agencyId.isBlank()) {
+
+            Log.e(
+                "VEHICLE_GET",
+                "Agency ID not found"
+            )
+
+            return null
+        }
+
         val localVehicle =
-            vehicleDao.getVehicle(number)
+            vehicleDao.getVehicle(
+                number,
+                agencyId
+            )
 
         if (localVehicle != null) {
 
@@ -634,8 +731,24 @@ class VehicleRepository(
 
         try {
 
+            val agencyId =
+                getCurrentAgencyId()
+
+            if (agencyId.isBlank()) {
+
+                Log.e(
+                    "VEHICLE_SUGGESTION",
+                    "Agency ID not found"
+                )
+
+                return Response.success(emptyList())
+            }
+
             val localVehicles =
-                vehicleDao.searchVehicles(searchKeyword)
+                vehicleDao.searchVehicles(
+                    searchKeyword,
+                    agencyId
+                )
 
             if (localVehicles.isNotEmpty()) {
 
@@ -660,6 +773,7 @@ class VehicleRepository(
             )
         }
 
+
         // =====================================================
         // 2. IF ROOM HAS NOTHING → API
         // =====================================================
@@ -673,8 +787,24 @@ class VehicleRepository(
                     "Searching API"
                 )
 
+                val userId =
+                    sessionManager.getUserId()
+
+                if (userId <= 0) {
+
+                    Log.e(
+                        "VEHICLE_SUGGESTION",
+                        "Invalid userId"
+                    )
+
+                    return Response.success(emptyList())
+                }
+
                 val response =
-                    api.searchVehicles(searchKeyword)
+                    api.searchVehicles(
+                        searchKeyword,
+                        userId
+                    )
 
                 if (
                     response.isSuccessful &&
@@ -800,9 +930,7 @@ class VehicleRepository(
             agencyId,
             date
         )
-    suspend fun syncAllVehicles(
-        agencyId: String
-    ): Boolean {
+    suspend fun syncAllVehicles(): Boolean {
 
         if (!isNetworkAvailable()) {
             Log.d(
@@ -820,8 +948,15 @@ class VehicleRepository(
                 "Downloading all vehicles..."
             )
 
+            val userId =
+                sessionManager.getUserId()
+
+            if (userId <= 0) {
+                return false
+            }
+
             val response =
-                api.getAllVehicles(agencyId)
+                api.getAllVehicles(userId)
 
             if (
                 response.isSuccessful &&
@@ -886,21 +1021,39 @@ class VehicleRepository(
                 .replace(" ", "")
                 .uppercase()
 
+        val agencyId =
+            getCurrentAgencyId()
+
+        if (agencyId.isBlank()) {
+            return null
+        }
+
         val entity =
-            vehicleDao.getVehicle(number)
+            vehicleDao.getVehicle(
+                number,
+                agencyId
+            )
 
         return entity?.toVehicle()
     }
-    suspend fun getAllVehicles(
-        agencyId: String
-    ): List<Vehicle> {
+    suspend fun getAllVehicles(): List<Vehicle> {
 
         return try {
 
-            val response =
-                api.getAllVehicles(agencyId)
+            val userId =
+                sessionManager.getUserId()
 
-            if (response.isSuccessful && response.body() != null) {
+            if (userId <= 0) {
+                return emptyList()
+            }
+
+            val response =
+                api.getAllVehicles(userId)
+
+            if (
+                response.isSuccessful &&
+                response.body() != null
+            ) {
 
                 response.body()!!
 
@@ -913,7 +1066,7 @@ class VehicleRepository(
 
             Log.e(
                 "GET_ALL_VEHICLES",
-                "Failed to get vehicles",
+                "Failed",
                 e
             )
 
@@ -934,9 +1087,22 @@ class VehicleRepository(
                 .replace(" ", "")
                 .uppercase()
 
+        val agencyId =
+            getCurrentAgencyId()
+
+        if (agencyId.isBlank()) {
+            Log.e(
+                "IMAGE_PENDING",
+                "Agency ID not found"
+            )
+            return
+        }
+
         val existing =
-            pendingImageUploadDao
-                .getPendingForVehicle(number)
+            pendingImageUploadDao.getPendingForVehicle(
+                number,
+                agencyId
+            )
 
         if (existing == null) {
 
@@ -944,13 +1110,14 @@ class VehicleRepository(
                 PendingImageUploadEntity(
                     vehicleNumber = number,
                     status = status,
-                    uploadStatus = "PENDING"
+                    uploadStatus = "PENDING",
+                    agencyId = agencyId
                 )
             )
 
             Log.d(
                 "IMAGE_PENDING",
-                "Image upload added to queue: $number"
+                "Image upload added: $number"
             )
 
         } else {
@@ -961,8 +1128,24 @@ class VehicleRepository(
             )
         }
     }
+
+
+
     suspend fun getPendingImageUploads(): List<PendingImageUploadEntity> {
-        return pendingImageUploadDao.getPendingUploads()
+
+        val agencyId = getCurrentAgencyId()
+
+        if (agencyId.isBlank()) {
+            Log.e(
+                "IMAGE_PENDING",
+                "Agency ID not found"
+            )
+            return emptyList()
+        }
+
+        return pendingImageUploadDao.getPendingUploads(
+            agencyId
+        )
     }
 
     suspend fun markImageUploadCompleted(
@@ -978,14 +1161,27 @@ class VehicleRepository(
                 .replace(" ", "")
                 .uppercase()
 
+        val agencyId =
+            getCurrentAgencyId()
+
+        if (agencyId.isBlank()) {
+            Log.e(
+                "IMAGE_UPLOAD",
+                "Agency ID not found"
+            )
+            return
+        }
+
         // Mark pending image upload as completed
         pendingImageUploadDao.markUploadedByVehicle(
-            number
+            number,
+            agencyId
         )
 
         // Mark vehicle image upload completed
         vehicleDao.markImageUploadCompleted(
-            number
+            number,
+            agencyId
         )
 
         Log.d(
@@ -993,6 +1189,9 @@ class VehicleRepository(
             "Image upload completed: $number"
         )
     }
+
+
+
     suspend fun getUploadedImages(): List<UploadedImage> {
 
         val response =
@@ -1053,6 +1252,7 @@ class VehicleRepository(
     suspend fun removePendingImageUpload(
         vehicleNumber: String
     ) {
+
         val number =
             vehicleNumber
                 .trim()
@@ -1062,13 +1262,28 @@ class VehicleRepository(
                 .replace(" ", "")
                 .uppercase()
 
+        val agencyId =
+            getCurrentAgencyId()
+
+        if (agencyId.isBlank()) {
+            Log.e(
+                "IMAGE_PENDING",
+                "Agency ID not found"
+            )
+            return
+        }
+
         val pending =
-            pendingImageUploadDao.getPendingForVehicle(number)
+            pendingImageUploadDao.getPendingForVehicle(
+                number,
+                agencyId
+            )
 
         if (pending != null) {
 
             pendingImageUploadDao.delete(
-                pending.id
+                pending.id,
+                agencyId
             )
 
             Log.d(
@@ -1076,5 +1291,10 @@ class VehicleRepository(
                 "Pending image removed: $number"
             )
         }
+    }
+
+
+    private fun getCurrentAgencyId(): String {
+        return sessionManager.getAgencyId().trim()
     }
 }

@@ -1,6 +1,5 @@
 package com.example.repomaster.data.local
 
-
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -9,111 +8,213 @@ import androidx.room.Query
 @Dao
 interface VehicleDao {
 
-    // Search exact vehicle number
+    // =========================================================
+    // GET VEHICLE BY NUMBER + AGENCY
+    // =========================================================
+
     @Query("""
         SELECT * FROM vehicles
         WHERE vehicleNumber = :vehicleNumber
+        AND agencyId = :agencyId
         LIMIT 1
     """)
     suspend fun getVehicle(
-        vehicleNumber: String
+        vehicleNumber: String,
+        agencyId: String
     ): VehicleEntity?
 
-    // Search vehicles for suggestions
+
+    // =========================================================
+    // SEARCH VEHICLES FOR SUGGESTIONS
+    // =========================================================
+
     @Query("""
         SELECT * FROM vehicles
         WHERE vehicleNumber LIKE '%' || :keyword || '%'
+        AND agencyId = :agencyId
         ORDER BY vehicleNumber
     """)
     suspend fun searchVehicles(
-        keyword: String
+        keyword: String,
+        agencyId: String
     ): List<VehicleEntity>
 
-    // Save/update one vehicle
+
+    // =========================================================
+    // INSERT ONE VEHICLE
+    // =========================================================
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertVehicle(
         vehicle: VehicleEntity
     )
 
-    // Save/update multiple vehicles
+
+    // =========================================================
+    // INSERT MULTIPLE VEHICLES
+    // =========================================================
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertVehicles(
         vehicles: List<VehicleEntity>
     )
 
-    // Delete all local vehicles
+
+    // =========================================================
+    // DELETE ALL LOCAL VEHICLES
+    // =========================================================
+
     @Query("DELETE FROM vehicles")
     suspend fun deleteAll()
 
-    // Count local vehicles
-    @Query("SELECT COUNT(*) FROM vehicles")
-    suspend fun getVehicleCount(): Int
-    @Query("SELECT * FROM vehicles")
-    suspend fun getAllVehicles(): List<VehicleEntity>
+
+    // =========================================================
+    // COUNT LOCAL VEHICLES
+    // =========================================================
+
     @Query("""
-    UPDATE vehicles
-    SET repoStatus = :status,
-        statusSyncPending = 1,
-        statusUpdatedOffline = 1
-    WHERE vehicleNumber = :vehicleNumber
-""")
+        SELECT COUNT(*)
+        FROM vehicles
+    """)
+    suspend fun getVehicleCount(): Int
+
+
+    // =========================================================
+    // GET ALL VEHICLES
+    // =========================================================
+
+    @Query("""
+        SELECT * FROM vehicles
+    """)
+    suspend fun getAllVehicles(): List<VehicleEntity>
+
+
+    // =========================================================
+    // UPDATE OFFLINE STATUS
+    // =========================================================
+
+    @Query("""
+        UPDATE vehicles
+        SET repoStatus = :status,
+            statusSyncPending = 1,
+            statusUpdatedOffline = 1
+        WHERE vehicleNumber = :vehicleNumber
+        AND agencyId = :agencyId
+    """)
     suspend fun updateStatusOffline(
         vehicleNumber: String,
-        status: String
+        status: String,
+        agencyId: String
     )
+
+
+    // =========================================================
+    // PENDING STATUS UPDATES
+    // =========================================================
+
     @Query("""
     SELECT * FROM vehicles
     WHERE statusSyncPending = 1
+    AND agencyId = :agencyId
 """)
-    suspend fun getPendingStatusUpdates(): List<VehicleEntity>
+    suspend fun getPendingStatusUpdates(
+        agencyId: String
+    ): List<VehicleEntity>
+
+    // =========================================================
+    // MARK STATUS SYNCED
+    // =========================================================
+
     @Query("""
-    UPDATE vehicles
-    SET statusSyncPending = 0,
-        statusUpdatedOffline = 0
-    WHERE vehicleNumber = :vehicleNumber
-""")
+        UPDATE vehicles
+        SET statusSyncPending = 0,
+            statusUpdatedOffline = 0
+        WHERE vehicleNumber = :vehicleNumber
+        AND agencyId = :agencyId
+    """)
     suspend fun markStatusSynced(
-        vehicleNumber: String
+        vehicleNumber: String,
+        agencyId: String
     )
+
+
+    // =========================================================
+    // UPDATE STATUS FROM SERVER
+    // =========================================================
+
     @Query("""
-    UPDATE vehicles
-    SET repoStatus = :status,
-        statusSyncPending = 0,
-        statusUpdatedOffline = 0
-    WHERE vehicleNumber = :vehicleNumber
-""")
+        UPDATE vehicles
+        SET repoStatus = :status,
+            statusSyncPending = 0,
+            statusUpdatedOffline = 0
+        WHERE vehicleNumber = :vehicleNumber
+        AND agencyId = :agencyId
+    """)
     suspend fun updateStatusFromServer(
         vehicleNumber: String,
-        status: String
+        status: String,
+        agencyId: String
     )
+
+
+    // =========================================================
+    // GET VEHICLE BY NUMBER + AGENCY
+    // =========================================================
+
     @Query("""
-    SELECT * FROM vehicles
-    WHERE vehicleNumber = :vehicleNumber
-    LIMIT 1
-""")
+        SELECT * FROM vehicles
+        WHERE vehicleNumber = :vehicleNumber
+        AND agencyId = :agencyId
+        LIMIT 1
+    """)
     suspend fun getVehicleByNumber(
-        vehicleNumber: String
+        vehicleNumber: String,
+        agencyId: String
     ): VehicleEntity?
+
+
+    // =========================================================
+    // IMAGE UPLOAD PENDING
+    // =========================================================
+
     @Query("""
-    UPDATE vehicles
-    SET imageUploadPending = 1
-    WHERE vehicleNumber = :vehicleNumber
-""")
+        UPDATE vehicles
+        SET imageUploadPending = 1
+        WHERE vehicleNumber = :vehicleNumber
+        AND agencyId = :agencyId
+    """)
     suspend fun markImageUploadPending(
-        vehicleNumber: String
+        vehicleNumber: String,
+        agencyId: String
     )
+
+
+    // =========================================================
+    // VEHICLES WITH PENDING IMAGE UPLOAD
+    // =========================================================
+
     @Query("""
     SELECT * FROM vehicles
     WHERE imageUploadPending = 1
+    AND agencyId = :agencyId
     ORDER BY vehicleNumber
 """)
-    suspend fun getVehiclesWithPendingImageUpload(): List<VehicleEntity>
+    suspend fun getVehiclesWithPendingImageUpload(
+        agencyId: String
+    ): List<VehicleEntity>
+
+    // =========================================================
+    // IMAGE UPLOAD COMPLETED
+    // =========================================================
+
     @Query("""
-    UPDATE vehicles
-    SET imageUploadPending = 0
-    WHERE vehicleNumber = :vehicleNumber
-""")
+        UPDATE vehicles
+        SET imageUploadPending = 0
+        WHERE vehicleNumber = :vehicleNumber
+        AND agencyId = :agencyId
+    """)
     suspend fun markImageUploadCompleted(
-        vehicleNumber: String
+        vehicleNumber: String,
+        agencyId: String
     )
 }

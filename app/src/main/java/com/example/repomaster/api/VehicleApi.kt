@@ -26,7 +26,8 @@ interface VehicleApi {
 
     @GET("api/vehicles/{vehicleNumber}")
     suspend fun getVehicle(
-        @Path("vehicleNumber") vehicleNumber: String
+        @Path("vehicleNumber") vehicleNumber: String,
+        @Query("userId") userId: Int
     ): Response<Vehicle>
 
     @PUT("api/vehicles/{vehicleNumber}/status")
@@ -42,7 +43,7 @@ interface VehicleApi {
 
     @GET("api/vehicles")
     suspend fun getAllVehicles(
-        @Query("agencyId") agencyId: String
+        @Query("userId") userId: Int
     ): Response<List<Vehicle>>
 
     @PUT("api/vehicles/{vehicleNumber}")
@@ -65,7 +66,8 @@ interface VehicleApi {
 
     @GET("api/vehicles/search")
     suspend fun searchVehicles(
-        @Query("keyword") keyword: String
+        @Query("keyword") keyword: String,
+        @Query("userId") userId: Int
     ): Response<List<Vehicle>>
 
     @POST("api/search-history/save")

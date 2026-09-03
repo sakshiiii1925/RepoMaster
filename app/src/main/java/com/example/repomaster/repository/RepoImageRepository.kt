@@ -9,6 +9,7 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Response
 import java.io.File
+import com.example.repomaster.utils.SessionManager
 import android.util.Log
 import com.example.repomaster.data.local.DatabaseProvider
 import com.example.repomaster.network.RetrofitClient
@@ -107,9 +108,6 @@ class RepoImageRepository(
         )
     }
 
-
-
-
     private fun createImagePart(
         partName: String,
         file: File
@@ -130,6 +128,7 @@ class RepoImageRepository(
         DatabaseProvider
             .getDatabase(context)
             .pendingImageUploadDao()
+    private val sessionManager = SessionManager(context)
     suspend fun markImageUploadCompleted(
         vehicleNumber: String
     ) {
@@ -142,14 +141,27 @@ class RepoImageRepository(
                 .replace(".", "")
                 .replace(" ", "")
                 .uppercase()
+        val agencyId =
+            sessionManager
+                .getAgencyId()
+                .trim()
+        if (agencyId.isEmpty()) {
+            Log.e(
+                "IMAGE_UPLOAD",
+                "Cannot mark upload completed: agencyId is empty"
+            )
+            return
+        }
 
         pendingImageUploadDao.markUploadedByVehicle(
-            number
+            number,
+            agencyId
         )
 
         Log.d(
             "IMAGE_UPLOAD",
-            "Pending upload completed: $number"
+            "Pending upload completed: $number, agencyId=$agencyId"
         )
     }
+
 }

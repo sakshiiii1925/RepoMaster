@@ -145,7 +145,7 @@ class ViewVehicleActivity : AppCompatActivity() {
         setupDeleteObserver()
 
 
-        homeViewModel.getAllVehicles(agencyId)
+        homeViewModel.getAllVehicles()
 
 
 
@@ -194,7 +194,7 @@ class ViewVehicleActivity : AppCompatActivity() {
         swipeRefresh.setOnRefreshListener {
 
 
-            homeViewModel.getAllVehicles(agencyId)
+            homeViewModel.getAllVehicles()
 
 
         }
@@ -220,7 +220,7 @@ class ViewVehicleActivity : AppCompatActivity() {
 
 
 
-                homeViewModel.getAllVehicles(agencyId)
+                homeViewModel.getAllVehicles()
 
 
 

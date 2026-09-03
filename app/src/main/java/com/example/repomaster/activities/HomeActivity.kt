@@ -104,10 +104,9 @@ class HomeActivity : AppCompatActivity() {
                 factory
             )[HomeViewModel::class.java]
         StatusSyncScheduler.start(this)
-        val agencyId =
-            SessionManager(this).getAgencyId()
+
         homeViewModel.syncVehicles(
-            agencyId
+
         )
         setupUserDetails()
 

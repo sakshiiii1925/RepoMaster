@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
+import com.example.repomaster.models.AdminPayment
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.repomaster.databinding.ActivityPaymentHistoryBinding
@@ -87,7 +88,10 @@ class PaymentHistoryActivity : AppCompatActivity() {
         adapter =
             PaymentHistoryAdapter1(
                 emptyList()
-            )
+            ) { payment ->
+
+                showDeleteConfirmation(payment)
+            }
 
         binding.recyclerPaymentHistory.layoutManager =
             LinearLayoutManager(this)
@@ -147,8 +151,52 @@ class PaymentHistoryActivity : AppCompatActivity() {
                 ).show()
             }
         }
+        viewModel.deleteResult.observe(this) { result ->
+
+            result.onSuccess { message ->
+
+                Toast.makeText(
+                    this,
+                    message,
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                // Reload payment history
+                viewModel.loadPaymentHistory(userId)
+                viewModel.loadSummary(userId)
+            }
+
+            result.onFailure { error ->
+
+                Toast.makeText(
+                    this,
+                    error.message ?: "Delete failed",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
     }
 
+    private fun showDeleteConfirmation(
+        payment: AdminPayment
+    ) {
 
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Delete Payment")
+            .setMessage(
+                "Are you sure you want to delete this payment?\n\n" +
+                        "Vehicle: ${payment.vehicle_number}\n" +
+                        "Amount: ₹${payment.amount}\n" +
+                        "Payment Method: ${payment.payment_method}"
+            )
+            .setNegativeButton("Cancel", null)
+            .setPositiveButton("Delete") { _, _ ->
+
+                viewModel.deletePayment(
+                    payment.id
+                )
+            }
+            .show()
+    }
 
 }

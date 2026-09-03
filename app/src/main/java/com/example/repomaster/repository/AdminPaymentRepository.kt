@@ -2,7 +2,7 @@ package com.example.repomaster.repository
 
 import com.example.repomaster.api.AdminPaymentApi
 import com.example.repomaster.models.*
-
+import okhttp3.Response
 class AdminPaymentRepository(
     private val api: AdminPaymentApi
 ) {
@@ -103,5 +103,11 @@ class AdminPaymentRepository(
 
     suspend fun getPaymentHistory(userId: Int) =
         api.getPaymentHistory(userId)
+    suspend fun deletePayment(
+        paymentId: Int
+    )=
+
+         api.deletePayment(paymentId)
+
 }
 

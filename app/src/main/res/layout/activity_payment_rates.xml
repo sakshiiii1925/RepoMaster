@@ -50,7 +50,7 @@
                 android:textStyle="bold"
                 android:textSize="14sp"
                 android:layout_marginTop="5dp"
-                android:layout_marginBottom="18dp" />
+                android:layout_marginBottom="18dp"/>
 
 
             <!-- Add / Edit Rate Card -->
@@ -164,7 +164,6 @@
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
-
 
             <!-- Existing Rates -->
             <TextView

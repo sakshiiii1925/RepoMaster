@@ -55,11 +55,12 @@ class HomeViewModel(
     }
     val vehicleList = MutableLiveData<List<Vehicle>>()
 
-    fun getAllVehicles(agencyId: String) {
+    fun getAllVehicles() {
 
         viewModelScope.launch {
 
-            vehicleList.value = repository.getAllVehicles(agencyId)
+            vehicleList.value =
+                repository.getAllVehicles()
 
         }
     }
@@ -142,11 +143,11 @@ class HomeViewModel(
         emit(repository.getSearchHistory(agencyId))
 
     }
-    fun syncVehicles(agencyId: String) {
+    fun syncVehicles() {
 
         viewModelScope.launch {
 
-            repository.syncAllVehicles(agencyId)
+            repository.syncAllVehicles()
 
         }
     }

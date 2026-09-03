@@ -105,5 +105,9 @@ interface AdminPaymentApi {
     suspend fun getPaymentHistory(
         @Query("user_id") userId: Int
     ): Response<ApiResponse<List<AdminPayment>>>
+    @DELETE("api/admin/payment/{id}")
+    suspend fun deletePayment(
+        @Path("id") id: Int
+    ): Response<DeleteResponse>
 }
 

@@ -389,5 +389,60 @@ class AdminPaymentViewModel(
             }
         }
     }
+    private val _deleteResult =
+        MutableLiveData<Result<String>>()
+
+    val deleteResult: LiveData<Result<String>> =
+        _deleteResult
+    fun deletePayment(paymentId: Int) {
+
+        viewModelScope.launch {
+
+            try {
+
+                val response =
+                    repository.deletePayment(paymentId)
+
+                if (response.isSuccessful) {
+
+                    val body = response.body()
+
+                    if (body?.success == true) {
+
+                        _deleteResult.value =
+                            Result.success(
+                                body.message
+                            )
+
+                    } else {
+
+                        _deleteResult.value =
+                            Result.failure(
+                                Exception(
+                                    body?.message
+                                        ?: "Delete failed"
+                                )
+                            )
+                    }
+
+                } else {
+
+                    _deleteResult.value =
+                        Result.failure(
+                            Exception(
+                                "Delete failed: ${response.code()}"
+                            )
+                        )
+                }
+
+            } catch (e: Exception) {
+
+                _deleteResult.value =
+                    Result.failure(
+                        e
+                    )
+            }
+        }
+    }
 }
 

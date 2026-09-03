@@ -14,47 +14,59 @@ interface PendingImageUploadDao {
     )
 
     @Query("""
-        SELECT * 
+        SELECT *
         FROM pending_image_uploads
-        WHERE uploadStatus = 'PENDING'
+        WHERE agencyId = :agencyId
+        AND uploadStatus = 'PENDING'
         ORDER BY createdAt DESC
     """)
-    suspend fun getPendingUploads(): List<PendingImageUploadEntity>
+    suspend fun getPendingUploads(
+        agencyId: String
+    ): List<PendingImageUploadEntity>
 
     @Query("""
         SELECT *
         FROM pending_image_uploads
         WHERE vehicleNumber = :vehicleNumber
+        AND agencyId = :agencyId
         AND uploadStatus = 'PENDING'
         LIMIT 1
     """)
     suspend fun getPendingForVehicle(
-        vehicleNumber: String
+        vehicleNumber: String,
+        agencyId: String
     ): PendingImageUploadEntity?
 
     @Query("""
         UPDATE pending_image_uploads
         SET uploadStatus = 'UPLOADED'
         WHERE id = :id
+        AND agencyId = :agencyId
     """)
     suspend fun markUploaded(
-        id: Int
+        id: Int,
+        agencyId: String
     )
 
     @Query("""
         DELETE FROM pending_image_uploads
         WHERE id = :id
+        AND agencyId = :agencyId
     """)
     suspend fun delete(
-        id: Int
+        id: Int,
+        agencyId: String
     )
+
     @Query("""
-    UPDATE pending_image_uploads
-    SET uploadStatus = 'UPLOADED'
-    WHERE vehicleNumber = :vehicleNumber
-    AND uploadStatus = 'PENDING'
-""")
+        UPDATE pending_image_uploads
+        SET uploadStatus = 'UPLOADED'
+        WHERE vehicleNumber = :vehicleNumber
+        AND agencyId = :agencyId
+        AND uploadStatus = 'PENDING'
+    """)
     suspend fun markUploadedByVehicle(
-        vehicleNumber: String
+        vehicleNumber: String,
+        agencyId: String
     )
 }
