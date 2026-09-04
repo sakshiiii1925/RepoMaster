@@ -79,9 +79,10 @@ class UserPaymentHistoryActivity : AppCompatActivity() {
 
         adapter =
             PaymentHistoryAdapter1(
-                emptyList()
+                emptyList(),
+                showDeleteButton = false
             ) {
-                // User cannot delete payment
+                // User cannot delete
             }
 
         binding.recyclerPaymentHistory.layoutManager =

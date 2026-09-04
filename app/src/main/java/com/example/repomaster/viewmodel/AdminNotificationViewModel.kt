@@ -18,13 +18,11 @@ class AdminNotificationViewModel(
     val notifications: LiveData<List<AdminNotification>>
         get() = _notifications
 
-
     private val _unreadCount =
         MutableLiveData<Int>()
 
     val unreadCount: LiveData<Int>
         get() = _unreadCount
-
 
     private val _error =
         MutableLiveData<String?>()
@@ -32,60 +30,43 @@ class AdminNotificationViewModel(
     val error: LiveData<String?>
         get() = _error
 
-
-    fun loadNotifications(
-        agencyId: String
-    ) {
-
+    fun loadNotifications(agencyId: String) {
         viewModelScope.launch {
 
             val result =
-                repository.getNotifications(
-                    agencyId
-                )
+                repository.getNotifications(agencyId)
 
-            result
-                .onSuccess {
+            result.onSuccess {
 
-                    _notifications.value = it
+                _notifications.value = it
 
-                }
-                .onFailure {
+            }.onFailure {
 
-                    _error.value =
-                        it.message
-                            ?: "Failed to load notifications"
-                }
+                _error.value =
+                    it.message
+                        ?: "Failed to load notifications"
+            }
         }
     }
 
-
-    fun loadUnreadCount(
-        agencyId: String
-    ) {
-
+    fun loadUnreadCount(agencyId: String) {
         viewModelScope.launch {
 
             val result =
-                repository.getUnreadCount(
-                    agencyId
-                )
+                repository.getUnreadCount(agencyId)
 
-            result
-                .onSuccess {
+            result.onSuccess {
 
-                    _unreadCount.value = it
+                _unreadCount.value = it
 
-                }
-                .onFailure {
+            }.onFailure {
 
-                    _error.value =
-                        it.message
-                            ?: "Failed to load notification count"
-                }
+                _error.value =
+                    it.message
+                        ?: "Failed to load notification count"
+            }
         }
     }
-
 
     fun markAsRead(
         id: Int,
@@ -97,25 +78,31 @@ class AdminNotificationViewModel(
             val result =
                 repository.markAsRead(id)
 
-            result
-                .onSuccess {
+            result.onSuccess {
 
-                    // Refresh notification list
-                    loadNotifications(
-                        agencyId
-                    )
+                /*
+                 * Remove notification immediately
+                 * from the current list.
+                 */
+                val currentList =
+                    _notifications.value.orEmpty()
 
-                    // Refresh unread count
-                    loadUnreadCount(
-                        agencyId
-                    )
-                }
-                .onFailure {
+                _notifications.value =
+                    currentList.filter {
+                        it.id != id
+                    }
 
-                    _error.value =
-                        it.message
-                            ?: "Failed to mark notification as read"
-                }
+                /*
+                 * Update unread count.
+                 */
+                loadUnreadCount(agencyId)
+
+            }.onFailure {
+
+                _error.value =
+                    it.message
+                        ?: "Failed to mark notification as read"
+            }
         }
     }
 }

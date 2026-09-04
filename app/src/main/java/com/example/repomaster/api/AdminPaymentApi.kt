@@ -12,8 +12,9 @@ interface AdminPaymentApi {
     // =========================================================
 
     @GET("api/admin/payment/users")
-    suspend fun getUsers():
-            Response<ApiResponse<List<AdminPaymentUser>>>
+    suspend fun getUsers(
+        @Query("agency_id") agencyId: String
+    ): Response<ApiResponse<List<AdminPaymentUser>>>
 
 
     // =========================================================
@@ -23,7 +24,8 @@ interface AdminPaymentApi {
 
     @GET("api/admin/payment/user-vehicles")
     suspend fun getUserVehicles(
-        @Query("user_id") userId: Int
+        @Query("user_id") userId: Int,
+        @Query("agency_id") agencyId: String
     ): Response<ApiResponse<List<AdminPaymentVehicle>>>
 
 

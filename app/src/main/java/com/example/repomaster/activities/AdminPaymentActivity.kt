@@ -7,12 +7,15 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import android.content.Intent
+import com.example.repomaster.R
 import com.example.repomaster.databinding.ActivityAdminPaymentBinding
 import com.example.repomaster.models.*
 import com.example.repomaster.network.RetrofitClient
 import com.example.repomaster.repository.AdminPaymentRepository
 import com.example.repomaster.viewmodel.AdminPaymentViewModel
 import com.example.repomaster.viewmodel.AdminPaymentViewModelFactory
+import com.example.repomaster.utils.SessionManager
+import com.google.android.material.appbar.MaterialToolbar
 
 class AdminPaymentActivity : AppCompatActivity() {
 
@@ -26,13 +29,13 @@ class AdminPaymentActivity : AppCompatActivity() {
     private val viewModel: AdminPaymentViewModel by viewModels {
         AdminPaymentViewModelFactory(repository)
     }
-
+    private lateinit var sessionManager: SessionManager
 
     private var users = emptyList<AdminPaymentUser>()
 
     private var vehicles =
         emptyList<AdminPaymentVehicle>()
-
+    private lateinit var toolbar: MaterialToolbar
     private var selectedUser: AdminPaymentUser? = null
 
     private var selectedVehicle: AdminPaymentVehicle? = null
@@ -51,15 +54,39 @@ class AdminPaymentActivity : AppCompatActivity() {
             ActivityAdminPaymentBinding.inflate(layoutInflater)
 
         setContentView(binding.root)
-
+        sessionManager = SessionManager(this)
         setupPaymentMethods()
         setupUserSearch()
         setupVehicleDropdown()
         setupObservers()
         setupButtons()
         setupPaymentHistoryButton()
+        val agencyId =
+            sessionManager.getAgencyId()
 
-        viewModel.loadUsers()
+        if (agencyId.isBlank()) {
+
+            Toast.makeText(
+                this,
+                "Agency ID not found. Please login again.",
+                Toast.LENGTH_LONG
+            ).show()
+
+            return
+        }
+
+        viewModel.loadUsers(agencyId)
+        toolbar =
+            findViewById(R.id.toolbar)
+
+        setSupportActionBar(toolbar)
+
+        toolbar.setTitleTextColor(
+            getColor(R.color.black)
+        )
+        supportActionBar?.title =
+            "Payment Details"
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
 
@@ -105,8 +132,7 @@ class AdminPaymentActivity : AppCompatActivity() {
 
         binding.autoUser.setOnItemClickListener { _, _, position, _ ->
 
-            val user =
-                users[position]
+            val user = users[position]
 
             selectedUser = user
 
@@ -120,18 +146,38 @@ class AdminPaymentActivity : AppCompatActivity() {
 
             clearVehicleInformation()
 
-            viewModel.loadVehicles(user.id)
-
-            viewModel.loadSummary(user.id)
-
             binding.autoVehicle.setText(
                 "",
                 false
             )
 
-            binding.btnPaymentHistory.isEnabled =
-                true
+            val agencyId =
+                sessionManager.getAgencyId()
+
+            if (agencyId.isBlank()) {
+
+                Toast.makeText(
+                    this,
+                    "Agency ID not found. Please login again.",
+                    Toast.LENGTH_LONG
+                ).show()
+
+                return@setOnItemClickListener
+            }
+
+            viewModel.loadVehicles(
+                user.id,
+                agencyId
+            )
+
+            viewModel.loadSummary(
+                user.id
+            )
+
+            binding.btnPaymentHistory.isEnabled = true
         }
+
+
     }
 
 
@@ -291,26 +337,71 @@ class AdminPaymentActivity : AppCompatActivity() {
                 Toast.LENGTH_LONG
             ).show()
 
+            // -----------------------------------------
+            // Save current user and paid vehicle
+            // -----------------------------------------
+
+            val user = selectedUser
+            val paidVehicle = selectedVehicle
+
+            // -----------------------------------------
+            // Clear payment amount
+            // -----------------------------------------
+
             binding.edtPaymentAmount.setText("")
 
-            val user =
-                selectedUser
+            // -----------------------------------------
+            // Remove ONLY the paid work
+            // -----------------------------------------
 
-            val vehicle =
-                selectedVehicle
+            if (paidVehicle != null) {
 
-            if (user != null && vehicle != null) {
+                vehicles = vehicles.filterNot {
 
-                viewModel.calculatePayment(
-                    userId = user.id,
-                    vehicle = vehicle
-                )
+                    it.repo_year == paidVehicle.repo_year &&
+                            it.repo_month == paidVehicle.repo_month &&
+                            it.loan_number == paidVehicle.loan_number &&
+                            it.work_type == paidVehicle.work_type
+                }
 
-                viewModel.loadSummary(
-                    user.id
-                )
+                setupVehicleAdapter(vehicles)
+            }
+
+            // -----------------------------------------
+            // Clear selected vehicle
+            // -----------------------------------------
+
+            selectedVehicle = null
+
+            clearVehicleInformation()
+
+            // -----------------------------------------
+            // Refresh user summary
+            // -----------------------------------------
+
+            if (user != null) {
+
+                viewModel.loadSummary(user.id)
+
+                // -------------------------------------
+                // Refresh vehicle list from backend
+                // -------------------------------------
+
+                val agencyId =
+                    sessionManager.getAgencyId()
+
+                if (agencyId.isNotBlank()) {
+
+                    viewModel.loadVehicles(
+                        user.id,
+                        agencyId
+                    )
+                }
             }
         }
+
+
+
     }
 
 
@@ -677,5 +768,14 @@ class AdminPaymentActivity : AppCompatActivity() {
 
             startActivity(intent)
         }
+    }
+    override fun onSupportNavigateUp(): Boolean {
+
+
+        finish()
+
+
+        return true
+
     }
 }

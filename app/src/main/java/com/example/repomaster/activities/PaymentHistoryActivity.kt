@@ -7,6 +7,7 @@ import androidx.activity.viewModels
 import com.example.repomaster.models.AdminPayment
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.repomaster.R
 import com.example.repomaster.databinding.ActivityPaymentHistoryBinding
 import com.example.repomaster.network.RetrofitClient
 import com.example.repomaster.repository.AdminPaymentRepository
@@ -77,6 +78,11 @@ class PaymentHistoryActivity : AppCompatActivity() {
     }
 
     private fun setupToolbar() {
+        binding.toolbar.setTitleTextColor(
+            getColor(R.color.black)
+        )
+        supportActionBar?.title =
+            "Payment History"
 
         binding.toolbar.setNavigationOnClickListener {
             finish()
@@ -87,7 +93,8 @@ class PaymentHistoryActivity : AppCompatActivity() {
 
         adapter =
             PaymentHistoryAdapter1(
-                emptyList()
+                emptyList(),
+                showDeleteButton = true
             ) { payment ->
 
                 showDeleteConfirmation(payment)
@@ -198,5 +205,13 @@ class PaymentHistoryActivity : AppCompatActivity() {
             }
             .show()
     }
+    override fun onSupportNavigateUp(): Boolean {
 
+
+        finish()
+
+
+        return true
+
+    }
 }

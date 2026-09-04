@@ -1,6 +1,7 @@
 package com.example.repomaster.activities
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.repomaster.databinding.ItemPaymentHistory1Binding
@@ -8,6 +9,7 @@ import com.example.repomaster.models.AdminPayment
 
 class PaymentHistoryAdapter1(
     private var items: List<AdminPayment>,
+    private val showDeleteButton: Boolean,
     private val onDeleteClick: (AdminPayment) -> Unit
 ) : RecyclerView.Adapter<PaymentHistoryAdapter1.ViewHolder>() {
 
@@ -59,8 +61,26 @@ class PaymentHistoryAdapter1(
         binding.txtRemarks.text =
             "Remarks: ${item.remarks ?: "-"}"
 
-        binding.btnDelete.setOnClickListener {
-            onDeleteClick(item)
+
+        // ================================================
+        // DELETE BUTTON
+        // ================================================
+
+        if (showDeleteButton) {
+
+            binding.btnDelete.visibility =
+                View.VISIBLE
+
+            binding.btnDelete.setOnClickListener {
+                onDeleteClick(item)
+            }
+
+        } else {
+
+            binding.btnDelete.visibility =
+                View.GONE
+
+            binding.btnDelete.setOnClickListener(null)
         }
     }
 

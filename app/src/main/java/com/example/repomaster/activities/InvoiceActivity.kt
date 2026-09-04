@@ -238,4 +238,13 @@ class InvoiceActivity : AppCompatActivity() {
             }
         )
     }
+    override fun onSupportNavigateUp(): Boolean {
+
+
+        finish()
+
+
+        return true
+
+    }
 }

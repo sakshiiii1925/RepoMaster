@@ -284,9 +284,23 @@ class VehicleRepository(
 
             try {
 
+                val userId =
+                    sessionManager.getUserId()
+
+                if (userId <= 0) {
+
+                    Log.e(
+                        "STATUS_UPDATE",
+                        "Invalid userId: $userId"
+                    )
+
+                    return StatusSaveResult.FAILED
+                }
+
                 val response =
                     api.updateStatus(
                         number,
+                        userId,
                         StatusUpdateRequest(status)
                     )
 
@@ -444,9 +458,23 @@ class VehicleRepository(
                     "Syncing ${vehicle.vehicleNumber} -> $status"
                 )
 
+                val userId =
+                    sessionManager.getUserId()
+
+                if (userId <= 0) {
+
+                    Log.e(
+                        "STATUS_SYNC",
+                        "Invalid userId: $userId"
+                    )
+
+                    return false
+                }
+
                 val response =
                     api.updateStatus(
                         vehicle.vehicleNumber,
+                        userId,
                         StatusUpdateRequest(status)
                     )
 

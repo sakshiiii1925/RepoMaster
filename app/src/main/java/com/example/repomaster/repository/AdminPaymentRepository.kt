@@ -11,8 +11,10 @@ class AdminPaymentRepository(
     // USERS
     // =========================================================
 
-    suspend fun getUsers() =
-        api.getUsers()
+    suspend fun getUsers(
+        agencyId: String
+    ) =
+        api.getUsers(agencyId)
 
 
     // =========================================================
@@ -20,9 +22,13 @@ class AdminPaymentRepository(
     // =========================================================
 
     suspend fun getUserVehicles(
-        userId: Int
+        userId: Int,
+        agencyId: String
     ) =
-        api.getUserVehicles(userId)
+        api.getUserVehicles(
+            userId = userId,
+            agencyId = agencyId
+        )
 
 
     // =========================================================

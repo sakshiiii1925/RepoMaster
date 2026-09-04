@@ -9,23 +9,34 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.repomaster.R
 import com.example.repomaster.adapters.AdminNotificationAdapter
+import com.example.repomaster.models.AdminNotificationItem
 import com.example.repomaster.repository.AdminNotificationRepository
 import com.example.repomaster.utils.SessionManager
 import com.example.repomaster.viewmodel.AdminNotificationViewModel
 import com.example.repomaster.viewmodel.AdminNotificationViewModelFactory
+import com.example.repomaster.viewmodel.UserViewModel
 import com.example.repomaster.network.RetrofitClient
 import com.google.android.material.appbar.MaterialToolbar
 
 class AdminNotificationActivity : AppCompatActivity() {
 
     private lateinit var recyclerNotifications: RecyclerView
-
     private lateinit var adapter: AdminNotificationAdapter
 
-    private lateinit var viewModel: AdminNotificationViewModel
+    private lateinit var notificationViewModel:
+            AdminNotificationViewModel
 
-    private lateinit var sessionManager: SessionManager
+    private lateinit var userViewModel:
+            UserViewModel
 
+    private lateinit var sessionManager:
+            SessionManager
+
+    private var vehicleNotifications =
+        emptyList<AdminNotificationItem>()
+
+    private var pendingUserNotifications =
+        emptyList<AdminNotificationItem>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -35,44 +46,33 @@ class AdminNotificationActivity : AppCompatActivity() {
             R.layout.activity_admin_notification
         )
 
-
         val toolbar =
-            findViewById<androidx.appcompat.widget.Toolbar>(
+            findViewById<MaterialToolbar>(
                 R.id.toolbar
             )
 
         toolbar.setNavigationOnClickListener {
-
             finish()
-
         }
-
 
         recyclerNotifications =
             findViewById(
                 R.id.recyclerNotifications
             )
 
+        recyclerNotifications.layoutManager =
+            LinearLayoutManager(this)
 
         sessionManager =
             SessionManager(this)
 
-
-        recyclerNotifications.layoutManager =
-            LinearLayoutManager(this)
-
-
-        setupViewModel()
-
+        setupViewModels()
         setupAdapter()
-
         observeNotifications()
-
         loadNotifications()
     }
 
-
-    private fun setupViewModel() {
+    private fun setupViewModels() {
 
         val repository =
             AdminNotificationRepository(
@@ -84,13 +84,17 @@ class AdminNotificationActivity : AppCompatActivity() {
                 repository
             )
 
-        viewModel =
+        notificationViewModel =
             ViewModelProvider(
                 this,
                 factory
             )[AdminNotificationViewModel::class.java]
-    }
 
+        userViewModel =
+            ViewModelProvider(this)[
+                UserViewModel::class.java
+            ]
+    }
 
     private fun setupAdapter() {
 
@@ -99,68 +103,193 @@ class AdminNotificationActivity : AppCompatActivity() {
                 emptyList()
             ) { notification ->
 
+                /*
+                 * USER REQUEST
+                 */
+                if (notification.type == "USER") {
 
-                // Mark notification as read
-                viewModel.markAsRead(
-                    notification.id,
-                    sessionManager.getAgencyId()
-                )
-
-
-                // Open vehicle details
-                val intent =
-                    Intent(
-                        this,
-                        VehicleDetailsActivity::class.java
+                    startActivity(
+                        Intent(
+                            this,
+                            PendingUsersActivity::class.java
+                        )
                     )
 
-                intent.putExtra(
-                    "vehicleNumber",
-                    notification.vehicle_number
-                )
+                    return@AdminNotificationAdapter
+                }
 
-                startActivity(intent)
+                /*
+                 * VEHICLE NOTIFICATION
+                 */
+
+                val notificationId =
+                    notification.notificationId
+
+                if (notificationId != null) {
+
+                    /*
+                     * Remove immediately from UI.
+                     */
+                    adapter.removeNotification(
+                        notification
+                    )
+
+                    /*
+                     * Mark as read in database.
+                     */
+                    notificationViewModel.markAsRead(
+                        notificationId,
+                        sessionManager.getAgencyId()
+                    )
+                }
+
+                /*
+                 * Open vehicle details.
+                 */
+                val vehicleNumber =
+                    notification.vehicleNumber
+
+                if (!vehicleNumber.isNullOrBlank()) {
+
+                    val intent =
+                        Intent(
+                            this,
+                            VehicleDetailsActivity::class.java
+                        )
+
+                    intent.putExtra(
+                        "vehicleNumber",
+                        vehicleNumber
+                    )
+
+                    startActivity(intent)
+
+                } else {
+
+                    Toast.makeText(
+                        this,
+                        "Vehicle number not found",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
-
 
         recyclerNotifications.adapter =
             adapter
     }
 
 
+
+
     private fun observeNotifications() {
 
-        viewModel.notifications.observe(
-            this
-        ) { notifications ->
+        /*
+         * Vehicle notifications
+         */
+        notificationViewModel.notifications
+            .observe(this) { notifications ->
 
-            adapter.updateList(
-                notifications
-            )
-        }
+                vehicleNotifications =
+                    notifications.map { notification ->
 
+                        AdminNotificationItem(
 
-        viewModel.error.observe(
-            this
-        ) { error ->
+                            type = "VEHICLE",
 
-            if (!error.isNullOrEmpty()) {
+                            title =
+                                notification.vehicle_number,
 
-                Toast.makeText(
-                    this,
-                    error,
-                    Toast.LENGTH_SHORT
-                ).show()
+                            message =
+                                notification.message,
+
+                            date =
+                                notification.created_at,
+
+                            isRead =
+                                notification.is_read == 1,
+
+                            notificationId =
+                                notification.id,
+
+                            vehicleNumber =
+                                notification.vehicle_number
+                        )
+                    }
+
+                updateCombinedNotifications()
             }
-        }
+
+        /*
+         * Pending users
+         */
+        userViewModel.pendingUsers()
+            .observe(this) { response ->
+
+                if (
+                    response.isSuccessful &&
+                    response.body() != null
+                ) {
+
+                    pendingUserNotifications =
+                        response.body()!!.map { user ->
+
+                            AdminNotificationItem(
+
+                                type = "USER",
+
+                                title =
+                                    "New User Request",
+
+                                message =
+                                    "${user.fullName} wants to join your agency",
+
+                                date = "",
+
+                                isRead = false,
+
+                                notificationId =
+                                    user.id?.toInt()
+                            )
+                        }
+
+                    updateCombinedNotifications()
+                }
+            }
+
+        /*
+         * Notification errors
+         */
+        notificationViewModel.error
+            .observe(this) { error ->
+
+                if (
+                    !error.isNullOrEmpty()
+                ) {
+
+                    Toast.makeText(
+                        this,
+                        error,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
     }
 
+    private fun updateCombinedNotifications() {
+
+        val combined =
+            vehicleNotifications +
+                    pendingUserNotifications
+
+        adapter.updateList(
+            combined
+        )
+    }
 
     private fun loadNotifications() {
 
         val agencyId =
             sessionManager.getAgencyId()
-
 
         if (agencyId.isEmpty()) {
 
@@ -170,12 +299,49 @@ class AdminNotificationActivity : AppCompatActivity() {
                 Toast.LENGTH_SHORT
             ).show()
 
+            finish()
+
             return
         }
 
+        /*
+         * Load vehicle notifications
+         */
+        notificationViewModel
+            .loadNotifications(
+                agencyId
+            )
 
-        viewModel.loadNotifications(
-            agencyId
-        )
+        /*
+         * Load pending user requests
+         */
+        userViewModel
+            .loadPendingUsers(
+                agencyId
+            )
+    }
+
+    override fun onResume() {
+
+        super.onResume()
+
+        if (::sessionManager.isInitialized) {
+
+            val agencyId =
+                sessionManager.getAgencyId()
+
+            if (agencyId.isNotEmpty()) {
+
+                notificationViewModel
+                    .loadNotifications(
+                        agencyId
+                    )
+
+                userViewModel
+                    .loadPendingUsers(
+                        agencyId
+                    )
+            }
+        }
     }
 }

@@ -50,17 +50,22 @@ class AdminPaymentViewModel(
         get() = _users
 
 
-    fun loadUsers() {
+    fun loadUsers(agencyId: String) {
 
         viewModelScope.launch {
 
             try {
 
+                if (agencyId.isBlank()) {
+                    _error.value = "Agency ID not found"
+                    return@launch
+                }
+
                 _loading.value = true
                 _error.value = null
 
                 val response =
-                    repository.getUsers()
+                    repository.getUsers(agencyId)
 
                 if (response.isSuccessful) {
 
@@ -88,8 +93,7 @@ class AdminPaymentViewModel(
             } catch (e: Exception) {
 
                 _error.value =
-                    e.message
-                        ?: "Network error"
+                    e.message ?: "Network error"
 
             } finally {
 
@@ -99,9 +103,17 @@ class AdminPaymentViewModel(
     }
 
 
+
+
+
+
     // =========================================================
     // VEHICLES
     // =========================================================
+
+    // =========================================================
+// VEHICLES
+// =========================================================
 
     private val _vehicles =
         MutableLiveData<List<AdminPaymentVehicle>>()
@@ -111,18 +123,27 @@ class AdminPaymentViewModel(
 
 
     fun loadVehicles(
-        userId: Int
+        userId: Int,
+        agencyId: String
     ) {
 
         viewModelScope.launch {
 
             try {
 
+                if (agencyId.isBlank()) {
+                    _error.value = "Agency ID is required"
+                    return@launch
+                }
+
                 _loading.value = true
                 _error.value = null
 
                 val response =
-                    repository.getUserVehicles(userId)
+                    repository.getUserVehicles(
+                        userId = userId,
+                        agencyId = agencyId
+                    )
 
                 if (response.isSuccessful) {
 

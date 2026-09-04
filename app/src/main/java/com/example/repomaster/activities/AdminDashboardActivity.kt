@@ -394,51 +394,25 @@ R.id.nav_manage_rates->{
 
             R.id.menu_notification -> {
 
-                showNotificationChooser()
 
+                openNotifications()
                 return true
             }
         }
 
         return super.onOptionsItemSelected(item)
     }
-    private fun showNotificationChooser() {
 
-        val options = arrayOf(
-            "Pending User Requests",
-            "Vehicle Notifications"
+    private fun openNotifications() {
+
+        startActivity(
+            Intent(
+                this,
+                AdminNotificationActivity::class.java
+            )
         )
-
-        AlertDialog.Builder(this)
-            .setTitle("Notifications")
-            .setItems(options) { _, which ->
-
-                when (which) {
-
-                    0 -> {
-                        // Pending user requests
-                        startActivity(
-                            Intent(
-                                this,
-                                PendingUsersActivity::class.java
-                            )
-                        )
-                    }
-
-                    1 -> {
-                        // Vehicle status notifications
-                        startActivity(
-                            Intent(
-                                this,
-                                AdminNotificationActivity::class.java
-                            )
-                        )
-                    }
-                }
-            }
-            .setNegativeButton("Cancel", null)
-            .show()
     }
+
     private fun loadNotificationCounts() {
 
         if (!::txtBadge.isInitialized) {

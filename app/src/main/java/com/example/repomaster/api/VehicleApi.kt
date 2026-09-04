@@ -33,6 +33,7 @@ interface VehicleApi {
     @PUT("api/vehicles/{vehicleNumber}/status")
     suspend fun updateStatus(
         @Path("vehicleNumber") vehicleNumber: String,
+        @Query("userId") userId: Int,
         @Body request: StatusUpdateRequest
     ): Response<Vehicle>
 

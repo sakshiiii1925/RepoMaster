@@ -6,9 +6,8 @@
 
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     android:orientation="vertical"
-    android:background="@android:color/white">
+    android:background="#F6F7F9">
 
 
     <!-- ================================================= -->
@@ -17,355 +16,562 @@
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
-
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
 
+        android:background="@android:color/white"
+
         app:title="Upload Vehicle Images"
-        app:titleTextColor="@android:color/black"
+        app:titleTextColor="#172033"
 
         app:navigationIcon="@drawable/baseline_arrow_back_24"
-        app:navigationIconTint="@color/black"/>
+        app:navigationIconTint="#172033"
+
+        app:elevation="2dp"/>
 
 
     <!-- ================================================= -->
-    <!-- SCROLL VIEW -->
+    <!-- MAIN SCROLL -->
     <!-- ================================================= -->
 
     <ScrollView
-
         android:layout_width="match_parent"
         android:layout_height="0dp"
-
         android:layout_weight="1"
-
-        android:fillViewport="true">
-
+        android:fillViewport="true"
+        android:clipToPadding="false">
 
         <LinearLayout
-
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:orientation="vertical"
-
             android:padding="16dp">
 
 
-            <!-- ========================================= -->
-            <!-- VEHICLE NUMBER -->
-            <!-- ========================================= -->
+            <!-- ================================================= -->
+            <!-- VEHICLE INFO CARD -->
+            <!-- ================================================= -->
 
-            <TextView
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:text="Vehicle Number"
-
-                android:textStyle="bold"
-                android:textSize="14sp"/>
-
-
-            <TextView
-
-                android:id="@+id/txtVehicleNumber"
-
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
-                android:layout_marginTop="4dp"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#E2E5EA"
+                app:cardBackgroundColor="@android:color/white">
 
-                android:text="MH14AB1234"
-
-                android:textSize="20sp"
-                android:textStyle="bold"/>
-
-
-            <!-- ========================================= -->
-            <!-- STATUS -->
-            <!-- ========================================= -->
-
-            <TextView
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:layout_marginTop="16dp"
-
-                android:text="Selected Status"
-
-                android:textStyle="bold"
-                android:textSize="14sp"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="18dp">
 
 
-            <TextView
+                    <!-- Vehicle Number -->
 
-                android:id="@+id/txtSelectedStatus"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
 
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                        android:text="VEHICLE NUMBER"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:textColor="#7A8290"
+                        android:letterSpacing="0.08"/>
 
-                android:layout_marginTop="4dp"
 
-                android:text="repo mark"
+                    <TextView
+                        android:id="@+id/txtVehicleNumber"
 
-                android:textSize="18sp"
-                android:textStyle="bold"/>
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        android:layout_marginTop="5dp"
+
+                        android:text="MH14AB1234"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:textColor="#172033"/>
+
+
+                    <!-- Divider -->
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+
+                        android:layout_marginTop="14dp"
+                        android:layout_marginBottom="14dp"
+
+                        android:background="#ECEEF2"/>
+
+
+                    <!-- Status -->
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:text="STATUS"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:textColor="#7A8290"
+                        android:letterSpacing="0.08"/>
+
+
+                    <TextView
+                        android:id="@+id/txtSelectedStatus"
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:layout_marginTop="7dp"
+
+                        android:paddingStart="14dp"
+                        android:paddingEnd="14dp"
+                        android:paddingTop="7dp"
+                        android:paddingBottom="7dp"
+                        android:text="repo mark"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#002147"/>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
 
 
             <!-- ================================================= -->
-            <!-- INVENTORY -->
+            <!-- INVENTORY SECTION -->
             <!-- ================================================= -->
-
-            <TextView
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:layout_marginTop="28dp"
-
-                android:text="Inventory Images"
-
-                android:textSize="20sp"
-                android:textStyle="bold"/>
-
-
-            <TextView
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:layout_marginTop="4dp"
-
-                android:text="Select exactly 2 inventory images"
-
-                android:textSize="13sp"/>
-
-
-            <!-- Select inventory button -->
-
-            <com.google.android.material.button.MaterialButton
-
-                android:id="@+id/btnSelectInventory"
-
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-
-                android:layout_marginTop="12dp"
-
-                android:backgroundTint="#002147"
-
-                android:text="SELECT 2 INVENTORY IMAGES"
-
-                android:textColor="@android:color/white"/>
-
-
-            <!-- Inventory images -->
 
             <LinearLayout
-
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="22dp"
 
-                android:orientation="horizontal">
-
-
-                <ImageView
-
-                    android:id="@+id/imgInventory1"
-
-                    android:layout_width="0dp"
-                    android:layout_height="160dp"
-
-                    android:layout_weight="1"
-
-                    android:layout_marginEnd="6dp"
-
-                    android:background="#EEEEEE"
-
-                    android:scaleType="centerCrop"
-
-                    android:src="@drawable/outline_image_24"/>
+                android:orientation="vertical">
 
 
-                <ImageView
+                <!-- Section heading -->
 
-                    android:id="@+id/imgInventory2"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
-                    android:layout_width="0dp"
-                    android:layout_height="160dp"
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
 
-                    android:layout_weight="1"
+                        android:text="Inventory Images"
+                        android:textSize="19sp"
+                        android:textStyle="bold"
+                        android:textColor="#172033"/>
 
-                    android:layout_marginStart="6dp"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
 
-                    android:background="#EEEEEE"
+                        android:text="2 REQUIRED"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        android:textColor="#002147"/>
 
-                    android:scaleType="centerCrop"
+                </LinearLayout>
 
-                    android:src="@drawable/outline_image_24"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:layout_marginTop="4dp"
+
+                    android:text="Upload clear photos of the vehicle inventory."
+                    android:textSize="13sp"
+                    android:textColor="#747B87"/>
+
+
+                <!-- Select button -->
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSelectInventory"
+
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+
+                    android:layout_marginTop="13dp"
+
+                    android:text="SELECT 2 INVENTORY IMAGES"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/white"
+
+                    android:backgroundTint="#002147"
+
+                    app:cornerRadius="14dp"
+                    app:icon="@drawable/outline_image_24"
+                    app:iconTint="@android:color/white"
+                    app:iconGravity="textStart"
+                    app:iconPadding="10dp"/>
+
+
+                <!-- Inventory Images -->
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:layout_marginTop="12dp"
+
+                    android:orientation="horizontal">
+
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="0dp"
+                        android:layout_height="165dp"
+                        android:layout_weight="1"
+
+                        app:cardCornerRadius="14dp"
+                        app:cardElevation="0dp"
+                        app:strokeWidth="1dp"
+                        app:strokeColor="#DDE1E7">
+
+                        <ImageView
+                            android:id="@+id/imgInventory1"
+
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+
+                            android:background="#ECEEF2"
+
+                            android:scaleType="centerCrop"
+
+                            android:src="@drawable/outline_image_24"
+
+                            android:contentDescription="Inventory image 1"/>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="0dp"
+                        android:layout_height="165dp"
+                        android:layout_weight="1"
+
+                        android:layout_marginStart="10dp"
+
+                        app:cardCornerRadius="14dp"
+                        app:cardElevation="0dp"
+                        app:strokeWidth="1dp"
+                        app:strokeColor="#DDE1E7">
+
+                        <ImageView
+                            android:id="@+id/imgInventory2"
+
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+
+                            android:background="#ECEEF2"
+
+                            android:scaleType="centerCrop"
+
+                            android:src="@drawable/outline_image_24"
+
+                            android:contentDescription="Inventory image 2"/>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
 
             </LinearLayout>
 
 
             <!-- ================================================= -->
-            <!-- VEHICLE IMAGES -->
+            <!-- VEHICLE SECTION -->
             <!-- ================================================= -->
 
-            <TextView
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:layout_marginTop="32dp"
-
-                android:text="Vehicle Images"
-
-                android:textSize="20sp"
-                android:textStyle="bold"/>
-
-
-            <TextView
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:layout_marginTop="4dp"
-
-                android:text="Select exactly 5 vehicle images"
-
-                android:textSize="13sp"/>
-
-
-            <!-- Select vehicle button -->
-
-            <com.google.android.material.button.MaterialButton
-
-                android:id="@+id/btnSelectVehicle"
-
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="28dp"
 
-                android:backgroundTint="#002147"
-
-                android:text="SELECT 5 VEHICLE IMAGES"
-
-                android:textColor="@android:color/white"/>
+                android:orientation="vertical">
 
 
-            <!-- Vehicle image 1 -->
+                <!-- Section heading -->
 
-            <ImageView
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
-                android:id="@+id/imgVehicle1"
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
 
-                android:layout_width="match_parent"
-                android:layout_height="180dp"
+                        android:text="Vehicle Images"
+                        android:textSize="19sp"
+                        android:textStyle="bold"
+                        android:textColor="#172033"/>
 
-                android:layout_marginTop="12dp"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
 
-                android:background="#EEEEEE"
+                        android:text="5 REQUIRED"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        android:textColor="#002147"/>
 
-                android:scaleType="centerCrop"
-
-                android:src="@drawable/outline_image_24"/>
-
-
-            <!-- Vehicle image 2 -->
-
-            <ImageView
-
-                android:id="@+id/imgVehicle2"
-
-                android:layout_width="match_parent"
-                android:layout_height="180dp"
-
-                android:layout_marginTop="12dp"
-
-                android:background="#EEEEEE"
-
-                android:scaleType="centerCrop"
-
-                android:src="@drawable/outline_image_24"/>
+                </LinearLayout>
 
 
-            <!-- Vehicle image 3 -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
 
-            <ImageView
+                    android:layout_marginTop="4dp"
 
-                android:id="@+id/imgVehicle3"
-
-                android:layout_width="match_parent"
-                android:layout_height="180dp"
-
-                android:layout_marginTop="12dp"
-
-                android:background="#EEEEEE"
-
-                android:scaleType="centerCrop"
-
-                android:src="@drawable/outline_image_24"/>
+                    android:text="Upload clear photos from different angles."
+                    android:textSize="13sp"
+                    android:textColor="#747B87"/>
 
 
-            <!-- Vehicle image 4 -->
+                <!-- Select vehicle button -->
 
-            <ImageView
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSelectVehicle"
 
-                android:id="@+id/imgVehicle4"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
 
-                android:layout_width="match_parent"
-                android:layout_height="180dp"
+                    android:layout_marginTop="13dp"
 
-                android:layout_marginTop="12dp"
+                    android:text="SELECT 5 VEHICLE IMAGES"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/white"
 
-                android:background="#EEEEEE"
+                    android:backgroundTint="#002147"
 
-                android:scaleType="centerCrop"
+                    app:cornerRadius="14dp"
+                    app:icon="@drawable/outline_image_24"
+                    app:iconTint="@android:color/white"
+                    app:iconGravity="textStart"
+                    app:iconPadding="10dp"/>
 
-                android:src="@drawable/outline_image_24"/>
+
+                <!-- ========================================= -->
+                <!-- VEHICLE IMAGE 1 -->
+                <!-- ========================================= -->
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="190dp"
+
+                    android:layout_marginTop="14dp"
+
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="#DDE1E7">
+
+                    <ImageView
+                        android:id="@+id/imgVehicle1"
+
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+
+                        android:background="#ECEEF2"
+
+                        android:scaleType="centerCrop"
+
+                        android:src="@drawable/outline_image_24"
+
+                        android:contentDescription="Vehicle image 1"/>
+
+                </com.google.android.material.card.MaterialCardView>
 
 
-            <!-- Vehicle image 5 -->
+                <!-- VEHICLE IMAGE 2 -->
 
-            <ImageView
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="190dp"
 
-                android:id="@+id/imgVehicle5"
+                    android:layout_marginTop="10dp"
 
-                android:layout_width="match_parent"
-                android:layout_height="180dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="#DDE1E7">
 
-                android:layout_marginTop="12dp"
+                    <ImageView
+                        android:id="@+id/imgVehicle2"
 
-                android:background="#EEEEEE"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
 
-                android:scaleType="centerCrop"
+                        android:background="#ECEEF2"
 
-                android:src="@drawable/outline_image_24"/>
+                        android:scaleType="centerCrop"
+
+                        android:src="@drawable/outline_image_24"
+
+                        android:contentDescription="Vehicle image 2"/>
+
+                </com.google.android.material.card.MaterialCardView>
+
+
+                <!-- VEHICLE IMAGE 3 -->
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="190dp"
+
+                    android:layout_marginTop="10dp"
+
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="#DDE1E7">
+
+                    <ImageView
+                        android:id="@+id/imgVehicle3"
+
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+
+                        android:background="#ECEEF2"
+
+                        android:scaleType="centerCrop"
+
+                        android:src="@drawable/outline_image_24"
+
+                        android:contentDescription="Vehicle image 3"/>
+
+                </com.google.android.material.card.MaterialCardView>
+
+
+                <!-- VEHICLE IMAGE 4 -->
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="190dp"
+
+                    android:layout_marginTop="10dp"
+
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="#DDE1E7">
+
+                    <ImageView
+                        android:id="@+id/imgVehicle4"
+
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+
+                        android:background="#ECEEF2"
+
+                        android:scaleType="centerCrop"
+
+                        android:src="@drawable/outline_image_24"
+
+                        android:contentDescription="Vehicle image 4"/>
+
+                </com.google.android.material.card.MaterialCardView>
+
+
+                <!-- VEHICLE IMAGE 5 -->
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="190dp"
+
+                    android:layout_marginTop="10dp"
+
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="#DDE1E7">
+
+                    <ImageView
+                        android:id="@+id/imgVehicle5"
+
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+
+                        android:background="#ECEEF2"
+
+                        android:scaleType="centerCrop"
+
+                        android:src="@drawable/outline_image_24"
+
+                        android:contentDescription="Vehicle image 5"/>
+
+                </com.google.android.material.card.MaterialCardView>
+
+
+            </LinearLayout>
 
 
             <!-- ================================================= -->
             <!-- IMAGE SIZE INFORMATION -->
             <!-- ================================================= -->
 
-            <TextView
-
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="22dp"
 
-                android:gravity="center"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#EEF3F8">
 
-                android:text="Images will automatically be compressed to maximum 200 KB"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
 
-                android:textSize="12sp"
+                    android:gravity="center_vertical"
 
-                android:textColor="#666666"/>
+                    android:orientation="horizontal"
+                    android:padding="13dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+
+                        android:src="@android:drawable/ic_dialog_info"
+                        app:tint="#002147"
+
+                        android:contentDescription="Information"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+
+                        android:layout_weight="1"
+
+                        android:layout_marginStart="10dp"
+
+                        android:text="Images will automatically be compressed to a maximum of 200 KB."
+                        android:textSize="12sp"
+                        android:textColor="#4D5867"/>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
 
 
             <!-- ================================================= -->
@@ -373,7 +579,6 @@
             <!-- ================================================= -->
 
             <ProgressBar
-
                 android:id="@+id/progressBar"
 
                 android:layout_width="wrap_content"
@@ -386,31 +591,52 @@
                 android:visibility="gone"/>
 
 
-            <!-- ================================================= -->
-            <!-- SUBMIT -->
-            <!-- ================================================= -->
+            <!-- Bottom spacing -->
 
-            <com.google.android.material.button.MaterialButton
-
-                android:id="@+id/btnSubmit"
-
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-
-                android:layout_marginTop="24dp"
-                android:layout_marginBottom="30dp"
-
-                android:backgroundTint="#002147"
-
-                android:text="SUBMIT"
-
-                android:textColor="@android:color/white"
-
-                android:textSize="16sp"/>
-
+                android:layout_height="20dp"/>
 
         </LinearLayout>
 
     </ScrollView>
+
+
+    <!-- ================================================= -->
+    <!-- BOTTOM SUBMIT AREA -->
+    <!-- ================================================= -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:orientation="vertical"
+
+        android:background="@android:color/white"
+
+        android:elevation="8dp"
+
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="12dp">
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSubmit"
+
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+
+            android:text="SUBMIT IMAGES"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+
+            android:backgroundTint="#002147"
+
+            app:cornerRadius="15dp"/>
+
+    </LinearLayout>
 
 </LinearLayout>

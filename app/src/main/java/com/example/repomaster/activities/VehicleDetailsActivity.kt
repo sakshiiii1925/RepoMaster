@@ -516,6 +516,16 @@ private lateinit var toolbar: MaterialToolbar
                         "Status Updated Successfully",
                         Toast.LENGTH_SHORT
                     ).show()
+
+                    val status =
+                        autoStatus.text.toString().trim()
+
+                    if (
+                        status.equals("repo mark", ignoreCase = true) ||
+                        status.equals("Parked", ignoreCase = true)
+                    ) {
+                        openRepoImageUpload(status)
+                    }
                 }
 
                 StatusSaveResult.SAVED_OFFLINE -> {
@@ -525,6 +535,16 @@ private lateinit var toolbar: MaterialToolbar
                         "Status saved offline. It will sync when internet is available.",
                         Toast.LENGTH_LONG
                     ).show()
+
+                    val status =
+                        autoStatus.text.toString().trim()
+
+                    if (
+                        status.equals("repo mark", ignoreCase = true) ||
+                        status.equals("Parked", ignoreCase = true)
+                    ) {
+                        openRepoImageUpload(status)
+                    }
                 }
 
                 StatusSaveResult.FAILED -> {
@@ -539,6 +559,7 @@ private lateinit var toolbar: MaterialToolbar
                 null -> Unit
             }
         }
+
 
 //call region manager
         callregionmanager.setOnClickListener {
@@ -815,5 +836,36 @@ private lateinit var toolbar: MaterialToolbar
         return true
 
     }
+    private fun openRepoImageUpload(status: String) {
 
+        val vehicleNumber =
+            txtVehicleNo.text.toString().trim()
+
+        if (vehicleNumber.isEmpty()) {
+            Toast.makeText(
+                this,
+                "Vehicle number not found",
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+
+        val intent =
+            Intent(
+                this,
+                RepoImageUploadActivity::class.java
+            )
+
+        intent.putExtra(
+            "vehicleNumber",
+            vehicleNumber
+        )
+
+        intent.putExtra(
+            "status",
+            status
+        )
+
+        startActivity(intent)
+    }
 }

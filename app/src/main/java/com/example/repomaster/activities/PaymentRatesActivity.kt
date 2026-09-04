@@ -62,6 +62,14 @@ class PaymentRatesActivity : AppCompatActivity() {
                 R.id.toolbarPaymentRate
             )
 
+        setSupportActionBar(toolbar)
+
+        toolbar.setTitleTextColor(
+            getColor(R.color.white)
+        )
+        supportActionBar?.title =
+            "Vehicle Type Rates"
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         toolbar.setNavigationOnClickListener {
             finish()
         }
@@ -809,6 +817,15 @@ class PaymentRatesActivity : AppCompatActivity() {
             }
 
         displayRates(filteredRates)
+    }
+    override fun onSupportNavigateUp(): Boolean {
+
+
+        finish()
+
+
+        return true
+
     }
 }
 
