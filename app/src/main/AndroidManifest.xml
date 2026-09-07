@@ -23,6 +23,9 @@
         android:theme="@style/Theme.RepoMaster"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".activities.OtpVerificationActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.UserPaymentHistoryActivity"
             android:exported="false" />
         <activity

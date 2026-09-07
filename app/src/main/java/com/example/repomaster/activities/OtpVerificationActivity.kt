@@ -3,7 +3,6 @@ package com.example.repomaster.activities
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.repomaster.R
@@ -11,72 +10,72 @@ import com.example.repomaster.viewmodel.UserViewModel
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 
-class ForgetPassword : AppCompatActivity() {
+class OtpVerificationActivity : AppCompatActivity() {
 
-    private lateinit var etEmail: TextInputEditText
-    private lateinit var userViewModel: UserViewModel
-    private lateinit var btnVerifyEmail: MaterialButton
     private lateinit var toolbar: androidx.appcompat.widget.Toolbar
+
+    private lateinit var etOtp: TextInputEditText
+    private lateinit var btnVerifyOtp: MaterialButton
+
+    private lateinit var userViewModel: UserViewModel
+
+    private lateinit var email: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_forget_password)
+        setContentView(R.layout.activity_otp_verification)
 
         userViewModel =
             ViewModelProvider(this)[UserViewModel::class.java]
 
+        // Get email from ForgetPassword screen
+        email = intent.getStringExtra("email") ?: ""
+
         // Toolbar
         toolbar = findViewById(R.id.toolbar)
+
         setSupportActionBar(toolbar)
 
-        toolbar.setTitleTextColor(
-            resources.getColor(R.color.white)
-        )
-
-        supportActionBar?.title = "Forgot Password"
+        supportActionBar?.title = "Verify OTP"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setDisplayShowHomeEnabled(true)
 
         // Views
-        etEmail = findViewById(R.id.etEmail)
-        btnVerifyEmail = findViewById(R.id.btnVerifyEmail)
+        etOtp = findViewById(R.id.etOtp)
+        btnVerifyOtp = findViewById(R.id.btnVerifyOtp)
 
-        btnVerifyEmail.setOnClickListener {
+        btnVerifyOtp.setOnClickListener {
 
-            val email = etEmail.text
+            val otp = etOtp.text
                 .toString()
                 .trim()
 
-            // Validate email
-            if (email.isEmpty()) {
+            // Validate OTP
+            if (otp.isEmpty()) {
 
-                etEmail.error =
-                    "Enter your registered email"
-
-                return@setOnClickListener
-            }
-
-            if (!android.util.Patterns.EMAIL_ADDRESS
-                    .matcher(email)
-                    .matches()
-            ) {
-
-                etEmail.error =
-                    "Enter a valid email address"
+                etOtp.error = "Enter OTP"
 
                 return@setOnClickListener
             }
 
-            // Disable button while sending OTP
-            btnVerifyEmail.isEnabled = false
+            if (!otp.matches(Regex("^\\d{6}$"))) {
+
+                etOtp.error =
+                    "OTP must be 6 digits"
+
+                return@setOnClickListener
+            }
+
+            btnVerifyOtp.isEnabled = false
 
             userViewModel
-                .sendPasswordResetOtp(email)
+                .verifyPasswordResetOtp(
+                    email,
+                    otp
+                )
                 .observe(this) { response ->
 
-                    btnVerifyEmail.isEnabled = true
+                    btnVerifyOtp.isEnabled = true
 
                     if (
                         response.isSuccessful &&
@@ -85,14 +84,14 @@ class ForgetPassword : AppCompatActivity() {
 
                         Toast.makeText(
                             this,
-                            "OTP sent to your registered email",
+                            "OTP verified successfully",
                             Toast.LENGTH_SHORT
                         ).show()
 
-                        // Open OTP verification screen
+                        // Open Reset Password screen
                         val intent = Intent(
                             this,
-                            OtpVerificationActivity::class.java
+                            ResetPassword::class.java
                         )
 
                         intent.putExtra(
@@ -100,13 +99,20 @@ class ForgetPassword : AppCompatActivity() {
                             email
                         )
 
+                        intent.putExtra(
+                            "otp",
+                            otp
+                        )
+
                         startActivity(intent)
+
+                        finish()
 
                     } else {
 
                         val message =
                             response.body()?.message
-                                ?: "Unable to send OTP"
+                                ?: "Invalid OTP"
 
                         Toast.makeText(
                             this,
@@ -123,4 +129,3 @@ class ForgetPassword : AppCompatActivity() {
         return true
     }
 }
-

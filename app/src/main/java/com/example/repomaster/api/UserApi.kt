@@ -5,6 +5,7 @@ import com.example.repomaster.models.User
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
+import com.example.repomaster.models.PasswordOtpResponse
 import retrofit2.http.GET
 import com.example.repomaster.models.UpdateUserStatusRequest
 import com.example.repomaster.models.NotificationCountresponse
@@ -203,4 +204,21 @@ interface UserApi {
         @Path("id") id: Long,
         @Body request: UpdateUserStatusRequest
     ): Response<User>
+    @POST("api/forgot-password/send-otp")
+    suspend fun sendPasswordResetOtp(
+        @Query("email") email: String
+    ): Response<PasswordOtpResponse>
+
+    @POST("api/forgot-password/verify-otp")
+    suspend fun verifyPasswordResetOtp(
+        @Query("email") email: String,
+        @Query("otp") otp: String
+    ): Response<PasswordOtpResponse>
+
+    @POST("api/forgot-password/reset")
+    suspend fun resetPasswordWithOtp(
+        @Query("email") email: String,
+        @Query("otp") otp: String,
+        @Query("newPassword") password: String
+    ): Response<PasswordOtpResponse>
 }

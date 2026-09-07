@@ -281,4 +281,28 @@ class UserViewModel : ViewModel() {
             )
         )
     }
+    fun sendPasswordResetOtp(email: String) = liveData {
+        emit(repository.sendPasswordResetOtp(email))
+    }
+
+    fun verifyPasswordResetOtp(
+        email: String,
+        otp: String
+    ) = liveData {
+        emit(repository.verifyPasswordResetOtp(email, otp))
+    }
+
+    fun resetPasswordWithOtp(
+        email: String,
+        otp: String,
+        newPassword: String
+    ) = liveData {
+        emit(
+            repository.resetPasswordWithOtp(
+                email,
+                otp,
+                newPassword
+            )
+        )
+    }
 }

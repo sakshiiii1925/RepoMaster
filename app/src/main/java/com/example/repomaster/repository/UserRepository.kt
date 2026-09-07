@@ -4,6 +4,7 @@ import com.example.repomaster.models.LoginResponse
 import com.example.repomaster.models.User
 import com.example.repomaster.network.RetrofitClient
 import retrofit2.Response
+import com.example.repomaster.models.PasswordOtpResponse
 import com.example.repomaster.models.EmailVerifyResponse
 import com.example.repomaster.models.PendingCountResponse
 import com.example.repomaster.models.ReportSummary
@@ -216,7 +217,30 @@ class UserRepository {
             UpdateUserStatusRequest(status)
         )
     }
+    suspend fun sendPasswordResetOtp(
+        email: String
+    ): Response<PasswordOtpResponse> {
+        return RetrofitClient.userApi.sendPasswordResetOtp(email)
+    }
 
+    suspend fun verifyPasswordResetOtp(
+        email: String,
+        otp: String
+    ): Response<PasswordOtpResponse> {
+        return RetrofitClient.userApi.verifyPasswordResetOtp(email, otp)
+    }
+
+    suspend fun resetPasswordWithOtp(
+        email: String,
+        otp: String,
+        newPassword: String
+    ): Response<PasswordOtpResponse> {
+        return RetrofitClient.userApi.resetPasswordWithOtp(
+            email,
+            otp,
+            newPassword
+        )
+    }
 }
 
 

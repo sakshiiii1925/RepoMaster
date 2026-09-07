@@ -30,7 +30,6 @@ import android.view.View
 import android.view.animation.AnimationUtils
 import android.view.Menu
 import com.google.android.material.badge.BadgeDrawable
-import com.google.android.material.badge.BadgeUtils
 import android.os.Handler
 import android.os.Looper
 import com.google.android.material.badge.ExperimentalBadgeUtils
