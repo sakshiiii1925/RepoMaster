@@ -1071,21 +1071,61 @@ class VehicleRepository(
             val userId =
                 sessionManager.getUserId()
 
+            val agencyId =
+                sessionManager.getAgencyId()
+
+            val role =
+                sessionManager.getRole()
+
+            Log.d(
+                "GET_ALL_VEHICLES",
+                "userId=$userId, agencyId=$agencyId, role=$role"
+            )
+
             if (userId <= 0) {
+
+                Log.e(
+                    "GET_ALL_VEHICLES",
+                    "Invalid userId=$userId"
+                )
+
                 return emptyList()
             }
 
             val response =
                 api.getAllVehicles(userId)
 
-            if (
-                response.isSuccessful &&
-                response.body() != null
-            ) {
+            Log.d(
+                "GET_ALL_VEHICLES",
+                "HTTP code=${response.code()}"
+            )
 
-                response.body()!!
+            Log.d(
+                "GET_ALL_VEHICLES",
+                "successful=${response.isSuccessful}"
+            )
+
+            if (response.isSuccessful) {
+
+                val vehicles =
+                    response.body()
+
+                Log.d(
+                    "GET_ALL_VEHICLES",
+                    "vehicles received=${vehicles?.size ?: 0}"
+                )
+
+                vehicles ?: emptyList()
 
             } else {
+
+                val error =
+                    response.errorBody()?.string()
+
+                Log.e(
+                    "GET_ALL_VEHICLES",
+                    "API error=$error"
+                )
 
                 emptyList()
             }
@@ -1094,13 +1134,14 @@ class VehicleRepository(
 
             Log.e(
                 "GET_ALL_VEHICLES",
-                "Failed",
+                "Exception while loading vehicles",
                 e
             )
 
             emptyList()
         }
     }
+
     suspend fun markImageUploadPending(
         vehicleNumber: String,
         status: String

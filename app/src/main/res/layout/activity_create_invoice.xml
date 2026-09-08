@@ -244,7 +244,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Invoice Information"
+                    android:text="Invoice/Yard Information"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:textColor="#002147"/>
@@ -280,6 +280,8 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
 
+                <!-- Invoice Bank -->
+
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -289,23 +291,65 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etInvoiceBank"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:focusable="false"
+                        android:clickable="false"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
+
+                <!-- Area -->
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:hint="Invoice Address">
+                    android:hint="Branch">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etInvoiceAddress"
+                        android:id="@+id/etArea"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="false"
+                        android:clickable="false"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <!-- Yard Name -->
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:hint="Yard">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etYardName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="false"
+                        android:clickable="false"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <!-- Yard Address -->
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:hint="Yard Address">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etYardAddress"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:minLines="2"
-                        android:gravity="top"/>
+                        android:gravity="top"
+                        android:focusable="false"
+                        android:clickable="false"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 

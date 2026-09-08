@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.repomaster.models.Invoice
 import com.example.repomaster.repository.InvoiceRepository
 import kotlinx.coroutines.launch
+import com.example.repomaster.models.Vehicle
 import com.example.repomaster.models.PaymentCreateRequest
 import com.example.repomaster.models.Payment
 import com.example.repomaster.models.PaymentUpdateRequest
@@ -375,4 +376,42 @@ class InvoiceViewModel(
             }
         }
     }
+    private val _vehicleSuggestions =
+        MutableLiveData<List<Vehicle>>()
+
+    val vehicleSuggestions: LiveData<List<Vehicle>>
+        get() = _vehicleSuggestions
+
+    fun searchVehiclesForInvoice(keyword: String) {
+
+        viewModelScope.launch {
+
+            try {
+
+                val result =
+                    repository.searchVehiclesForInvoice(keyword)
+
+                result
+                    .onSuccess { vehicles ->
+
+                        _vehicleSuggestions.postValue(
+                            vehicles
+                        )
+                    }
+                    .onFailure {
+
+                        _vehicleSuggestions.postValue(
+                            emptyList()
+                        )
+                    }
+
+            } catch (e: Exception) {
+
+                _vehicleSuggestions.postValue(
+                    emptyList()
+                )
+            }
+        }
+    }
+
 }

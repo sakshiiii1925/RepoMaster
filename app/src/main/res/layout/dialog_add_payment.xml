@@ -8,13 +8,27 @@
     android:padding="20dp">
 
     <TextView
+        android:id="@+id/txtInvoiceTotal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Add Payment"
-        android:textSize="20sp"
+        android:text="Invoice Total: ₹0.00"
+        android:textSize="16sp"
         android:textStyle="bold"
-        android:layout_marginBottom="16dp"/>
-
+        android:layout_marginBottom="8dp" />
+    <TextView
+        android:id="@+id/txtAlreadyPaid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Already Paid: ₹0.00"
+        android:textSize="16sp"
+        android:layout_marginBottom="16dp" />
+    <TextView
+        android:id="@+id/txtRemainingAmount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Remaining: ₹0.00"
+        android:textSize="16sp"
+        android:layout_marginBottom="16dp" />
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

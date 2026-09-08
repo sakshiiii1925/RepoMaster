@@ -10,6 +10,7 @@ import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
+import com.example.repomaster.models.Vehicle
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -97,4 +98,8 @@ interface InvoiceApi {
     suspend fun deletePayment(
         @Path("id") id: Long
     ): Response<String>
+    @GET("api/invoices/vehicle-search")
+    suspend fun searchVehiclesForInvoice(
+        @Query("keyword") keyword: String
+    ): Response<List<Vehicle>>
 }

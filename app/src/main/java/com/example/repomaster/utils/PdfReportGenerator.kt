@@ -13,6 +13,13 @@ import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 import java.io.File
+import com.itextpdf.kernel.colors.DeviceRgb
+import com.itextpdf.kernel.pdf.canvas.draw.SolidLine
+import com.itextpdf.layout.borders.Border
+import com.itextpdf.layout.borders.SolidBorder
+import com.itextpdf.layout.properties.TextAlignment
+import com.itextpdf.layout.properties.UnitValue
+import com.itextpdf.layout.properties.VerticalAlignment
 import java.io.FileOutputStream
 import java.io.OutputStream
 import java.text.SimpleDateFormat
@@ -407,6 +414,50 @@ class PdfReportGenerator(
                     }"
                 )
             )
+            // --------------------------------
+// INVOICE / FINANCE DETAILS
+// --------------------------------
+
+            document.add(
+                Paragraph("INVOICE / FINANCE DETAILS")
+                    .setBold()
+                    .setFontSize(15f)
+                    .setMarginTop(15f)
+            )
+
+            val financeTable = Table(2)
+
+            addInvoiceRow(
+                financeTable,
+                "Finance Bank",
+                invoice.invoiceBank
+            )
+
+            addInvoiceRow(
+                financeTable,
+                "Branch",
+                invoice.branch
+            )
+
+            addInvoiceRow(
+                financeTable,
+                "Yard Name",
+                invoice.yardName
+            )
+
+            addInvoiceRow(
+                financeTable,
+                "Yard Address",
+                invoice.yardAddress
+            )
+
+            addInvoiceRow(
+                financeTable,
+                "DPD",
+                invoice.dpd?.toString()
+            )
+
+            document.add(financeTable)
 
             // --------------------------------
             // CUSTOMER DETAILS
@@ -594,6 +645,11 @@ class PdfReportGenerator(
                 paymentTable,
                 "Payment Received",
                 "₹${invoice.paymentReceived ?: 0.0}"
+            )
+            addInvoiceRow(
+                paymentTable,
+                "Remaining Amount",
+                "₹${invoice.remainingAmount ?: 0.0}"
             )
 
             document.add(paymentTable)

@@ -16,7 +16,7 @@ data class Invoice(
 
     val invoiceBank: String? = null,
     val invoiceAddress: String? = null,
-
+    val branch: String? = null,
     val loanNumber: String? = null,
     val customerName: String? = null,
     val vehicleNumber: String? = null,
@@ -54,5 +54,12 @@ data class Invoice(
 
     val paymentStatus: String? = null,
 
-    val agencyId: String? = null
+    val agencyId: String? = null,
+    val yardName: String? = null,
+    val yardAddress: String? = null,
+    val remainingAmount: Double? = null,
+    val dpd: Int? = 0,
+    val dpdChargePercent: Double? = 0.0,
+    val dpdExtraCharge: Double? = 0.0,
+    val dpdTotalAmount: Double? = 0.0
 )

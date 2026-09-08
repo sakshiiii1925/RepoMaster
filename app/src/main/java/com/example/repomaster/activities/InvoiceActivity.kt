@@ -79,7 +79,7 @@ class InvoiceActivity : AppCompatActivity() {
 
         observeInvoices()
         setupInvoiceSearch()
-        loadInvoices()
+
         val createinvoicebtn=findViewById<FloatingActionButton>(R.id.btnCreateInvoice)
         createinvoicebtn.setOnClickListener {
             val intent= Intent(this, CreateInvoice::class.java)
@@ -246,5 +246,11 @@ class InvoiceActivity : AppCompatActivity() {
 
         return true
 
+    }
+    override fun onResume() {
+        super.onResume()
+
+        // Refresh invoice list whenever this screen becomes visible
+        loadInvoices()
     }
 }

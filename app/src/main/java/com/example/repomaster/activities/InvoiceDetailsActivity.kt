@@ -29,6 +29,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.repomaster.adapter.PaymentHistoryAdapter
 import com.example.repomaster.utils.PdfReportGenerator
 import android.text.Editable
+
 class InvoiceDetailsActivity : AppCompatActivity() {
 
     private lateinit var invoiceViewModel: InvoiceViewModel
@@ -37,6 +38,11 @@ class InvoiceDetailsActivity : AppCompatActivity() {
     private lateinit var progressInvoiceDetails: View
     private var currentInvoice: Invoice? = null
     private var invoiceId: Long = -1L
+    private lateinit var txtDpd: TextView
+    private lateinit var txtDpdInvoiceAmount: TextView
+    private lateinit var txtDpdExtraCharge: TextView
+    private lateinit var txtDpdTotalAmount: TextView
+    private lateinit var etDpdPercent: TextInputEditText
     private lateinit var paymentHistorySection: LinearLayout
     private lateinit var btnPaymentHistory: Button
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,6 +51,22 @@ class InvoiceDetailsActivity : AppCompatActivity() {
         setContentView(
             R.layout.activity_invoice_details
         )
+        txtDpd =
+            findViewById(R.id.txtDpd)
+
+        txtDpdInvoiceAmount =
+            findViewById(R.id.txtDpdInvoiceAmount)
+
+        txtDpdExtraCharge =
+            findViewById(R.id.txtDpdExtraCharge)
+
+        txtDpdTotalAmount =
+            findViewById(R.id.txtDpdTotalAmount)
+
+        etDpdPercent =
+            findViewById(R.id.etDpdPercent)
+
+        setupDpdCalculation()
         paymentHistorySection =
             findViewById(R.id.paymentHistorySection)
 
@@ -122,7 +144,6 @@ class InvoiceDetailsActivity : AppCompatActivity() {
         setupViewModel()
         setupDeleteButton()
         observeInvoice()
-        setupPaymentButton()
         setupAddPaymentButton()
         setupPaymentHistoryButton()
         loadInvoice()
@@ -416,6 +437,15 @@ class InvoiceDetailsActivity : AppCompatActivity() {
             R.id.txtRemarks
         ).text =
             "Remarks: ${invoice.remarks ?: "N/A"}"
+        txtDpd.text =
+            "${invoice.dpd ?: 0} Days"
+
+        txtDpdInvoiceAmount.text =
+            "₹%.2f".format(
+                invoice.invoiceTotal ?: 0.0
+            )
+
+        calculateDpdCharge()
     }
 
     //generate pdf
@@ -470,251 +500,28 @@ class InvoiceDetailsActivity : AppCompatActivity() {
 
         invoiceViewModel.deleteInvoice(invoiceId)
     }
-    private fun setupPaymentButton() {
 
-        findViewById<Button>(
-            R.id.btnUpdatePayment
-        ).setOnClickListener {
-
-            val invoice = currentInvoice
-
-            if (invoice == null) {
-
-                Toast.makeText(
-                    this,
-                    "Invoice data not loaded",
-                    Toast.LENGTH_SHORT
-                ).show()
-
-                return@setOnClickListener
-            }
-
-            showPaymentDialog(invoice)
-        }
-    }
-    private fun showPaymentDialog(
-        invoice: Invoice
-    ) {
-
-        val dialogView =
-            layoutInflater.inflate(
-                R.layout.dialog_update_payment,
-                null
-            )
-
-        val txtDialogInvoiceTotal =
-            dialogView.findViewById<TextView>(
-                R.id.txtDialogInvoiceTotal
-            )
-
-        val txtRemainingAmount =
-            dialogView.findViewById<TextView>(
-                R.id.txtRemainingAmount
-            )
-
-        val etPaymentReceived =
-            dialogView.findViewById<EditText>(
-                R.id.etPaymentReceived
-            )
-
-        val etPaymentDate =
-            dialogView.findViewById<EditText>(
-                R.id.etPaymentDate
-            )
-        val txtPaymentStatusPreview =
-            dialogView.findViewById<TextView>(
-                R.id.txtPaymentStatusPreview
-            )
-
-
-
-        val invoiceTotal =
-            invoice.invoiceTotal ?: 0.0
-
-        val alreadyPaid =
-            invoice.paymentReceived ?: 0.0
-
-
-        txtDialogInvoiceTotal.text =
-            "Invoice Total: ₹%.2f".format(
-                invoiceTotal
-            )
-
-
-        val remaining =
-            invoiceTotal - alreadyPaid
-
-        txtRemainingAmount.text =
-            "Remaining: ₹%.2f".format(
-                remaining.coerceAtLeast(0.0)
-            )
-
-
-        etPaymentReceived.setText(
-            if (alreadyPaid > 0)
-                alreadyPaid.toString()
-            else
-                ""
-        )
-        etPaymentReceived.addTextChangedListener(
-            object : TextWatcher {
-
-                override fun beforeTextChanged(
-                    s: CharSequence?,
-                    start: Int,
-                    count: Int,
-                    after: Int
-                ) {}
-
-                override fun onTextChanged(
-                    s: CharSequence?,
-                    start: Int,
-                    before: Int,
-                    count: Int
-                ) {
-
-                    val payment =
-                        s?.toString()
-                            ?.toDoubleOrNull()
-                            ?: 0.0
-
-                    val remaining =
-                        invoiceTotal - payment
-
-                    txtRemainingAmount.text =
-                        "Remaining: ₹%.2f".format(
-                            remaining.coerceAtLeast(0.0)
-                        )
-                }
-
-                override fun afterTextChanged(
-                    s: Editable?
-                ) {}
-            }
-        )
-
-
-        etPaymentDate.setText(
-            invoice.paymentDate ?: ""
-        )
-
-
-
-
-
-        val dialog =
-            AlertDialog.Builder(this)
-                .setTitle("Update Payment")
-                .setView(dialogView)
-                .setNegativeButton(
-                    "Cancel",
-                    null
-                )
-                .setPositiveButton(
-                    "Save Payment",
-                    null
-                )
-                .create()
-
-
-        dialog.setOnShowListener {
-
-            val saveButton =
-                dialog.getButton(
-                    AlertDialog.BUTTON_POSITIVE
-                )
-
-            saveButton.setOnClickListener {
-
-                val payment =
-                    etPaymentReceived.text
-                        .toString()
-                        .toDoubleOrNull()
-
-                if (payment == null) {
-
-                    etPaymentReceived.error =
-                        "Enter payment amount"
-
-                    return@setOnClickListener
-                }
-
-
-                if (payment < 0) {
-
-                    etPaymentReceived.error =
-                        "Invalid payment amount"
-
-                    return@setOnClickListener
-                }
-
-
-                if (payment > invoiceTotal) {
-
-                    etPaymentReceived.error =
-                        "Payment cannot exceed invoice total"
-
-                    return@setOnClickListener
-                }
-
-
-                val paymentDate =
-                    etPaymentDate.text
-                        .toString()
-                        .trim()
-
-
-                val status =
-                    when {
-                        payment == 0.0 ->
-                            "Pending"
-
-                        payment < invoiceTotal ->
-                            "Partial"
-
-                        payment == invoiceTotal ->
-                            "Paid"
-
-                        else ->
-                            "Pending"
-                    }
-                txtPaymentStatusPreview.text =
-                    "Status: $status"
-
-                val request =
-                    PaymentUpdateRequest(
-                        paymentReceived =
-                            payment,
-
-                        paymentDate =
-                            paymentDate.ifEmpty {
-                                null
-                            },
-
-                        paymentStatus =
-                            status
-                    )
-
-
-                invoiceViewModel.updatePayment(
-                    invoiceId,
-                    request
-                )
-
-
-                dialog.dismiss()
-            }
-        }
-
-
-        dialog.show()
-    }
-    private fun showAddPaymentDialog() {
+    private fun showAddPaymentDialog(invoice: Invoice) {
 
         val dialogView =
             layoutInflater.inflate(
                 R.layout.dialog_add_payment,
                 null
+            )
+
+        val txtInvoiceTotal =
+            dialogView.findViewById<TextView>(
+                R.id.txtInvoiceTotal
+            )
+
+        val txtAlreadyPaid =
+            dialogView.findViewById<TextView>(
+                R.id.txtAlreadyPaid
+            )
+
+        val txtRemainingAmount =
+            dialogView.findViewById<TextView>(
+                R.id.txtRemainingAmount
             )
 
         val etPaymentDate =
@@ -732,6 +539,26 @@ class InvoiceDetailsActivity : AppCompatActivity() {
                 R.id.etPaymentRemarks
             )
 
+        val invoiceTotal =
+            invoice.invoiceTotal ?: 0.0
+
+        val alreadyPaid =
+            invoice.paymentReceived ?: 0.0
+
+        val currentRemaining =
+            (invoiceTotal - alreadyPaid)
+                .coerceAtLeast(0.0)
+
+        txtInvoiceTotal.text =
+            "Invoice Total: ₹%.2f".format(invoiceTotal)
+
+        txtAlreadyPaid.text =
+            "Already Paid: ₹%.2f".format(alreadyPaid)
+
+        txtRemainingAmount.text =
+            "Remaining: ₹%.2f".format(currentRemaining)
+
+
         // Default today's date
         val calendar = Calendar.getInstance()
 
@@ -744,6 +571,7 @@ class InvoiceDetailsActivity : AppCompatActivity() {
                 calendar.get(Calendar.DAY_OF_MONTH)
             )
         )
+
 
         // Date picker
         etPaymentDate.setOnClickListener {
@@ -769,8 +597,51 @@ class InvoiceDetailsActivity : AppCompatActivity() {
             ).show()
         }
 
+
+        // Update remaining amount while typing
+        etPaymentAmount.addTextChangedListener(
+            object : TextWatcher {
+
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {}
+
+                override fun onTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    before: Int,
+                    count: Int
+                ) {
+
+                    val newPayment =
+                        s?.toString()
+                            ?.trim()
+                            ?.toDoubleOrNull()
+                            ?: 0.0
+
+                    val newRemaining =
+                        (currentRemaining - newPayment)
+                            .coerceAtLeast(0.0)
+
+                    txtRemainingAmount.text =
+                        "Remaining: ₹%.2f".format(
+                            newRemaining
+                        )
+                }
+
+                override fun afterTextChanged(
+                    s: Editable?
+                ) {}
+            }
+        )
+
+
         val dialog =
             AlertDialog.Builder(this)
+                .setTitle("Add Payment")
                 .setView(dialogView)
                 .setNegativeButton(
                     "Cancel",
@@ -781,6 +652,7 @@ class InvoiceDetailsActivity : AppCompatActivity() {
                     null
                 )
                 .create()
+
 
         dialog.setOnShowListener {
 
@@ -802,6 +674,17 @@ class InvoiceDetailsActivity : AppCompatActivity() {
                     return@setOnClickListener
                 }
 
+
+                // Prevent payment greater than remaining
+                if (amount > currentRemaining) {
+
+                    etPaymentAmount.error =
+                        "Payment cannot exceed remaining amount"
+
+                    return@setOnClickListener
+                }
+
+
                 val paymentDate =
                     etPaymentDate.text
                         ?.toString()
@@ -815,13 +698,16 @@ class InvoiceDetailsActivity : AppCompatActivity() {
                     return@setOnClickListener
                 }
 
+
                 val remarks =
                     etPaymentRemarks.text
                         ?.toString()
                         ?.trim()
 
+
                 val session =
                     SessionManager(this)
+
 
                 val request =
                     PaymentCreateRequest(
@@ -831,6 +717,7 @@ class InvoiceDetailsActivity : AppCompatActivity() {
                         createdBy =
                             session.getUserEmail()
                     )
+
 
                 invoiceViewModel.addPayment(
                     invoiceId,
@@ -862,7 +749,7 @@ class InvoiceDetailsActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            showAddPaymentDialog()
+            showAddPaymentDialog(invoice)
         }
     }
     private fun showDeletePaymentConfirmation(
@@ -885,6 +772,74 @@ class InvoiceDetailsActivity : AppCompatActivity() {
                 null
             )
             .show()
+    }
+    private fun setupDpdCalculation() {
+
+        etDpdPercent.addTextChangedListener(
+            object : TextWatcher {
+
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+                }
+
+                override fun onTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    before: Int,
+                    count: Int
+                ) {
+
+                    calculateDpdCharge()
+                }
+
+                override fun afterTextChanged(
+                    s: Editable?
+                ) {
+                }
+            }
+        )
+    }
+    private fun calculateDpdCharge() {
+
+        val invoice = currentInvoice
+            ?: return
+
+        val invoiceAmount =
+            invoice.invoiceTotal ?: 0.0
+
+        val dpd =
+            invoice.dpd ?: 0
+
+        val percent =
+            etDpdPercent.text
+                ?.toString()
+                ?.trim()
+                ?.toDoubleOrNull()
+                ?: 0.0
+
+        val extraCharge =
+            invoiceAmount *
+                    (percent / 100.0) *
+                    dpd
+
+        val totalAmount =
+            invoiceAmount + extraCharge
+
+        txtDpd.text =
+            "$dpd Days"
+
+        txtDpdInvoiceAmount.text =
+            "₹%.2f".format(invoiceAmount)
+
+        txtDpdExtraCharge.text =
+            "₹%.2f".format(extraCharge)
+
+        txtDpdTotalAmount.text =
+            "₹%.2f".format(totalAmount)
     }
 
     private fun setupPaymentHistoryButton() {
