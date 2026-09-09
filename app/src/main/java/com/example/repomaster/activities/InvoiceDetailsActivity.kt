@@ -39,6 +39,7 @@ class InvoiceDetailsActivity : AppCompatActivity() {
     private var currentInvoice: Invoice? = null
     private var invoiceId: Long = -1L
     private lateinit var txtDpd: TextView
+    private var isSettingDpdPercent = false
     private lateinit var txtDpdInvoiceAmount: TextView
     private lateinit var txtDpdExtraCharge: TextView
     private lateinit var txtDpdTotalAmount: TextView
@@ -140,7 +141,7 @@ class InvoiceDetailsActivity : AppCompatActivity() {
             return
         }
 
-
+        setupSaveDpdButton()
         setupViewModel()
         setupDeleteButton()
         observeInvoice()
@@ -309,6 +310,21 @@ class InvoiceDetailsActivity : AppCompatActivity() {
                 }
             }
         }
+        invoiceViewModel.dpdUpdated.observe(this) { invoice ->
+
+            if (invoice != null) {
+
+                currentInvoice = invoice
+
+                displayInvoice(invoice)
+
+                Toast.makeText(
+                    this,
+                    "DPD charge updated successfully",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
     }
     private fun displayInvoice(
         invoice: Invoice
@@ -414,25 +430,58 @@ class InvoiceDetailsActivity : AppCompatActivity() {
         val paymentReceived =
             invoice.paymentReceived ?: 0.0
 
+        val dpd =
+            invoice.dpd ?: 0
+
+        val percent =
+            etDpdPercent.text
+                ?.toString()
+                ?.trim()
+                ?.toDoubleOrNull()
+                ?: 0.0
+
+        val dpdExtraCharge =
+            invoiceTotal *
+                    (percent / 100.0) *
+                    dpd
+
+        val totalWithDpd =
+            invoiceTotal + dpdExtraCharge
+
         val remainingAmount =
-            (invoiceTotal - paymentReceived)
+            (totalWithDpd - paymentReceived)
                 .coerceAtLeast(0.0)
+
         findViewById<TextView>(
             R.id.txtPaymentInvoiceTotal
         ).text =
             "₹%.2f".format(
-                invoice.invoiceTotal ?: 0.0
+                totalWithDpd
             )
+
         findViewById<TextView>(
-            R.id.txtPaymentStatus
+            R.id.txtPaymentReceived
         ).text =
-            invoice.paymentStatus ?: "Pending"
+            "₹%.2f".format(
+                paymentReceived
+            )
+
         findViewById<TextView>(
             R.id.txtRemainingAmount
         ).text =
             "Remaining Amount: ₹%.2f".format(
                 remainingAmount
             )
+
+        findViewById<TextView>(
+            R.id.txtPaymentStatus
+        ).text =
+            when {
+                paymentReceived <= 0 -> "Pending"
+                paymentReceived < totalWithDpd -> "Partial"
+                else -> "Paid"
+            }
+
         findViewById<TextView>(
             R.id.txtRemarks
         ).text =
@@ -444,6 +493,17 @@ class InvoiceDetailsActivity : AppCompatActivity() {
             "₹%.2f".format(
                 invoice.invoiceTotal ?: 0.0
             )
+        isSettingDpdPercent = true
+
+        etDpdPercent.setText(
+            if ((invoice.dpdChargePercent ?: 0.0) > 0.0) {
+                invoice.dpdChargePercent.toString()
+            } else {
+                ""
+            }
+        )
+
+        isSettingDpdPercent = false
 
         calculateDpdCharge()
     }
@@ -470,7 +530,7 @@ class InvoiceDetailsActivity : AppCompatActivity() {
             showDeleteConfirmation()
         }
     }
-    //diaglogue box
+    //Diaglogue box
     private fun showDeleteConfirmation() {
 
         AlertDialog.Builder(this)
@@ -545,12 +605,36 @@ class InvoiceDetailsActivity : AppCompatActivity() {
         val alreadyPaid =
             invoice.paymentReceived ?: 0.0
 
+        val dpd =
+            invoice.dpd ?: 0
+
+        val percent =
+            etDpdPercent.text
+                ?.toString()
+                ?.trim()
+                ?.toDoubleOrNull()
+                ?: 0.0
+
+        val dpdExtraCharge =
+            invoiceTotal *
+                    (percent / 100.0) *
+                    dpd
+
+        val totalWithDpd =
+            roundMoney(
+                invoiceTotal + dpdExtraCharge
+            )
+
         val currentRemaining =
-            (invoiceTotal - alreadyPaid)
-                .coerceAtLeast(0.0)
+            roundMoney(
+                (totalWithDpd - alreadyPaid)
+                    .coerceAtLeast(0.0)
+            )
 
         txtInvoiceTotal.text =
-            "Invoice Total: ₹%.2f".format(invoiceTotal)
+            "Total With DPD Charge: ₹%.2f".format(
+                totalWithDpd
+            )
 
         txtAlreadyPaid.text =
             "Already Paid: ₹%.2f".format(alreadyPaid)
@@ -623,8 +707,10 @@ class InvoiceDetailsActivity : AppCompatActivity() {
                             ?: 0.0
 
                     val newRemaining =
-                        (currentRemaining - newPayment)
-                            .coerceAtLeast(0.0)
+                        roundMoney(
+                            (currentRemaining - newPayment)
+                                .coerceAtLeast(0.0)
+                        )
 
                     txtRemainingAmount.text =
                         "Remaining: ₹%.2f".format(
@@ -676,14 +762,16 @@ class InvoiceDetailsActivity : AppCompatActivity() {
 
 
                 // Prevent payment greater than remaining
-                if (amount > currentRemaining) {
+                val roundedAmount =
+                    roundMoney(amount)
+
+                if (roundedAmount > currentRemaining) {
 
                     etPaymentAmount.error =
                         "Payment cannot exceed remaining amount"
 
                     return@setOnClickListener
                 }
-
 
                 val paymentDate =
                     etPaymentDate.text
@@ -712,7 +800,7 @@ class InvoiceDetailsActivity : AppCompatActivity() {
                 val request =
                     PaymentCreateRequest(
                         paymentDate = paymentDate,
-                        paymentAmount = amount,
+                        paymentAmount = roundedAmount,
                         remarks = remarks,
                         createdBy =
                             session.getUserEmail()
@@ -793,7 +881,9 @@ class InvoiceDetailsActivity : AppCompatActivity() {
                     count: Int
                 ) {
 
-                    calculateDpdCharge()
+                    if (!isSettingDpdPercent) {
+                        calculateDpdCharge()
+                    }
                 }
 
                 override fun afterTextChanged(
@@ -803,10 +893,11 @@ class InvoiceDetailsActivity : AppCompatActivity() {
             }
         )
     }
+
     private fun calculateDpdCharge() {
 
-        val invoice = currentInvoice
-            ?: return
+        val invoice =
+            currentInvoice ?: return
 
         val invoiceAmount =
             invoice.invoiceTotal ?: 0.0
@@ -819,6 +910,7 @@ class InvoiceDetailsActivity : AppCompatActivity() {
                 ?.toString()
                 ?.trim()
                 ?.toDoubleOrNull()
+                ?: invoice.dpdChargePercent
                 ?: 0.0
 
         val extraCharge =
@@ -827,8 +919,24 @@ class InvoiceDetailsActivity : AppCompatActivity() {
                     dpd
 
         val totalAmount =
-            invoiceAmount + extraCharge
+            roundMoney(
+                invoiceAmount + extraCharge
+            )
 
+        val paymentReceived =
+            roundMoney(
+                invoice.paymentReceived ?: 0.0
+            )
+
+        val remainingAmount =
+            roundMoney(
+                (totalAmount - paymentReceived)
+                    .coerceAtLeast(0.0)
+            )
+
+        /*
+         * DPD
+         */
         txtDpd.text =
             "$dpd Days"
 
@@ -836,11 +944,49 @@ class InvoiceDetailsActivity : AppCompatActivity() {
             "₹%.2f".format(invoiceAmount)
 
         txtDpdExtraCharge.text =
-            "₹%.2f".format(extraCharge)
+            "₹%.2f".format(
+                roundMoney(extraCharge)
+            )
 
         txtDpdTotalAmount.text =
             "₹%.2f".format(totalAmount)
+
+        /*
+         * PAYMENT SUMMARY
+         */
+        findViewById<TextView>(
+            R.id.txtPaymentInvoiceTotal
+        ).text =
+            "₹%.2f".format(totalAmount)
+
+        findViewById<TextView>(
+            R.id.txtPaymentReceived
+        ).text =
+            "₹%.2f".format(paymentReceived)
+
+        findViewById<TextView>(
+            R.id.txtRemainingAmount
+        ).text =
+            "Remaining Amount: ₹%.2f".format(
+                remainingAmount
+            )
+
+        findViewById<TextView>(
+            R.id.txtPaymentStatus
+        ).text =
+            when {
+
+                paymentReceived <= 0.0 ->
+                    "Pending"
+
+                remainingAmount <= 0.0 ->
+                    "Paid"
+
+                else ->
+                    "Partial"
+            }
     }
+
 
     private fun setupPaymentHistoryButton() {
 
@@ -871,6 +1017,48 @@ class InvoiceDetailsActivity : AppCompatActivity() {
             }
         }
     }
+    private fun setupSaveDpdButton() {
+
+        findViewById<Button>(
+            R.id.btnSaveDpdPercent
+        ).setOnClickListener {
+
+            val percent =
+                etDpdPercent.text
+                    ?.toString()
+                    ?.trim()
+                    ?.toDoubleOrNull()
+
+            if (percent == null) {
+
+                etDpdPercent.error =
+                    "Enter DPD percentage"
+
+                return@setOnClickListener
+            }
+
+            if (percent < 0) {
+
+                etDpdPercent.error =
+                    "Percentage cannot be negative"
+
+                return@setOnClickListener
+            }
+
+            if (percent > 100) {
+
+                etDpdPercent.error =
+                    "Percentage cannot be greater than 100"
+
+                return@setOnClickListener
+            }
+
+            invoiceViewModel.updateDpdCharge(
+                invoiceId,
+                percent
+            )
+        }
+    }
     override fun onResume() {
         super.onResume()
 
@@ -886,5 +1074,8 @@ class InvoiceDetailsActivity : AppCompatActivity() {
                 )
             }
         }
+    }
+    private fun roundMoney(value: Double): Double {
+        return kotlin.math.round(value * 100.0) / 100.0
     }
 }

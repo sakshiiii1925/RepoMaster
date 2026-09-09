@@ -8,134 +8,614 @@
     android:orientation="vertical"
     android:background="@drawable/backgrdimg">
 
+    <!-- ========================= -->
+    <!-- TOOLBAR -->
+    <!-- ========================= -->
+
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="80dp"
         android:background="@android:color/transparent"
-        android:title="User Activity Report"
+        android:title="Executive Activity Report"
         android:titleTextColor="@android:color/white"
-        android:paddingTop="40dp"
+        android:paddingTop="20dp"
         app:navigationIcon="@drawable/baseline_arrow_back_24"/>
 
-    <!-- Download Buttons -->
 
-    <LinearLayout
+    <!-- ========================= -->
+    <!-- MAIN SCROLL -->
+    <!-- ========================= -->
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:padding="12dp">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnDownloadPdf"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:text="PDF"
-            android:textAllCaps="false"
-            android:layout_marginEnd="8dp"
-            android:backgroundTint="#E53935"
-            app:icon="@drawable/baseline_picture_as_pdf_24"/>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnDownloadExcel"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:text="Excel"
-            android:textAllCaps="false"
-            android:layout_marginStart="8dp"
-            android:backgroundTint="#43A047"
-            app:icon="@drawable/ic_excel"/>
-
-    </LinearLayout>
-
-
-
-    <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fillViewport="true">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:scrollbars="none">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingBottom="20dp">
 
-            <!-- Header -->
+
+            <!-- ========================= -->
+            <!-- SUMMARY TITLE -->
+            <!-- ========================= -->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="SUMMARY"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.08"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"/>
+
+
+            <!-- ========================= -->
+            <!-- SUMMARY CARDS -->
+            <!-- ========================= -->
 
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:background="@color/white"
-                android:gravity="center_vertical">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp">
 
-                <TextView
-                    android:layout_width="140dp"
+
+                <!-- ROW 1 -->
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="User"
-                    android:textColor="@android:color/black"
-                    android:textStyle="bold"
-                    android:gravity="center"/>
+                    android:orientation="horizontal">
 
-                <TextView
-                    android:layout_width="220dp"
+                    <!-- AGENTS -->
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="0dp"
+                        android:layout_height="100dp"
+                        android:layout_weight="1"
+                        android:layout_margin="5dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="4dp"
+                        app:strokeWidth="1dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:padding="10dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="AGENTS"
+                                android:textSize="11sp"
+                                android:textStyle="bold"
+                                android:textColor="#666666"/>
+
+                            <TextView
+                                android:id="@+id/txtTotalExecutives"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0"
+                                android:textSize="28sp"
+                                android:textStyle="bold"
+                                android:textColor="#002147"
+                                android:layout_marginTop="4dp"/>
+
+                        </LinearLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+
+                    <!-- SEARCHES -->
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="0dp"
+                        android:layout_height="105dp"
+                        android:layout_weight="1"
+                        android:layout_margin="5dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="4dp"
+                        app:strokeWidth="1dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:padding="10dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="SEARCHES"
+                                android:textSize="11sp"
+                                android:textStyle="bold"
+                                android:textColor="#666666"/>
+
+                            <TextView
+                                android:id="@+id/txtTotalSearches"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0"
+                                android:textSize="28sp"
+                                android:textStyle="bold"
+                                android:textColor="#002147"
+                                android:layout_marginTop="4dp"/>
+
+                        </LinearLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
+
+
+                <!-- ROW 2 -->
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Email"
-                    android:textColor="@android:color/black"
-                    android:textStyle="bold"
-                    android:gravity="center"/>
+                    android:orientation="horizontal">
 
-                <TextView
+                    <!-- REPO MARK -->
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="0dp"
+                        android:layout_height="105dp"
+                        android:layout_weight="1"
+                        android:layout_margin="5dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="4dp"
+                        app:strokeWidth="1dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="REPO MARKED"
+                                android:textSize="11sp"
+                                android:textStyle="bold"
+                                android:textColor="#666666"/>
+
+                            <TextView
+                                android:id="@+id/txtTotalRepoMarked"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0"
+                                android:textSize="28sp"
+                                android:textStyle="bold"
+                                android:textColor="#C62828"
+                                android:layout_marginTop="4dp"/>
+
+                        </LinearLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+
+                    <!-- PARKED -->
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="0dp"
+                        android:layout_height="105dp"
+                        android:layout_weight="1"
+                        android:layout_margin="5dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="4dp"
+                        app:strokeWidth="1dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="PARKED"
+                                android:textSize="11sp"
+                                android:textStyle="bold"
+                                android:textColor="#666666"/>
+
+                            <TextView
+                                android:id="@+id/txtTotalParked"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0"
+                                android:textSize="28sp"
+                                android:textStyle="bold"
+                                android:textColor="#EF6C00"
+                                android:layout_marginTop="4dp"/>
+
+                        </LinearLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
+
+                <!-- ROW 4 -->
+
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:text="Total Searches"
-                    android:textColor="@android:color/black"
-                    android:textStyle="bold"
-                    android:gravity="center"/>
+                    android:layout_height="105dp"
+                    android:layout_margin="5dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="4dp"
+                    app:strokeWidth="1dp">
 
-                <TextView
-                    android:layout_width="110dp"
-                    android:layout_height="wrap_content"
-                    android:text="Repo Mark"
-                    android:textColor="@android:color/black"
-                    android:textStyle="bold"
-                    android:gravity="center"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:text="Parked"
-                    android:textColor="@android:color/black"
-                    android:textStyle="bold"
-                    android:gravity="center"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="RELEASED"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:textColor="#666666"/>
 
-                <TextView
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:text="Released"
-                    android:textColor="@android:color/black"
-                    android:textStyle="bold"
-                    android:gravity="center"/>
+                        <TextView
+                            android:id="@+id/txtTotalReleased"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textSize="28sp"
+                            android:textStyle="bold"
+                            android:textColor="#2E7D32"
+                            android:layout_marginTop="4dp"/>
 
-                <TextView
-                    android:layout_width="180dp"
-                    android:layout_height="wrap_content"
-                    android:text="Last Search"
-                    android:textColor="@android:color/black"
-                    android:textStyle="bold"
-                    android:gravity="center"/>
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
 
             </LinearLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvUserActivity"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"/>
+
+            <!-- ========================= -->
+            <!-- FILTER SECTION -->
+            <!-- ========================= -->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="FILTER REPORT"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.08"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="18dp"
+                android:paddingBottom="8dp"/>
+
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="5dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="14dp">
+
+
+                    <!-- DATE ROW -->
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="6dp"
+                            android:hint="From Date"
+                            app:boxBackgroundMode="outline"
+                            app:boxBackgroundColor="@color/white">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/edtFromDate"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:focusable="false"
+                                android:clickable="true"
+                                android:inputType="none"/>
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="6dp"
+                            android:hint="To Date"
+                            app:boxBackgroundMode="outline"
+                            app:boxBackgroundColor="@color/white">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/edtToDate"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:focusable="false"
+                                android:clickable="true"
+                                android:inputType="none"/>
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                    </LinearLayout>
+
+
+                    <!-- USER -->
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:hint="Select User"
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        app:boxBackgroundColor="@color/white">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/autoUser"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="none"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp"/>
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+
+                    <!-- FILTER BUTTONS -->
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="12dp">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnApplyFilter"
+                            android:layout_width="0dp"
+                            android:layout_height="52dp"
+                            android:layout_weight="1"
+                            android:text="Apply Filter"
+                            android:textAllCaps="false"
+                            android:textStyle="bold"
+                            android:backgroundTint="#002147"
+                            app:cornerRadius="12dp"/>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnClearFilter"
+                            android:layout_width="0dp"
+                            android:layout_height="52dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="8dp"
+                            android:text="Clear"
+                            android:textAllCaps="false"
+                            android:textStyle="bold"
+                            android:backgroundTint="#607D8B"
+                            app:cornerRadius="12dp"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <!-- ========================= -->
+            <!-- DOWNLOAD -->
+            <!-- ========================= -->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="EXPORT REPORT"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.08"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="18dp"
+                android:paddingBottom="8dp"/>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnDownloadPdf"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:layout_margin="5dp"
+                    android:text="PDF Report"
+                    android:textAllCaps="false"
+                    android:textStyle="bold"
+                    android:backgroundTint="#C62828"
+                    app:cornerRadius="12dp"
+                    app:icon="@drawable/baseline_picture_as_pdf_24"/>
+
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnDownloadExcel"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:layout_margin="5dp"
+                    android:text="Excel Report"
+                    android:textAllCaps="false"
+                    android:textStyle="bold"
+                    android:backgroundTint="#2E7D32"
+                    app:cornerRadius="12dp"
+                    app:icon="@drawable/ic_excel"/>
+
+            </LinearLayout>
+
+
+            <!-- ========================= -->
+            <!-- ACTIVITY TABLE -->
+            <!-- ========================= -->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="EXECUTIVE ACTIVITY"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.08"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="18dp"
+                android:paddingBottom="8dp"/>
+
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fillViewport="false"
+                android:scrollbars="horizontal">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp">
+
+
+                    <!-- TABLE HEADER -->
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="52dp"
+                        android:background="@color/white"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="140dp"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="USER"
+                            android:textColor="#002147"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:layout_width="220dp"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="EMAIL"
+                            android:textColor="#002147"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:layout_width="110dp"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="SEARCHES"
+                            android:textColor="#002147"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:layout_width="110dp"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="REPO MARK"
+                            android:textColor="#002147"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:layout_width="110dp"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="CONTACTED"
+                            android:textColor="#002147"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:layout_width="120dp"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="ON THE WAY"
+                            android:textColor="#002147"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:layout_width="100dp"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="PARKED"
+                            android:textColor="#002147"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:layout_width="110dp"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="RELEASED"
+                            android:textColor="#002147"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:layout_width="190dp"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="LAST SEARCH"
+                            android:textColor="#002147"
+                            android:textStyle="bold"/>
+
+                    </LinearLayout>
+
+
+                    <!-- DATA -->
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvUserActivity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="500dp"
+                        android:nestedScrollingEnabled="false"/>
+
+                </LinearLayout>
+
+            </HorizontalScrollView>
 
         </LinearLayout>
 
-    </HorizontalScrollView>
+    </ScrollView>
 
 </LinearLayout>

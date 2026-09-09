@@ -178,7 +178,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="1dp"
-                                android:text="Executive Report"
+                                android:text="Agent Report"
                                 android:gravity="center"
                                 android:textStyle="bold"
                                 android:textSize="15sp"/>

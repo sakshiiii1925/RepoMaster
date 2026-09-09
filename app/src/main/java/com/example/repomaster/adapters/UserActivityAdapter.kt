@@ -27,6 +27,7 @@ class UserActivityAdapter(
         val txtRepoMarked: TextView =
             itemView.findViewById(R.id.txtRepoMarked)
 
+
         val txtParked: TextView =
             itemView.findViewById(R.id.txtParked)
 
@@ -59,26 +60,24 @@ class UserActivityAdapter(
 
         val item = userList[position]
 
-        holder.txtUserName.text =
-            " ${item.userName}"
-
-        holder.txtEmail.text =
-            "${item.userEmail}"
+        holder.txtUserName.text = item.userName
+        holder.txtEmail.text = item.userEmail
 
         holder.txtTotalSearches.text =
-            "${item.totalSearches}"
+            item.totalSearches.toString()
 
         holder.txtRepoMarked.text =
-            "${item.repoMarkedCount}"
+            item.repoMarkedCount.toString()
+
 
         holder.txtParked.text =
-            "${item.parkedCount}"
+            item.parkedCount.toString()
 
         holder.txtReleased.text =
-            "${item.releasedCount}"
+            item.releasedCount.toString()
 
         holder.txtLastSearchTime.text =
-            "${item.lastSearchTime}"
+            item.lastSearchTime ?: "-"
     }
 
     override fun getItemCount(): Int {

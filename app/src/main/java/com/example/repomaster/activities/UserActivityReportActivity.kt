@@ -4,7 +4,7 @@ import android.app.DatePickerDialog
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModelProvider
@@ -19,6 +19,11 @@ import com.example.repomaster.viewmodel.HomeViewModel
 import com.example.repomaster.viewmodel.UserViewModel
 import com.google.android.material.button.MaterialButton
 import java.util.Calendar
+import android.widget.TextView
+import java.text.SimpleDateFormat
+import java.util.Locale
+import com.example.repomaster.models.UserActivityReport
+import com.google.android.material.textfield.TextInputEditText
 import com.example.repomaster.viewmodel.HomeViewModelFactory
 
 class UserActivityReportActivity : AppCompatActivity() {
@@ -28,7 +33,23 @@ class UserActivityReportActivity : AppCompatActivity() {
     private lateinit var userViewModel: UserViewModel
     private lateinit var toolbar: Toolbar
     private lateinit var homeViewModel: HomeViewModel
+    private lateinit var edtFromDate: TextInputEditText
+    private lateinit var edtToDate: TextInputEditText
+    private lateinit var autoUser: AutoCompleteTextView
 
+    private lateinit var btnApplyFilter: MaterialButton
+    private lateinit var btnClearFilter: MaterialButton
+
+    private lateinit var txtTotalExecutives: TextView
+    private lateinit var txtTotalSearches: TextView
+    private lateinit var txtTotalRepoMarked: TextView
+    private lateinit var txtTotalParked: TextView
+    private lateinit var txtTotalReleased: TextView
+
+    private var selectedUserEmail: String? = null
+
+    private var currentReports =
+        emptyList<UserActivityReport>()
 
 
     private lateinit var btnDownloadPdf: MaterialButton
@@ -51,13 +72,44 @@ class UserActivityReportActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.rvUserActivity)
         btnDownloadPdf = findViewById(R.id.btnDownloadPdf)
         btnDownloadExcel = findViewById(R.id.btnDownloadExcel)
+        edtFromDate =
+            findViewById(R.id.edtFromDate)
 
+        edtToDate =
+            findViewById(R.id.edtToDate)
+
+        autoUser =
+            findViewById(R.id.autoUser)
+
+        btnApplyFilter =
+            findViewById(R.id.btnApplyFilter)
+
+        btnClearFilter =
+            findViewById(R.id.btnClearFilter)
+
+
+        txtTotalExecutives =
+            findViewById(R.id.txtTotalExecutives)
+
+        txtTotalSearches =
+            findViewById(R.id.txtTotalSearches)
+
+        txtTotalRepoMarked =
+            findViewById(R.id.txtTotalRepoMarked)
+
+        txtTotalParked =
+            findViewById(R.id.txtTotalParked)
+
+        txtTotalReleased =
+            findViewById(R.id.txtTotalReleased)
         toolbar.setTitleTextColor(
             getColor(R.color.white)
         )
-        supportActionBar?.title = "Executive Report"
+        supportActionBar?.title = "Agent Report"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
+        toolbar.setTitleTextColor(
+            getColor(R.color.white)
+        )
         toolbar.setNavigationOnClickListener {
             finish()
         }
@@ -80,19 +132,173 @@ class UserActivityReportActivity : AppCompatActivity() {
         btnDownloadExcel.setOnClickListener {
             downloadUserActivityExcel()
         }
+        edtFromDate.setOnClickListener {
+            showDatePicker(edtFromDate)
+        }
 
+        edtToDate.setOnClickListener {
+            showDatePicker(edtToDate)
+        }
+        btnApplyFilter.setOnClickListener {
+
+            loadReport()
+        }
+        btnClearFilter.setOnClickListener {
+
+            edtFromDate.text?.clear()
+
+            edtToDate.text?.clear()
+
+            autoUser.setText(
+                "All Users",
+                false
+            )
+
+            selectedUserEmail = null
+
+            loadReport()
+        }
     }
+    private fun setupUserDropdown(
+        reports: List<UserActivityReport>
+    ) {
 
+        val users =
+            mutableListOf("All Users")
+
+        users.addAll(
+            reports
+                .map {
+                    "${it.userName} - ${it.userEmail}"
+                }
+                .distinct()
+        )
+
+
+        val adapter =
+            ArrayAdapter(
+                this,
+                android.R.layout.simple_dropdown_item_1line,
+                users
+            )
+
+        autoUser.setAdapter(adapter)
+
+
+        autoUser.setOnItemClickListener {
+                _, _, position, _ ->
+
+            if (position == 0) {
+
+                selectedUserEmail = null
+
+            } else {
+
+                val selected =
+                    users[position]
+
+                selectedUserEmail =
+                    selected
+                        .substringAfter(" - ")
+            }
+        }
+    }
+    private fun showDatePicker(
+        editText: TextInputEditText
+    ) {
+
+        val calendar = Calendar.getInstance()
+
+        DatePickerDialog(
+            this,
+            { _, year, month, day ->
+
+                val selected = Calendar.getInstance()
+
+                selected.set(
+                    year,
+                    month,
+                    day
+                )
+
+                val formatter =
+                    SimpleDateFormat(
+                        "yyyy-MM-dd",
+                        Locale.getDefault()
+                    )
+
+                editText.setText(
+                    formatter.format(
+                        selected.time
+                    )
+                )
+
+            },
+
+            calendar.get(
+                Calendar.YEAR
+            ),
+
+            calendar.get(
+                Calendar.MONTH
+            ),
+
+            calendar.get(
+                Calendar.DAY_OF_MONTH
+            )
+
+        ).show()
+    }
     private fun loadReport() {
 
-        userViewModel.getUserActivityReport(agencyId)
+        userViewModel
+            .getUserActivityReport(
+                agencyId = agencyId,
+                fromDate =
+                    edtFromDate.text
+                        ?.toString()
+                        ?.ifBlank { null },
+                toDate =
+                    edtToDate.text
+                        ?.toString()
+                        ?.ifBlank { null },
+                userEmail =
+                    selectedUserEmail
+            )
             .observe(this) { response ->
 
-                if (response.isSuccessful && response.body() != null) {
+                if (
+                    response.isSuccessful &&
+                    response.body() != null
+                ) {
 
-                    adapter.updateList(response.body()!!)
+                    currentReports =
+                        response.body()!!
+
+                    adapter.updateList(
+                        currentReports
+                    )
+
+                    updateSummary(
+                        currentReports
+                    )
+
+                    setupUserDropdown(
+                        currentReports
+                    )
 
                 } else {
+
+                    currentReports =
+                        emptyList()
+
+                    adapter.updateList(
+                        emptyList()
+                    )
+
+                    updateSummary(
+                        emptyList()
+                    )
 
                     Toast.makeText(
                         this,
@@ -105,54 +311,51 @@ class UserActivityReportActivity : AppCompatActivity() {
 
     private fun downloadUserActivityPdf() {
 
-        userViewModel.getUserActivityReport(agencyId)
-            .observe(this) { response ->
+        val reports = currentReports
 
-                if (response.isSuccessful) {
+        val rows = reports.map {
 
-                    val reports = response.body() ?: emptyList()
+            listOf(
+                it.userName,
+                it.userEmail,
+                it.totalSearches.toString(),
+                it.repoMarkedCount.toString(),
+                it.parkedCount.toString(),
+                it.releasedCount.toString(),
+                it.lastSearchTime ?: ""
+            )
+        }
 
-                    val rows = reports.map {
+        PdfReportGenerator(this).generateReport(
 
-                        listOf(
-                            it.userName,
-                            it.userEmail,
-                            it.totalSearches.toString(),
-                            it.repoMarkedCount.toString(),
-                            it.parkedCount.toString(),
-                            it.releasedCount.toString(),
-                            it.lastSearchTime
-                        )
-                    }
+            title = "Executive Report",
 
-                    PdfReportGenerator(this).generateReport(
+            agencyId = agencyId,
 
-                        title = "Executive Report",
+            headers = listOf(
+                "User",
+                "Email",
+                "Searches",
+                "Repo Mark",
+                "Parked",
+                "Released",
+                "Last Search"
+            ),
 
-                        agencyId = agencyId,
-                        headers = listOf(
-                            "User",
-                            "Email",
-                            "Searches",
-                            "Repo Mark",
-                            "Parked",
-                            "Released",
-                            "Last Search"
-                        ),
+            rows = rows,
 
-                        rows = rows,
+            fileName = "Agent_Report.pdf"
+        )
 
-                        fileName = "Executive_Report.pdf"
-                    )
-
-                    Toast.makeText(
-                        this,
-                        "PDF saved successfully",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-            }
+        Toast.makeText(
+            this,
+            "PDF saved successfully",
+            Toast.LENGTH_LONG
+        ).show()
     }
+
+
+
 
     private fun downloadUserActivityExcel() {
 
@@ -163,7 +366,7 @@ class UserActivityReportActivity : AppCompatActivity() {
 
                     val uri = FileDownloader(this).saveExcel(
                         response.body()!!,
-                        "Executive_Report.xlsx"
+                        "Agent_Report.xlsx"
                     )
 
                     if (uri != null) {
@@ -188,7 +391,34 @@ class UserActivityReportActivity : AppCompatActivity() {
 
             }
     }
+    private fun updateSummary(
+        reports: List<UserActivityReport>
+    ) {
 
+        txtTotalExecutives.text =
+            reports.size.toString()
+
+        txtTotalSearches.text =
+            reports.sumOf {
+                it.totalSearches
+            }.toString()
+
+        txtTotalRepoMarked.text =
+            reports.sumOf {
+                it.repoMarkedCount
+            }.toString()
+
+
+        txtTotalParked.text =
+            reports.sumOf {
+                it.parkedCount
+            }.toString()
+
+        txtTotalReleased.text =
+            reports.sumOf {
+                it.releasedCount
+            }.toString()
+    }
 
     override fun onSupportNavigateUp(): Boolean {
 

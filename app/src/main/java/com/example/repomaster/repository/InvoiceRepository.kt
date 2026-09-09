@@ -4,6 +4,7 @@ import com.example.repomaster.models.PaymentCreateRequest
 import com.example.repomaster.api.InvoiceApi
 import com.example.repomaster.models.Invoice
 import com.example.repomaster.models.Vehicle
+import com.example.repomaster.models.DpdChargeRequest
 import com.example.repomaster.models.PaymentUpdateRequest
 class InvoiceRepository(
     private val invoiceApi: InvoiceApi
@@ -79,4 +80,12 @@ class InvoiceRepository(
             Result.failure(e)
         }
     }
+    suspend fun updateDpdCharge(
+        id: Long,
+        request: DpdChargeRequest
+    ) =
+        invoiceApi.updateDpdCharge(
+            id,
+            request
+        )
 }

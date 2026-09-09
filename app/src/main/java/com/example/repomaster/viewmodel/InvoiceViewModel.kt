@@ -4,6 +4,7 @@ package com.example.repomaster.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.repomaster.models.DpdChargeRequest
 import androidx.lifecycle.viewModelScope
 import com.example.repomaster.models.Invoice
 import com.example.repomaster.repository.InvoiceRepository
@@ -413,5 +414,51 @@ class InvoiceViewModel(
             }
         }
     }
+    private val _dpdUpdated = MutableLiveData<Invoice?>()
+    val dpdUpdated: LiveData<Invoice?> = _dpdUpdated
+    fun updateDpdCharge(
+        id: Long,
+        dpdChargePercent: Double
+    ) {
 
+        viewModelScope.launch {
+
+            try {
+
+                _loading.value = true
+                _error.value = null
+
+                val request =
+                    DpdChargeRequest(
+                        dpdChargePercent = dpdChargePercent
+                    )
+
+                val response =
+                    repository.updateDpdCharge(
+                        id,
+                        request
+                    )
+
+                if (response.isSuccessful) {
+
+                    _dpdUpdated.value =
+                        response.body()
+
+                } else {
+
+                    _error.value =
+                        "Failed to update DPD charge: ${response.code()}"
+                }
+
+            } catch (e: Exception) {
+
+                _error.value =
+                    e.message ?: "Something went wrong"
+
+            } finally {
+
+                _loading.value = false
+            }
+        }
+    }
 }

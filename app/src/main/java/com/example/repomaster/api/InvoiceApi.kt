@@ -7,6 +7,7 @@ import com.example.repomaster.models.PaymentUpdateRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
+import com.example.repomaster.models.DpdChargeRequest
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -102,4 +103,13 @@ interface InvoiceApi {
     suspend fun searchVehiclesForInvoice(
         @Query("keyword") keyword: String
     ): Response<List<Vehicle>>
+    // ------------------------------------------------
+// UPDATE DPD CHARGE PERCENTAGE
+// ------------------------------------------------
+
+    @PUT("api/invoices/{id}/dpd-charge")
+    suspend fun updateDpdCharge(
+        @Path("id") id: Long,
+        @Body request: DpdChargeRequest
+    ): Response<Invoice>
 }

@@ -151,11 +151,20 @@ class UserViewModel : ViewModel() {
         )
     }
     fun getUserActivityReport(
-        agencyId: String
+        agencyId: String,
+        fromDate: String? = null,
+        toDate: String? = null,
+        userEmail: String? = null
     ) = liveData {
 
-        emit(repository.getUserActivityReport(agencyId))
-
+        emit(
+            repository.getUserActivityReport(
+                agencyId,
+                fromDate,
+                toDate,
+                userEmail
+            )
+        )
     }
     fun getMonthlyReport(
         agencyId: String,

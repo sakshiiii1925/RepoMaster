@@ -122,7 +122,10 @@ interface UserApi {
     ): Response<List<financeReport>>
     @GET("api/reports/user-activity")
     suspend fun getUserActivityReport(
-        @Query("agencyId") agencyId: String
+        @Query("agencyId") agencyId: String,
+        @Query("fromDate") fromDate: String? = null,
+        @Query("toDate") toDate: String? = null,
+        @Query("userEmail") userEmail: String? = null
     ): Response<List<UserActivityReport>>
     @GET("api/reports/monthly")
     suspend fun getMonthlyReport(
@@ -149,7 +152,10 @@ interface UserApi {
 
     @GET("api/reports/user-activity/excel/{agencyId}")
     suspend fun downloadUserActivityExcel(
-        @Path("agencyId") agencyId: String
+        @Path("agencyId") agencyId: String,
+        @Query("fromDate") fromDate: String? = null,
+        @Query("toDate") toDate: String? = null,
+        @Query("userEmail") userEmail: String? = null
     ): Response<ResponseBody>
     @GET("api/reports/monthly/excel/{agencyId}")
     @Streaming

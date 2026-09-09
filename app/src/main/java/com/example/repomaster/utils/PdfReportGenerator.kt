@@ -313,6 +313,9 @@ class PdfReportGenerator(
         }
 
     }
+
+
+
     fun generateInvoicePdf(invoice: Invoice) {
 
         try {
@@ -328,13 +331,26 @@ class PdfReportGenerator(
 
             val pdfDocument =
                 PdfDocument(writer)
-
+            pdfDocument.addEventHandler(
+                PdfDocumentEvent.END_PAGE,
+                PageNumberEventHandler()
+            )
             val document =
                 Document(pdfDocument)
 
-            // --------------------------------
+
+
+            document.setMargins(
+                25f,
+                25f,
+                25f,
+                25f
+            )
+
+
+            // ============================================================
             // LOGO
-            // --------------------------------
+            // ============================================================
 
             val bitmap =
                 BitmapFactory.decodeResource(
@@ -359,8 +375,8 @@ class PdfReportGenerator(
             val logo =
                 Image(imageData)
 
-            logo.setWidth(70f)
-            logo.setHeight(70f)
+            logo.setWidth(55f)
+            logo.setHeight(55f)
 
             logo.setHorizontalAlignment(
                 com.itextpdf.layout.properties.HorizontalAlignment.CENTER
@@ -368,340 +384,664 @@ class PdfReportGenerator(
 
             document.add(logo)
 
-            // --------------------------------
-            // COMPANY NAME
-            // --------------------------------
 
-            document.add(
-                Paragraph("REPO MASTER")
-                    .setBold()
-                    .setFontSize(22f)
-                    .setFontColor(ColorConstants.WHITE)
-                    .setBackgroundColor(ColorConstants.ORANGE)
-                    .setPadding(8f)
+            // ============================================================
+            // COMPANY HEADER
+            // ============================================================
+
+            val companyTable =
+                Table(
+                    UnitValue.createPercentArray(
+                        floatArrayOf(100f)
+                    )
+                )
+
+            companyTable.setWidth(
+                UnitValue.createPercentValue(100f)
             )
+
+            companyTable.addCell(
+                invoiceCell(
+                    "REPO MASTER",
+                    19f,
+                    TextAlignment.CENTER,
+                    true
+                )
+            )
+
+            document.add(companyTable)
 
             document.add(
                 Paragraph(
                     "Vehicle Recovery Management"
                 )
-                    .setFontSize(11f)
+                    .setFontSize(9f)
+                    .setTextAlignment(
+                        TextAlignment.CENTER
+                    )
+                    .setMarginTop(2f)
             )
 
-            // --------------------------------
-            // INVOICE TITLE
-            // --------------------------------
 
-            document.add(
-                Paragraph("INVOICE")
-                    .setBold()
-                    .setFontSize(20f)
-                    .setMarginTop(15f)
+            // ============================================================
+            // INVOICE TITLE + BASIC INFORMATION
+            // ============================================================
+
+            val titleTable =
+                Table(
+                    UnitValue.createPercentArray(
+                        floatArrayOf(65f, 35f)
+                    )
+                )
+
+            titleTable.setWidth(
+                UnitValue.createPercentValue(100f)
             )
 
-            document.add(
-                Paragraph(
-                    "Invoice Number: ${
-                        invoice.invoiceNumber ?: "N/A"
-                    }"
+            titleTable.addCell(
+                invoiceCell(
+                    """
+                TO,
+                THE MANAGER,
+                ${invoice.invoiceBank ?: "FINANCE COMPANY"}
+                """.trimIndent(),
+                    9f,
+                    TextAlignment.LEFT,
+                    true
                 )
             )
 
-            document.add(
-                Paragraph(
-                    "Invoice Date: ${
-                        invoice.invoiceDate ?: "N/A"
-                    }"
+            titleTable.addCell(
+                invoiceCell(
+                    """
+                INVOICE
+                Invoice No : ${invoice.invoiceNumber ?: "N/A"}
+                Date       : ${formatInvoiceDate(invoice.invoiceDate)}
+                """.trimIndent(),
+                    9f,
+                    TextAlignment.LEFT,
+                    true
                 )
             )
-            // --------------------------------
-// INVOICE / FINANCE DETAILS
-// --------------------------------
 
-            document.add(
-                Paragraph("INVOICE / FINANCE DETAILS")
-                    .setBold()
-                    .setFontSize(15f)
-                    .setMarginTop(15f)
+            document.add(titleTable)
+
+
+            // ============================================================
+            // FINANCE + CUSTOMER INFORMATION
+            // ============================================================
+
+            val financeCustomerTable =
+                Table(
+                    UnitValue.createPercentArray(
+                        floatArrayOf(50f, 50f)
+                    )
+                )
+
+            financeCustomerTable.setWidth(
+                UnitValue.createPercentValue(100f)
             )
 
-            val financeTable = Table(2)
-
-            addInvoiceRow(
-                financeTable,
-                "Finance Bank",
-                invoice.invoiceBank
+            financeCustomerTable.addCell(
+                invoiceCell(
+                    """
+                FINANCE DETAILS
+                
+                Finance Bank : ${invoice.invoiceBank ?: "N/A"}
+                Branch       : ${invoice.branch ?: "N/A"}
+             
+                """.trimIndent(),
+                    8f
+                )
             )
 
-            addInvoiceRow(
-                financeTable,
-                "Branch",
-                invoice.branch
+            financeCustomerTable.addCell(
+                invoiceCell(
+                    """
+                CUSTOMER DETAILS
+                
+                Customer Name : ${invoice.customerName ?: "N/A"}
+                Loan Number   : ${invoice.loanNumber ?: "N/A"}
+                Vehicle Number: ${invoice.vehicleNumber ?: "N/A"}
+                """.trimIndent(),
+                    8f
+                )
             )
 
-            addInvoiceRow(
-                financeTable,
-                "Yard Name",
-                invoice.yardName
-            )
+            document.add(financeCustomerTable)
 
-            addInvoiceRow(
-                financeTable,
-                "Yard Address",
-                invoice.yardAddress
-            )
 
-            addInvoiceRow(
-                financeTable,
-                "DPD",
-                invoice.dpd?.toString()
-            )
-
-            document.add(financeTable)
-
-            // --------------------------------
-            // CUSTOMER DETAILS
-            // --------------------------------
-
-            document.add(
-                Paragraph("CUSTOMER DETAILS")
-                    .setBold()
-                    .setFontSize(15f)
-                    .setMarginTop(15f)
-            )
-
-            val customerTable =
-                Table(2)
-
-            addInvoiceRow(
-                customerTable,
-                "Customer Name",
-                invoice.customerName
-            )
-
-            addInvoiceRow(
-                customerTable,
-                "Loan Number",
-                invoice.loanNumber
-            )
-
-            addInvoiceRow(
-                customerTable,
-                "Vehicle Number",
-                invoice.vehicleNumber
-            )
-
-            document.add(customerTable)
-
-            // --------------------------------
+            // ============================================================
             // VEHICLE DETAILS
-            // --------------------------------
-
-            document.add(
-                Paragraph("VEHICLE DETAILS")
-                    .setBold()
-                    .setFontSize(15f)
-                    .setMarginTop(15f)
-            )
+            // Yard is shown ONLY here
+            // ============================================================
 
             val vehicleTable =
-                Table(2)
+                Table(
+                    UnitValue.createPercentArray(
+                        floatArrayOf(50f, 50f)
+                    )
+                )
 
-            addInvoiceRow(
-                vehicleTable,
-                "Vehicle Type",
-                invoice.vehicleType
+            vehicleTable.setWidth(
+                UnitValue.createPercentValue(100f)
             )
 
-            addInvoiceRow(
-                vehicleTable,
-                "Vehicle Make",
-                invoice.vehicleMake
+            vehicleTable.addCell(
+                invoiceCell(
+                    """
+                VEHICLE DETAILS
+                
+                Vehicle Type : ${invoice.vehicleType ?: "N/A"}
+                Vehicle Make : ${invoice.vehicleMake ?: "N/A"}
+                Vehicle Model: ${invoice.vehicleModel ?: "N/A"}
+                """.trimIndent(),
+                    8f
+                )
             )
 
-            addInvoiceRow(
-                vehicleTable,
-                "Vehicle Model",
-                invoice.vehicleModel
-            )
-
-            addInvoiceRow(
-                vehicleTable,
-                "Engine Number",
-                invoice.engineNumber
-            )
-
-            addInvoiceRow(
-                vehicleTable,
-                "Chassis Number",
-                invoice.chassisNumber
+            vehicleTable.addCell(
+                invoiceCell(
+                    """
+                VEHICLE / YARD
+                
+                Engine No   : ${invoice.engineNumber ?: "N/A"}
+                Chassis No  : ${invoice.chassisNumber ?: "N/A"}
+                Yard Name   : ${invoice.yardName ?: "N/A"}
+                Yard Address: ${invoice.yardAddress ?: "N/A"}
+                """.trimIndent(),
+                    8f
+                )
             )
 
             document.add(vehicleTable)
 
-            // --------------------------------
-            // AMOUNT DETAILS
-            // --------------------------------
+
+            // ============================================================
+            // DETAILS OF BILLING
+            // ============================================================
 
             document.add(
-                Paragraph("AMOUNT DETAILS")
+                Paragraph(
+                    "DETAILS OF BILLING"
+                )
                     .setBold()
-                    .setFontSize(15f)
-                    .setMarginTop(15f)
+                    .setFontSize(11f)
+                    .setMarginTop(10f)
+                    .setMarginBottom(3f)
             )
 
-            val amountTable =
-                Table(2)
+            val billingTable =
+                Table(
+                    UnitValue.createPercentArray(
+                        floatArrayOf(
+                            8f,
+                            67f,
+                            25f
+                        )
+                    )
+                )
 
-            addInvoiceRow(
-                amountTable,
-                "Description 1",
-                invoice.description1
+            billingTable.setWidth(
+                UnitValue.createPercentValue(100f)
             )
 
-            addInvoiceRow(
-                amountTable,
-                "Basic Amount 1",
-                "₹${invoice.basic1Amount ?: 0.0}"
+
+            // ----------------------------
+            // HEADER
+            // ----------------------------
+
+            addBillingHeader(
+                billingTable,
+                "SR.NO"
             )
 
-            addInvoiceRow(
-                amountTable,
-                "Description 2",
-                invoice.description2
+            addBillingHeader(
+                billingTable,
+                "DETAILS OF BILLING"
             )
 
-            addInvoiceRow(
-                amountTable,
-                "Basic Amount 2",
-                "₹${invoice.basic2Amount ?: 0.0}"
+            addBillingHeader(
+                billingTable,
+                "AMOUNT"
             )
 
-            addInvoiceRow(
-                amountTable,
-                "Total Basic",
-                "₹${invoice.totalBasic ?: 0.0}"
+
+            // ============================================================
+            // 1. DESCRIPTION 1
+            // ============================================================
+
+            addBillingRow(
+                billingTable,
+                "1",
+                invoice.description1 ?: "Basic Charges",
+                money(invoice.basic1Amount)
             )
 
-            addInvoiceRow(
-                amountTable,
+
+            // ============================================================
+            // 2. DESCRIPTION 2
+            // ============================================================
+
+            addBillingRow(
+                billingTable,
+                "2",
+                invoice.description2 ?: "Additional Charges",
+                money(invoice.basic2Amount)
+            )
+
+
+            // ============================================================
+            // TOTAL BASIC
+            // ============================================================
+
+            addBillingSummaryRow(
+                billingTable,
+                "",
+                "TOTAL BASIC",
+                money(invoice.totalBasic)
+            )
+
+
+            // ============================================================
+            // GST DETAILS
+            // ============================================================
+
+            addBillingRow(
+                billingTable,
+                "",
                 "CGST",
-                "₹${invoice.cgst ?: 0.0}"
+                money(invoice.cgst)
             )
 
-            addInvoiceRow(
-                amountTable,
+            addBillingRow(
+                billingTable,
+                "",
                 "SGST",
-                "₹${invoice.sgst ?: 0.0}"
+                money(invoice.sgst)
             )
 
-            addInvoiceRow(
-                amountTable,
+            addBillingRow(
+                billingTable,
+                "",
                 "IGST",
-                "₹${invoice.igst ?: 0.0}"
+                money(invoice.igst)
             )
 
-            addInvoiceRow(
-                amountTable,
+            addBillingRow(
+                billingTable,
+                "",
                 "GST",
-                "₹${invoice.gst ?: 0.0}"
+                money(invoice.gst)
             )
 
-            addInvoiceRow(
-                amountTable,
+
+            // ============================================================
+            // INVOICE TOTAL
+            // ============================================================
+
+            addBillingSummaryRow(
+                billingTable,
+                "",
                 "INVOICE TOTAL",
-                "₹${invoice.invoiceTotal ?: 0.0}"
+                money(invoice.invoiceTotal)
             )
 
-            document.add(amountTable)
 
-            // --------------------------------
-            // PAYMENT DETAILS
-            // --------------------------------
+            // ============================================================
+            // DPD DETAILS
+            // ============================================================
+
+            addBillingRow(
+                billingTable,
+                "",
+                "DPD",
+                "${invoice.dpd ?: 0} Days"
+            )
+
+            addBillingRow(
+                billingTable,
+                "",
+                "DPD CHARGE RATE",
+                String.format(
+                    Locale.getDefault(),
+                    "%.2f%%",
+                    invoice.dpdChargePercent ?: 0.0
+                )
+            )
+
+            addBillingRow(
+                billingTable,
+                "",
+                "DPD EXTRA CHARGE",
+                money(invoice.dpdExtraCharge)
+            )
+
+
+            // ============================================================
+            // GRAND TOTAL
+            // ============================================================
+
+            addBillingGrandTotalRow(
+                billingTable,
+                "TOTAL AMOUNT INCLUDING DPD",
+                money(
+                    invoice.dpdTotalAmount
+                        ?: invoice.invoiceTotal
+                )
+            )
+
+
+            document.add(billingTable)
+
+// --------------------------------
+// PAYMENT SUMMARY
+// --------------------------------
 
             document.add(
-                Paragraph("PAYMENT DETAILS")
+                Paragraph("PAYMENT SUMMARY")
                     .setBold()
-                    .setFontSize(15f)
-                    .setMarginTop(15f)
+                    .setFontSize(11f)
+                    .setMarginTop(10f)
+                    .setMarginBottom(3f)
             )
 
             val paymentTable =
-                Table(2)
+                Table(
+                    UnitValue.createPercentArray(
+                        floatArrayOf(50f, 50f)
+                    )
+                )
 
-            addInvoiceRow(
-                paymentTable,
-                "Payment Status",
-                invoice.paymentStatus
-            )
-
-            addInvoiceRow(
-                paymentTable,
-                "Payment Date",
-                invoice.paymentDate
+            paymentTable.setWidth(
+                UnitValue.createPercentValue(100f)
             )
 
-            addInvoiceRow(
-                paymentTable,
-                "Payment Received",
-                "₹${invoice.paymentReceived ?: 0.0}"
+
+// --------------------------------
+// LEFT SIDE
+// --------------------------------
+
+            val leftPaymentCell =
+                Cell()
+
+            leftPaymentCell.add(
+                Paragraph(
+                    "TOTAL BILL AMOUNT: ${
+                        money(
+                            invoice.dpdTotalAmount
+                                ?: invoice.invoiceTotal
+                        )
+                    }"
+                )
+                    .setFontSize(9f)
+                    .setBold()
             )
-            addInvoiceRow(
-                paymentTable,
-                "Remaining Amount",
-                "₹${invoice.remainingAmount ?: 0.0}"
+
+            leftPaymentCell.add(
+                Paragraph(
+                    "PAYMENT RECEIVED: ${
+                        money(
+                            invoice.paymentReceived
+                        )
+                    }"
+                )
+                    .setFontSize(9f)
+                    .setBold()
+                    .setMarginTop(5f)
             )
+
+
+// --------------------------------
+// RIGHT SIDE
+// --------------------------------
+
+            val rightPaymentCell =
+                Cell()
+
+            rightPaymentCell.add(
+                Paragraph(
+                    "REMAINING AMOUNT: ${
+                        money(
+                            invoice.remainingAmount
+                        )
+                    }"
+                )
+                    .setFontSize(9f)
+                    .setBold()
+            )
+
+            rightPaymentCell.add(
+                Paragraph(
+                    "PAYMENT STATUS: ${
+                        invoice.paymentStatus ?: "Pending"
+                    }"
+                )
+                    .setFontSize(9f)
+                    .setBold()
+                    .setMarginTop(5f)
+            )
+
+            rightPaymentCell.add(
+                Paragraph(
+                    "PAYMENT DATE: ${
+                        invoice.paymentDate ?: "N/A"
+                    }"
+                )
+                    .setFontSize(9f)
+                    .setBold()
+                    .setMarginTop(5f)
+            )
+
+
+// --------------------------------
+// ADD CELLS
+// --------------------------------
+
+            paymentTable.addCell(leftPaymentCell)
+            paymentTable.addCell(rightPaymentCell)
 
             document.add(paymentTable)
 
-            // --------------------------------
+
+
+
+
+
+
+            // ============================================================
             // REMARKS
-            // --------------------------------
+            // ============================================================
 
             document.add(
-                Paragraph("REMARKS")
+                Paragraph(
+                    "REMARKS"
+                )
                     .setBold()
-                    .setFontSize(15f)
-                    .setMarginTop(15f)
+                    .setFontSize(11f)
+                    .setMarginTop(10f)
+                    .setMarginBottom(3f)
             )
 
-            document.add(
-                Paragraph(
-                    invoice.remarks ?: "N/A"
+            val remarksTable =
+                Table(
+                    UnitValue.createPercentArray(
+                        floatArrayOf(100f)
+                    )
+                )
+
+            remarksTable.setWidth(
+                UnitValue.createPercentValue(100f)
+            )
+
+            remarksTable.addCell(
+                invoiceCell(
+                    invoice.remarks ?: "N/A",
+                    8f
                 )
             )
 
-            // --------------------------------
+            document.add(remarksTable)
+
+
+            // ============================================================
+            // CREATED INFORMATION
+            // ============================================================
+
+            val createdTable =
+                Table(
+                    UnitValue.createPercentArray(
+                        floatArrayOf(50f, 50f)
+                    )
+                )
+
+            createdTable.setWidth(
+                UnitValue.createPercentValue(100f)
+            )
+
+            createdTable.addCell(
+                invoiceCell(
+                    """
+                Created By
+                ${invoice.createdBy ?: "N/A"}
+                """.trimIndent(),
+                    8f
+                )
+            )
+
+            createdTable.addCell(
+                invoiceCell(
+                    """
+                Created Date
+                ${invoice.createdDate ?: "N/A"}
+                """.trimIndent(),
+                    8f
+                )
+            )
+
+            document.add(createdTable)
+
+
+            // ============================================================
             // FOOTER
+            // ============================================================
+
             // --------------------------------
+// SIGNATURE SECTION
+// --------------------------------
 
             document.add(
+                Paragraph(
+                    "Kindly process the bill as soon as possible."
+                )
+                    .setFontSize(8f)
+                    .setMarginTop(12f)
+            )
+
+            document.add(
+                Paragraph(
+                    "Thanking you,"
+                )
+                    .setFontSize(8f)
+            )
+
+            val signatureTable =
+                Table(
+                    UnitValue.createPercentArray(
+                        floatArrayOf(50f, 50f)
+                    )
+                )
+
+            signatureTable.setWidth(
+                UnitValue.createPercentValue(100f)
+            )
+
+
+// --------------------------------
+// LEFT - AUTHORIZED BY
+// --------------------------------
+
+            signatureTable.addCell(
+                invoiceCell(
+                    "\n\n\nAuthorized By",
+                    8f,
+                    TextAlignment.LEFT
+                )
+            )
+
+
+// --------------------------------
+// RIGHT - DIGITAL SIGNATURE
+// --------------------------------
+
+            val signatureCell =
+                Cell()
+
+            signatureCell.setBorder(Border.NO_BORDER)
+            signatureCell.setTextAlignment(
+                TextAlignment.CENTER
+            )
+
+            signatureCell.add(
                 Paragraph(" ")
+                    .setFontSize(4f)
             )
 
-            document.add(
-                Paragraph(
-                    "This is a system generated invoice."
+
+// Load signature image
+            val signatureBitmap =
+                BitmapFactory.decodeResource(
+                    context.resources,
+                    R.drawable.digital_sign
                 )
-                    .setFontSize(9f)
+
+            val signatureStream =
+                ByteArrayOutputStream()
+
+            signatureBitmap.compress(
+                android.graphics.Bitmap.CompressFormat.PNG,
+                100,
+                signatureStream
             )
 
-            document.add(
-                Paragraph(
-                    "Authorized Signature"
+            val signatureImageData =
+                ImageDataFactory.create(
+                    signatureStream.toByteArray()
                 )
-                    .setMarginTop(30f)
+
+            val signatureImage =
+                Image(signatureImageData)
+
+            signatureImage
+                .setWidth(110f)
+                .setHeight(45f)
+                .setHorizontalAlignment(
+                    com.itextpdf.layout.properties.HorizontalAlignment.CENTER
+                )
+
+            signatureCell.add(signatureImage)
+
+            signatureCell.add(
+                Paragraph("Authorized Signature")
+                    .setFontSize(8f)
+                    .setBold()
+                    .setTextAlignment(
+                        TextAlignment.CENTER
+                    )
             )
 
-            // --------------------------------
+            signatureTable.addCell(signatureCell)
+
+            document.add(signatureTable)
+
+            // ============================================================
             // CLOSE PDF
-            // --------------------------------
+            // ============================================================
 
             document.close()
 
             pdfFile.outputStream.close()
 
-            // Notification
             showNotification(
                 pdfFile.uri,
                 fileName
@@ -724,25 +1064,195 @@ class PdfReportGenerator(
             ).show()
         }
     }
-    private fun addInvoiceRow(
+    private fun invoiceCell(
+        text: String,
+        fontSize: Float = 8f,
+        alignment: TextAlignment = TextAlignment.LEFT,
+        bold: Boolean = false
+    ): Cell {
+
+        val paragraph =
+            Paragraph(text)
+                .setFontSize(fontSize)
+                .setTextAlignment(alignment)
+                .setMargin(0f)
+
+        if (bold) {
+            paragraph.setBold()
+        }
+
+        return Cell()
+            .add(paragraph)
+            .setPadding(5f)
+            .setVerticalAlignment(
+                VerticalAlignment.MIDDLE
+            )
+            .setBorder(
+                SolidBorder(1f)
+            )
+    }
+
+
+    private fun addBillingHeader(
         table: Table,
-        label: String,
-        value: String?
+        text: String
+    ) {
+
+        table.addHeaderCell(
+            Cell()
+                .add(
+                    Paragraph(text)
+                        .setBold()
+                        .setFontSize(8f)
+                        .setTextAlignment(
+                            TextAlignment.CENTER
+                        )
+                )
+                .setPadding(5f)
+                .setVerticalAlignment(
+                    VerticalAlignment.MIDDLE
+                )
+                .setBorder(
+                    SolidBorder(1f)
+                )
+        )
+    }
+    private fun addBillingRow(
+        table: Table,
+        serial: String,
+        description: String,
+        amount: String
     ) {
 
         table.addCell(
-            Cell().add(
-                Paragraph(label)
-                    .setBold()
+            invoiceCell(
+                serial,
+                8f,
+                TextAlignment.CENTER
             )
         )
 
         table.addCell(
-            Cell().add(
-                Paragraph(
-                    value ?: "N/A"
-                )
+            invoiceCell(
+                description,
+                8f
+            )
+        )
+
+        table.addCell(
+            invoiceCell(
+                amount,
+                8f,
+                TextAlignment.RIGHT
             )
         )
     }
+    private fun addBillingSummaryRow(
+        table: Table,
+        serial: String,
+        description: String,
+        amount: String
+    ) {
+
+        table.addCell(
+            invoiceCell(
+                serial,
+                8f,
+                TextAlignment.CENTER,
+                true
+            )
+        )
+
+        table.addCell(
+            invoiceCell(
+                description,
+                8f,
+                TextAlignment.RIGHT,
+                true
+            )
+        )
+
+        table.addCell(
+            invoiceCell(
+                amount,
+                8f,
+                TextAlignment.RIGHT,
+                true
+            )
+        )
+    }
+    private fun addBillingGrandTotalRow(
+        table: Table,
+        description: String,
+        amount: String
+    ) {
+
+        val labelCell =
+            Cell(1, 2)
+                .add(
+                    Paragraph(description)
+                        .setBold()
+                        .setFontSize(9f)
+                        .setTextAlignment(
+                            TextAlignment.RIGHT
+                        )
+                )
+                .setPadding(6f)
+                .setBorder(
+                    SolidBorder(1f)
+                )
+
+        table.addCell(labelCell)
+
+        table.addCell(
+            invoiceCell(
+                amount,
+                9f,
+                TextAlignment.RIGHT,
+                true
+            )
+        )
+    }
+    private fun money(
+        amount: Double?
+    ): String {
+
+        return String.format(
+            Locale.getDefault(),
+            "₹%.2f",
+            amount ?: 0.0
+        )
+    }
+    private fun formatInvoiceDate(
+        date: String?
+    ): String {
+
+        if (date.isNullOrBlank()) {
+            return "N/A"
+        }
+
+        return try {
+
+            val input =
+                SimpleDateFormat(
+                    "yyyy-MM-dd",
+                    Locale.getDefault()
+                )
+
+            val output =
+                SimpleDateFormat(
+                    "dd/MM/yyyy",
+                    Locale.getDefault()
+                )
+
+            output.format(
+                input.parse(date)!!
+            )
+
+        } catch (e: Exception) {
+
+            date
+        }
+    }
+
 }

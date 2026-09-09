@@ -130,10 +130,18 @@ class UserRepository {
         )
     }
     suspend fun getUserActivityReport(
-        agencyId: String
+        agencyId: String,
+        fromDate: String? = null,
+        toDate: String? = null,
+        userEmail: String? = null
     ): Response<List<UserActivityReport>> {
 
-        return RetrofitClient.userApi.getUserActivityReport(agencyId)
+        return RetrofitClient.userApi.getUserActivityReport(
+            agencyId = agencyId,
+            fromDate = fromDate,
+            toDate = toDate,
+            userEmail = userEmail
+        )
     }
     suspend fun getMonthlyReport(
         agencyId: String,
