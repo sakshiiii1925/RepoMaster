@@ -640,7 +640,6 @@ private lateinit var layout1: LinearLayout
             this,
             VehicleReportActivity::class.java
         )
-
         intent.putExtra("FINANCE", finance)
         intent.putExtra("BRANCH", branch)
         intent.putExtra("STATUS", status)

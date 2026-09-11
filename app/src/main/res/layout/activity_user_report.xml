@@ -15,11 +15,11 @@
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="100dp"
         android:background="@android:color/transparent"
         android:title="Executive Activity Report"
         android:titleTextColor="@android:color/white"
-        android:paddingTop="20dp"
+        android:paddingTop="35dp"
         app:navigationIcon="@drawable/baseline_arrow_back_24"/>
 
 
@@ -62,7 +62,9 @@
             <!-- ========================= -->
             <!-- SUMMARY CARDS -->
             <!-- ========================= -->
-
+<HorizontalScrollView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -81,9 +83,8 @@
                     <!-- AGENTS -->
 
                     <com.google.android.material.card.MaterialCardView
-                        android:layout_width="0dp"
+                        android:layout_width="100dp"
                         android:layout_height="100dp"
-                        android:layout_weight="1"
                         android:layout_margin="5dp"
                         app:cardCornerRadius="16dp"
                         app:cardElevation="4dp"
@@ -122,9 +123,9 @@
                     <!-- SEARCHES -->
 
                     <com.google.android.material.card.MaterialCardView
-                        android:layout_width="0dp"
+                        android:layout_width="100dp"
                         android:layout_height="105dp"
-                        android:layout_weight="1"
+
                         android:layout_margin="5dp"
                         app:cardCornerRadius="16dp"
                         app:cardElevation="4dp"
@@ -159,22 +160,9 @@
 
                     </com.google.android.material.card.MaterialCardView>
 
-                </LinearLayout>
-
-
-                <!-- ROW 2 -->
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <!-- REPO MARK -->
-
                     <com.google.android.material.card.MaterialCardView
-                        android:layout_width="0dp"
+                        android:layout_width="100dp"
                         android:layout_height="105dp"
-                        android:layout_weight="1"
                         android:layout_margin="5dp"
                         app:cardCornerRadius="16dp"
                         app:cardElevation="4dp"
@@ -208,13 +196,9 @@
 
                     </com.google.android.material.card.MaterialCardView>
 
-
-                    <!-- PARKED -->
-
                     <com.google.android.material.card.MaterialCardView
-                        android:layout_width="0dp"
+                        android:layout_width="100dp"
                         android:layout_height="105dp"
-                        android:layout_weight="1"
                         android:layout_margin="5dp"
                         app:cardCornerRadius="16dp"
                         app:cardElevation="4dp"
@@ -248,49 +232,48 @@
 
                     </com.google.android.material.card.MaterialCardView>
 
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="100dp"
+                        android:layout_height="105dp"
+                        android:layout_margin="5dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="4dp"
+                        app:strokeWidth="1dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="RELEASED"
+                                android:textSize="11sp"
+                                android:textStyle="bold"
+                                android:textColor="#666666"/>
+
+                            <TextView
+                                android:id="@+id/txtTotalReleased"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0"
+                                android:textSize="28sp"
+                                android:textStyle="bold"
+                                android:textColor="#2E7D32"
+                                android:layout_marginTop="4dp"/>
+
+                        </LinearLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
                 </LinearLayout>
 
-                <!-- ROW 4 -->
 
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="100dp"
-                    android:layout_height="105dp"
-                    android:layout_margin="5dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="4dp"
-                    app:strokeWidth="1dp">
+                </LinearLayout>
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="RELEASED"
-                            android:textSize="11sp"
-                            android:textStyle="bold"
-                            android:textColor="#666666"/>
-
-                        <TextView
-                            android:id="@+id/txtTotalReleased"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="0"
-                            android:textSize="28sp"
-                            android:textStyle="bold"
-                            android:textColor="#2E7D32"
-                            android:layout_marginTop="4dp"/>
-
-                    </LinearLayout>
-
-                </com.google.android.material.card.MaterialCardView>
-
-            </LinearLayout>
-
-
+</HorizontalScrollView>
             <!-- ========================= -->
             <!-- FILTER SECTION -->
             <!-- ========================= -->
@@ -376,20 +359,23 @@
                     <!-- USER -->
 
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/userFilterLayout"
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:hint="Select User"
-                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                        app:boxBackgroundColor="@color/white">
+                        app:hintTextColor="@color/black"
+                        app:startIconDrawable="@drawable/baseline_search_24"
+                        android:hint="Search User">
 
-                        <AutoCompleteTextView
+                        <com.google.android.material.textfield.MaterialAutoCompleteTextView
                             android:id="@+id/autoUser"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="none"
-                            android:paddingStart="12dp"
-                            android:paddingEnd="12dp"/>
+                            android:inputType="text"
+                            android:singleLine="true"
+                            android:completionThreshold="1"
+                            android:imeOptions="actionDone" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -556,22 +542,6 @@
                             android:layout_height="match_parent"
                             android:gravity="center"
                             android:text="REPO MARK"
-                            android:textColor="#002147"
-                            android:textStyle="bold"/>
-
-                        <TextView
-                            android:layout_width="110dp"
-                            android:layout_height="match_parent"
-                            android:gravity="center"
-                            android:text="CONTACTED"
-                            android:textColor="#002147"
-                            android:textStyle="bold"/>
-
-                        <TextView
-                            android:layout_width="120dp"
-                            android:layout_height="match_parent"
-                            android:gravity="center"
-                            android:text="ON THE WAY"
                             android:textColor="#002147"
                             android:textStyle="bold"/>
 

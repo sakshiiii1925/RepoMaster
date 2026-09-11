@@ -168,8 +168,16 @@ class UserRepository {
             branch
         )
     suspend fun downloadUserActivityExcel(
-        agencyId: String
-    ) = RetrofitClient.userApi.downloadUserActivityExcel(agencyId)
+        agencyId: String,
+        fromDate: String? = null,
+        toDate: String? = null,
+        userEmail: String? = null
+    ) = RetrofitClient.userApi.downloadUserActivityExcel(
+        agencyId = agencyId,
+        fromDate = fromDate,
+        toDate = toDate,
+        userEmail = userEmail
+    )
     suspend fun downloadMonthlyExcel(
         agencyId: String,
         year: String,

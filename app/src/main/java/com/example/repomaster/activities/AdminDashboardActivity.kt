@@ -5,6 +5,9 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import com.example.repomaster.viewmodel.HomeViewModelFactory
+import androidx.activity.viewModels
+import com.example.repomaster.viewmodel.HomeViewModel
 import com.example.repomaster.repository.AdminNotificationRepository
 import com.example.repomaster.viewmodel.AdminNotificationViewModel
 import com.example.repomaster.viewmodel.AdminNotificationViewModelFactory
@@ -50,6 +53,9 @@ class AdminDashboardActivity : AppCompatActivity(),NavigationView.OnNavigationIt
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var badge: BadgeDrawable
     private lateinit var txtBadge: TextView
+    private lateinit var txttotalVehicles: TextView
+
+    private lateinit var txtPendingUsers: TextView
     private lateinit var notificationLayout: FrameLayout
     private var pendingUserCount = 0
     private var adminNotificationCount = 0
@@ -71,9 +77,21 @@ class AdminDashboardActivity : AppCompatActivity(),NavigationView.OnNavigationIt
             )
         }
     }
+    private val homeViewModel: HomeViewModel by viewModels {
+        HomeViewModelFactory(applicationContext)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.statusBarColor = android.graphics.Color.TRANSPARENT
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            window.decorView.systemUiVisibility =
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
+                        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        }
         //notification
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
 
@@ -171,6 +189,12 @@ class AdminDashboardActivity : AppCompatActivity(),NavigationView.OnNavigationIt
 
         val txtProfileLetter =
             headerView.findViewById<TextView>(R.id.txtProfileLetter)
+        txttotalVehicles=findViewById(R.id.txtTotalVehicles)
+        txtPendingUsers = findViewById(R.id.txtPendingUsers)
+
+        txttotalVehicles.text = "0"
+        txtPendingUsers.text = "0"
+
 
         val userName = sessionManager.getUserName()
 
@@ -197,7 +221,9 @@ class AdminDashboardActivity : AppCompatActivity(),NavigationView.OnNavigationIt
 
                 pendingUserCount =
                     response.body()?.size ?: 0
-
+                // Display pending user count on dashboard
+                txtPendingUsers.text =
+                    pendingUserCount.toString()
                 updateNotificationBadge()
             }
         }
@@ -210,6 +236,11 @@ class AdminDashboardActivity : AppCompatActivity(),NavigationView.OnNavigationIt
 
                 updateNotificationBadge()
             }
+        homeViewModel.totalVehicleCount.observe(this) { count ->
+
+            txttotalVehicles.text =
+                count.toString()
+        }
          cardAddVehicle.setOnClickListener {
 
                 animateCard(cardAddVehicle)
@@ -478,6 +509,8 @@ R.id.nav_manage_rates->{
 
             loadNotificationCounts()
         }
+
+        homeViewModel.getVehicleCount()
     }
 }
 

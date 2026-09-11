@@ -197,9 +197,20 @@ class UserViewModel : ViewModel() {
     }
 
     fun downloadUserActivityExcel(
-        agencyId: String
+        agencyId: String,
+        fromDate: String? = null,
+        toDate: String? = null,
+        userEmail: String? = null
     ) = liveData {
-        emit(repository.downloadUserActivityExcel(agencyId))
+
+        emit(
+            repository.downloadUserActivityExcel(
+                agencyId = agencyId,
+                fromDate = fromDate,
+                toDate = toDate,
+                userEmail = userEmail
+            )
+        )
     }
 
     fun downloadMonthlyExcel(

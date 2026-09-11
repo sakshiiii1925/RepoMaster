@@ -4,11 +4,12 @@ import com.example.repomaster.models.Vehicle
 import com.example.repomaster.models.StatusUpdateRequest
 import com.example.repomaster.models.SearchHistory
 import com.example.repomaster.models.UploadResponse
-
+import com.example.repomaster.models.ApiResponse1
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
-
+import com.example.repomaster.models.VehicleCountResponse
+import com.example.repomaster.models.BulkDeleteSearchHistoryRequest
 import retrofit2.Call
 import retrofit2.Response
 
@@ -113,5 +114,19 @@ interface VehicleApi {
 
     @GET("api/admin/download-template")
     fun downloadTemplate(): Call<ResponseBody>
+    @GET("api/vehicles/count")
+    suspend fun getVehicleCount(
+        @Query("userId") userId: Int
+    ): Response<VehicleCountResponse>
+    @DELETE("api/search-history/{id}")
+    suspend fun deleteSearchHistory(
+        @Path("id") id: Long,
+        @Query("userId") userId: Int
+    ): Response<ApiResponse1>
+    @POST("api/search-history/bulk-delete")
+    suspend fun deleteMultipleSearchHistory(
+        @Query("userId") userId: Int,
+        @Body request: BulkDeleteSearchHistoryRequest
+    ): Response<ApiResponse1>
 
 }

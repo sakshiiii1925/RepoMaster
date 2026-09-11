@@ -1,6 +1,8 @@
 package com.example.repomaster.activities
 
 import android.os.Bundle
+import com.example.repomaster.models.SearchHistory
+import android.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,6 +17,7 @@ import android.text.Editable
 import com.example.repomaster.viewmodel.HomeViewModelFactory
 import android.app.DatePickerDialog
 import java.util.Calendar
+import com.google.android.material.button.MaterialButton
 import com.example.repomaster.viewmodel.UserViewModel
 import com.example.repomaster.utils.SessionManager
 class AdminSearchHistoryActivity : AppCompatActivity() {
@@ -23,6 +26,7 @@ class AdminSearchHistoryActivity : AppCompatActivity() {
     private lateinit var etSearchVehicle: TextInputEditText
     private lateinit var adapter: AdminSearchHistoryAdapter
     private lateinit var homeViewModel: HomeViewModel
+    private lateinit var btnDeleteSelected: MaterialButton
     private lateinit var userViewModel: UserViewModel
     private lateinit var spUser: AutoCompleteTextView
     private lateinit var spDate: AutoCompleteTextView
@@ -41,6 +45,8 @@ class AdminSearchHistoryActivity : AppCompatActivity() {
         spUser = findViewById(R.id.spUser)
         spDate = findViewById(R.id.spDate)
         spSort = findViewById(R.id.spSort)
+        btnDeleteSelected =
+            findViewById(R.id.btnDeleteSelected)
         //sort dropdown
         val sortList = listOf(
             "Newest First",
@@ -144,6 +150,24 @@ class AdminSearchHistoryActivity : AppCompatActivity() {
                 calendar.get(Calendar.DAY_OF_MONTH)
             ).show()
         }
+        btnDeleteSelected.setOnClickListener {
+
+            val selectedIds =
+                adapter.getSelectedIds()
+
+            if (selectedIds.isEmpty()) {
+
+                Toast.makeText(
+                    this,
+                    "Please select at least one search history",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                return@setOnClickListener
+            }
+
+            showBulkDeleteConfirmation(selectedIds)
+        }
         etSearchVehicle = findViewById(R.id.etSearchVehicle)
         //search number
         etSearchVehicle.addTextChangedListener(object : TextWatcher {
@@ -181,7 +205,10 @@ class AdminSearchHistoryActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.recyclerSearchHistory)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        adapter = AdminSearchHistoryAdapter(emptyList())
+        adapter = AdminSearchHistoryAdapter(
+            emptyList()
+        )
+
         recyclerView.adapter = adapter
 //viewmodels
         val homeFactory =
@@ -195,6 +222,28 @@ class AdminSearchHistoryActivity : AppCompatActivity() {
         userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
         loadUsers()
         loadSearchHistory()
+        homeViewModel.deleteSearchHistoryResult
+            .observe(this) { success ->
+
+                if (success) {
+
+                    loadSearchHistory()
+
+                    Toast.makeText(
+                        this,
+                        "Search history deleted",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                } else {
+
+                    Toast.makeText(
+                        this,
+                        "Failed to delete search history",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
     }
     //load user in dropdown
     private fun loadUsers() {
@@ -241,6 +290,53 @@ class AdminSearchHistoryActivity : AppCompatActivity() {
                 ).show()
             }
         }
+    }
+
+
+
+    private fun showBulkDeleteConfirmation(
+        selectedIds: List<Long>
+    ) {
+
+        AlertDialog.Builder(this)
+            .setTitle("Delete Search History")
+            .setMessage(
+                "Are you sure you want to delete " +
+                        "${selectedIds.size} selected search history record(s)?"
+            )
+            .setNegativeButton(
+                "Cancel",
+                null
+            )
+            .setPositiveButton(
+                "Delete"
+            ) { _, _ ->
+
+                homeViewModel
+                    .deleteMultipleSearchHistory(selectedIds)
+                    .observe(this) { success ->
+
+                        if (success) {
+
+                            Toast.makeText(
+                                this,
+                                "${selectedIds.size} search history record(s) deleted",
+                                Toast.LENGTH_SHORT
+                            ).show()
+
+                            loadSearchHistory()
+
+                        } else {
+
+                            Toast.makeText(
+                                this,
+                                "Failed to delete search history",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+            }
+            .show()
     }
     override fun onSupportNavigateUp(): Boolean {
 

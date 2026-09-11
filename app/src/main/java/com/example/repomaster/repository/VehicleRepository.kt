@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.util.Log
+import com.example.repomaster.models.BulkDeleteSearchHistoryRequest
 import com.example.repomaster.models.UploadedImage
 import com.example.repomaster.data.local.DatabaseProvider
 import com.example.repomaster.data.local.toEntity
@@ -1141,7 +1142,81 @@ class VehicleRepository(
             emptyList()
         }
     }
+// =========================================================
+// GET TOTAL VEHICLE COUNT
+// =========================================================
 
+    suspend fun getVehicleCount(): Int {
+
+        return try {
+
+            val userId =
+                sessionManager.getUserId()
+
+            if (userId <= 0) {
+
+                Log.e(
+                    "VEHICLE_COUNT",
+                    "User ID not found: $userId"
+                )
+
+                return 0
+            }
+
+            Log.d(
+                "VEHICLE_COUNT",
+                "Loading vehicle count for userId=$userId"
+            )
+
+            val response =
+                api.getVehicleCount(
+                    userId
+                )
+
+            Log.d(
+                "VEHICLE_COUNT",
+                "HTTP code=${response.code()}"
+            )
+
+            if (response.isSuccessful) {
+
+                val result =
+                    response.body()
+
+                val count =
+                    result?.count ?: 0
+
+                Log.d(
+                    "VEHICLE_COUNT",
+                    "Total vehicles=$count"
+                )
+
+                count
+
+            } else {
+
+                val error =
+                    response.errorBody()?.string()
+
+                Log.e(
+                    "VEHICLE_COUNT",
+                    "API error=$error"
+                )
+
+                0
+            }
+
+        } catch (e: Exception) {
+
+            Log.e(
+                "VEHICLE_COUNT",
+                "Exception while loading vehicle count",
+                e
+            )
+
+            0
+        }
+    }
     suspend fun markImageUploadPending(
         vehicleNumber: String,
         status: String
@@ -1362,6 +1437,130 @@ class VehicleRepository(
         }
     }
 
+// =========================================================
+// DELETE SEARCH HISTORY
+// =========================================================
+
+    suspend fun deleteSearchHistory(
+        id: Long
+    ): Boolean {
+
+        return try {
+
+            val userId =
+                sessionManager.getUserId()
+
+            if (userId <= 0) {
+
+                Log.e(
+                    "DELETE_HISTORY",
+                    "Invalid userId=$userId"
+                )
+
+                return false
+            }
+
+            Log.d(
+                "DELETE_HISTORY",
+                "Deleting history id=$id, userId=$userId"
+            )
+
+            val response =
+                api.deleteSearchHistory(
+                    id,
+                    userId
+                )
+
+            Log.d(
+                "DELETE_HISTORY",
+                "HTTP code=${response.code()}"
+            )
+
+            if (response.isSuccessful) {
+
+                val result =
+                    response.body()
+
+                Log.d(
+                    "DELETE_HISTORY",
+                    "Response=$result"
+                )
+
+                result?.success == true
+
+            } else {
+
+                Log.e(
+                    "DELETE_HISTORY",
+                    "API error=${
+                        response.errorBody()?.string()
+                    }"
+                )
+
+                false
+            }
+
+        } catch (e: Exception) {
+
+            Log.e(
+                "DELETE_HISTORY",
+                "Exception deleting history",
+                e
+            )
+
+            false
+        }
+    }
+    suspend fun deleteMultipleSearchHistory(
+        ids: List<Long>
+    ): Boolean {
+
+        return try {
+
+            val userId =
+                sessionManager.getUserId()
+
+            if (userId <= 0) {
+                return false
+            }
+
+            val request =
+                BulkDeleteSearchHistoryRequest(ids)
+
+            val response =
+                api.deleteMultipleSearchHistory(
+                    userId,
+                    request
+                )
+
+            android.util.Log.d(
+                "SEARCH_DELETE",
+                "HTTP CODE: ${response.code()}"
+            )
+
+            android.util.Log.d(
+                "SEARCH_DELETE",
+                "BODY: ${response.body()}"
+            )
+
+            android.util.Log.d(
+                "SEARCH_DELETE",
+                "ERROR: ${response.errorBody()?.string()}"
+            )
+
+            response.isSuccessful
+
+        } catch (e: Exception) {
+
+            android.util.Log.e(
+                "SEARCH_DELETE",
+                "Exception",
+                e
+            )
+
+            false
+        }
+    }
 
     private fun getCurrentAgencyId(): String {
         return sessionManager.getAgencyId().trim()

@@ -102,9 +102,7 @@ class UserActivityReportActivity : AppCompatActivity() {
 
         txtTotalReleased =
             findViewById(R.id.txtTotalReleased)
-        toolbar.setTitleTextColor(
-            getColor(R.color.white)
-        )
+
         supportActionBar?.title = "Agent Report"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         toolbar.setTitleTextColor(
@@ -163,8 +161,9 @@ class UserActivityReportActivity : AppCompatActivity() {
         reports: List<UserActivityReport>
     ) {
 
-        val users =
-            mutableListOf("All Users")
+        val users = mutableListOf<String>()
+
+        users.add("All Users")
 
         users.addAll(
             reports
@@ -172,34 +171,39 @@ class UserActivityReportActivity : AppCompatActivity() {
                     "${it.userName} - ${it.userEmail}"
                 }
                 .distinct()
+                .sorted()
         )
 
+        val userAdapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_dropdown_item_1line,
+            users
+        )
 
-        val adapter =
-            ArrayAdapter(
-                this,
-                android.R.layout.simple_dropdown_item_1line,
-                users
-            )
+        autoUser.setAdapter(userAdapter)
 
-        autoUser.setAdapter(adapter)
+        // Start filtering as soon as admin types
+        autoUser.threshold = 1
 
+        // Show dropdown when clicked
+        autoUser.setOnClickListener {
+            autoUser.showDropDown()
+        }
 
-        autoUser.setOnItemClickListener {
-                _, _, position, _ ->
+        // Select user
+        autoUser.setOnItemClickListener { _, _, position, _ ->
 
-            if (position == 0) {
+            val selectedUser = userAdapter.getItem(position)
+
+            if (selectedUser == "All Users") {
 
                 selectedUserEmail = null
 
             } else {
 
-                val selected =
-                    users[position]
-
                 selectedUserEmail =
-                    selected
-                        .substringAfter(" - ")
+                    selectedUser
+                        ?.substringAfter(" - ")
             }
         }
     }
@@ -354,42 +358,52 @@ class UserActivityReportActivity : AppCompatActivity() {
         ).show()
     }
 
-
-
-
     private fun downloadUserActivityExcel() {
 
-        userViewModel.downloadUserActivityExcel(agencyId)
-            .observe(this) { response ->
+        userViewModel.downloadUserActivityExcel(
+            agencyId = agencyId,
+            fromDate = edtFromDate.text
+                ?.toString()
+                ?.ifBlank { null },
+            toDate = edtToDate.text
+                ?.toString()
+                ?.ifBlank { null },
+            userEmail = selectedUserEmail
+        ).observe(this) { response ->
 
-                if (response.isSuccessful && response.body() != null) {
+            if (response.isSuccessful && response.body() != null) {
 
-                    val uri = FileDownloader(this).saveExcel(
-                        response.body()!!,
-                        "Agent_Report.xlsx"
-                    )
+                val uri = FileDownloader(this).saveExcel(
+                    response.body()!!,
+                    "Agent_Report.xlsx"
+                )
 
-                    if (uri != null) {
+                if (uri != null) {
 
-                        Toast.makeText(
-                            this,
-                            "Excel saved in Downloads",
-                            Toast.LENGTH_LONG
-                        ).show()
+                    Toast.makeText(
+                        this,
+                        "Excel saved in Downloads",
+                        Toast.LENGTH_LONG
+                    ).show()
 
-                    } else {
+                } else {
 
-                        Toast.makeText(
-                            this,
-                            "Download failed",
-                            Toast.LENGTH_LONG
-                        ).show()
-
-                    }
-
+                    Toast.makeText(
+                        this,
+                        "Download failed",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
 
+            } else {
+
+                Toast.makeText(
+                    this,
+                    "Excel download failed: ${response.code()}",
+                    Toast.LENGTH_LONG
+                ).show()
             }
+        }
     }
     private fun updateSummary(
         reports: List<UserActivityReport>

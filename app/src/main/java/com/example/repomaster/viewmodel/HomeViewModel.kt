@@ -143,6 +143,17 @@ class HomeViewModel(
         emit(repository.getSearchHistory(agencyId))
 
     }
+    val totalVehicleCount =
+        MutableLiveData<Int>()
+    fun getVehicleCount() {
+
+        viewModelScope.launch {
+
+            totalVehicleCount.value =
+                repository.getVehicleCount()
+
+        }
+    }
     fun syncVehicles() {
 
         viewModelScope.launch {
@@ -150,5 +161,33 @@ class HomeViewModel(
             repository.syncAllVehicles()
 
         }
+    }
+    // =========================================================
+// DELETE SEARCH HISTORY
+// =========================================================
+
+    val deleteSearchHistoryResult =
+        MutableLiveData<Boolean>()
+
+    fun deleteSearchHistory(
+        id: Long
+    ) {
+
+        viewModelScope.launch {
+
+            val result =
+                repository.deleteSearchHistory(id)
+
+            deleteSearchHistoryResult.value =
+                result
+        }
+    }
+    fun deleteMultipleSearchHistory(
+        ids: List<Long>
+    ) = liveData {
+
+        emit(
+            repository.deleteMultipleSearchHistory(ids)
+        )
     }
 }
