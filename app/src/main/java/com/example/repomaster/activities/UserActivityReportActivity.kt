@@ -1,10 +1,10 @@
 package com.example.repomaster.activities
-
 import android.app.DatePickerDialog
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.*
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModelProvider
@@ -26,7 +26,9 @@ import com.example.repomaster.models.UserActivityReport
 import com.google.android.material.textfield.TextInputEditText
 import com.example.repomaster.viewmodel.HomeViewModelFactory
 
-class UserActivityReportActivity : AppCompatActivity() {
+class UserActivityReportActivity :
+    AppCompatActivity(),
+    UserActivityAdapter.OnUserActivityClickListener {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: UserActivityAdapter
@@ -114,7 +116,10 @@ class UserActivityReportActivity : AppCompatActivity() {
 
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        adapter = UserActivityAdapter(emptyList())
+        adapter = UserActivityAdapter(
+            emptyList(),
+            this
+        )
         recyclerView.adapter = adapter
 
         agencyId = SessionManager(this).getAgencyId()
@@ -433,7 +438,69 @@ class UserActivityReportActivity : AppCompatActivity() {
                 it.releasedCount
             }.toString()
     }
+    override fun onRepoMarkedClick(
+        userEmail: String
+    ) {
 
+        openVehicleReport(
+            userEmail = userEmail,
+            status = "repo mark"
+        )
+    }
+
+
+    override fun onParkedClick(
+        userEmail: String
+    ) {
+
+        openVehicleReport(
+            userEmail = userEmail,
+            status = "Parked"
+        )
+    }
+
+
+    override fun onReleasedClick(
+        userEmail: String
+    ) {
+
+        openVehicleReport(
+            userEmail = userEmail,
+            status = "Released"
+        )
+    }
+    private fun openVehicleReport(
+        userEmail: String,
+        status: String
+    ) {
+
+        val intent = Intent(
+            this,
+            VehicleReportActivity::class.java
+        )
+
+        intent.putExtra(
+            "USER_EMAIL",
+            userEmail
+        )
+
+        intent.putExtra(
+            "STATUS",
+            status
+        )
+
+        intent.putExtra(
+            "AGENCY_ID",
+            agencyId
+        )
+
+        intent.putExtra(
+            "FROM_AGENT_REPORT",
+            true
+        )
+
+        startActivity(intent)
+    }
     override fun onSupportNavigateUp(): Boolean {
 
 

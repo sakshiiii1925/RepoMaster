@@ -245,23 +245,37 @@ class VehicleRepository(
                     status == "Parked"
                 ) {
 
+                    val userId =
+                        sessionManager.getUserId()
+
+                    val userEmail =
+                        sessionManager.getUserEmail()
+
                     val existing =
-                        pendingImageUploadDao
-                            .getPendingForVehicle(
-                                number,
-                                agencyId
-                            )
+                        pendingImageUploadDao.getPendingForVehicle(
+                            vehicleNumber = number,
+                            agencyId = agencyId,
+                            userEmail = userEmail
+                        )
                     if (existing == null) {
 
                         pendingImageUploadDao.insert(
+
                             PendingImageUploadEntity(
+
                                 vehicleNumber = number,
+
                                 status = status,
+
                                 uploadStatus = "PENDING",
-                                agencyId = agencyId
+
+                                agencyId = agencyId,
+
+                                userId = userId.toString(),
+
+                                userEmail = userEmail
                             )
                         )
-
                         Log.d(
                             "IMAGE_UPLOAD",
                             "Pending image upload created: $number"
@@ -339,19 +353,35 @@ class VehicleRepository(
                         status == "Parked"
                     ) {
 
+                        val userId =
+                            sessionManager.getUserId()
+
+                        val userEmail =
+                            sessionManager.getUserEmail()
+
                         val existing =
                             pendingImageUploadDao.getPendingForVehicle(
-                                number,
-                                agencyId
+                                vehicleNumber = number,
+                                agencyId = agencyId,
+                                userEmail = userEmail
                             )
                         if (existing == null) {
 
                             pendingImageUploadDao.insert(
+
                                 PendingImageUploadEntity(
+
                                     vehicleNumber = number,
+
                                     status = status,
+
+                                    uploadStatus = "PENDING",
+
                                     agencyId = agencyId,
-                                    uploadStatus = "PENDING"
+
+                                    userId = userId.toString(),
+
+                                    userEmail = userEmail
                                 )
                             )
                         }
@@ -378,19 +408,35 @@ class VehicleRepository(
                     status == "Parked"
                 ) {
 
+                    val userId =
+                        sessionManager.getUserId()
+
+                    val userEmail =
+                        sessionManager.getUserEmail()
+
                     val existing =
                         pendingImageUploadDao.getPendingForVehicle(
-                            number,
-                            agencyId
+                            vehicleNumber = number,
+                            agencyId = agencyId,
+                            userEmail = userEmail
                         )
                     if (existing == null) {
 
                         pendingImageUploadDao.insert(
+
                             PendingImageUploadEntity(
+
                                 vehicleNumber = number,
+
                                 status = status,
+
+                                uploadStatus = "PENDING",
+
                                 agencyId = agencyId,
-                                uploadStatus = "PENDING"
+
+                                userId = userId.toString(),
+
+                                userEmail = userEmail
                             )
                         )
                     }
@@ -701,20 +747,6 @@ class VehicleRepository(
         return null
     }
 
-
-    // =========================================================
-    // DELETE VEHICLE
-    // =========================================================
-
-    suspend fun deleteVehicle(
-        vehicleNumber: String
-    ): Boolean {
-
-        val response =
-            api.deleteVehicle(vehicleNumber)
-
-        return response.isSuccessful
-    }
 
 
     // =========================================================
@@ -1235,62 +1267,150 @@ class VehicleRepository(
             getCurrentAgencyId()
 
         if (agencyId.isBlank()) {
+
             Log.e(
                 "IMAGE_PENDING",
                 "Agency ID not found"
             )
+
             return
         }
 
+        // =========================================================
+        // CURRENT USER
+        // =========================================================
+
+        val userId =
+            sessionManager.getUserId()
+
+        val userEmail =
+            sessionManager.getUserEmail()
+
+        if (userId <= 0) {
+
+            Log.e(
+                "IMAGE_PENDING",
+                "Invalid userId=$userId"
+            )
+
+            return
+        }
+
+        if (userEmail.isBlank()) {
+
+            Log.e(
+                "IMAGE_PENDING",
+                "User email not found"
+            )
+
+            return
+        }
+
+        Log.d(
+            "IMAGE_PENDING",
+            "User=$userEmail, Vehicle=$number"
+        )
+
+        // =========================================================
+        // CHECK CURRENT USER'S PENDING RECORD
+        // =========================================================
+
         val existing =
             pendingImageUploadDao.getPendingForVehicle(
-                number,
-                agencyId
+                vehicleNumber = number,
+                agencyId = agencyId,
+                userEmail = userEmail
             )
 
         if (existing == null) {
 
             pendingImageUploadDao.insert(
+
                 PendingImageUploadEntity(
+
                     vehicleNumber = number,
+
                     status = status,
+
+                    agencyId = agencyId,
+
                     uploadStatus = "PENDING",
-                    agencyId = agencyId
+
+                    userId = userId.toString(),
+
+                    userEmail = userEmail
                 )
             )
 
             Log.d(
                 "IMAGE_PENDING",
-                "Image upload added: $number"
+                "Pending image added for $userEmail: $number"
             )
 
         } else {
 
             Log.d(
                 "IMAGE_PENDING",
-                "Image upload already pending: $number"
+                "Pending image already exists for $userEmail: $number"
             )
         }
     }
 
 
 
-    suspend fun getPendingImageUploads(): List<PendingImageUploadEntity> {
 
-        val agencyId = getCurrentAgencyId()
+
+
+    // =========================================================
+// GET CURRENT USER'S PENDING IMAGE UPLOADS
+// =========================================================
+
+    suspend fun getPendingImageUploads(
+        agencyId: String,
+        userEmail: String
+    ): List<PendingImageUploadEntity> {
 
         if (agencyId.isBlank()) {
+
             Log.e(
                 "IMAGE_PENDING",
                 "Agency ID not found"
             )
+
             return emptyList()
         }
 
+        if (userEmail.isBlank()) {
+
+            Log.e(
+                "IMAGE_PENDING",
+                "User email not found"
+            )
+
+            return emptyList()
+        }
+
+        Log.d(
+            "IMAGE_PENDING",
+            "Loading pending uploads"
+        )
+
+        Log.d(
+            "IMAGE_PENDING",
+            "Agency ID: $agencyId"
+        )
+
+        Log.d(
+            "IMAGE_PENDING",
+            "User Email: $userEmail"
+        )
+
         return pendingImageUploadDao.getPendingUploads(
-            agencyId
+            agencyId = agencyId,
+            userEmail = userEmail
         )
     }
+
 
     suspend fun markImageUploadCompleted(
         vehicleNumber: String
@@ -1309,20 +1429,43 @@ class VehicleRepository(
             getCurrentAgencyId()
 
         if (agencyId.isBlank()) {
+
             Log.e(
                 "IMAGE_UPLOAD",
                 "Agency ID not found"
             )
+
             return
         }
 
-        // Mark pending image upload as completed
+        val userEmail =
+            sessionManager.getUserEmail()
+
+        if (userEmail.isBlank()) {
+
+            Log.e(
+                "IMAGE_UPLOAD",
+                "User email not found"
+            )
+
+            return
+        }
+
+        // =========================================================
+        // MARK PENDING IMAGE AS UPLOADED
+        // CURRENT USER ONLY
+        // =========================================================
+
         pendingImageUploadDao.markUploadedByVehicle(
-            number,
-            agencyId
+            vehicleNumber = number,
+            agencyId = agencyId,
+            userEmail = userEmail
         )
 
-        // Mark vehicle image upload completed
+        // =========================================================
+        // MARK VEHICLE IMAGE UPLOAD COMPLETED
+        // =========================================================
+
         vehicleDao.markImageUploadCompleted(
             number,
             agencyId
@@ -1330,9 +1473,10 @@ class VehicleRepository(
 
         Log.d(
             "IMAGE_UPLOAD",
-            "Image upload completed: $number"
+            "Image upload completed for $userEmail: $number"
         )
     }
+
 
 
 
@@ -1410,29 +1554,46 @@ class VehicleRepository(
             getCurrentAgencyId()
 
         if (agencyId.isBlank()) {
+
             Log.e(
                 "IMAGE_PENDING",
                 "Agency ID not found"
             )
+
+            return
+        }
+
+        val userEmail =
+            sessionManager.getUserEmail()
+
+        if (userEmail.isBlank()) {
+
+            Log.e(
+                "IMAGE_PENDING",
+                "User email not found"
+            )
+
             return
         }
 
         val pending =
             pendingImageUploadDao.getPendingForVehicle(
-                number,
-                agencyId
+                vehicleNumber = number,
+                agencyId = agencyId,
+                userEmail = userEmail
             )
 
         if (pending != null) {
 
             pendingImageUploadDao.delete(
-                pending.id,
-                agencyId
+                id = pending.id,
+                agencyId = agencyId,
+                userEmail = userEmail
             )
 
             Log.d(
                 "IMAGE_PENDING",
-                "Pending image removed: $number"
+                "Pending image removed for $userEmail: $number"
             )
         }
     }
@@ -1561,6 +1722,279 @@ class VehicleRepository(
             false
         }
     }
+
+// =========================================================
+// DELETE SINGLE VEHICLE
+// =========================================================
+
+    suspend fun deleteVehicle(
+        vehicleNumber: String
+    ): Boolean {
+
+        return try {
+
+            val userId =
+                sessionManager.getUserId()
+
+            if (userId <= 0) {
+
+                Log.e(
+                    "DELETE_VEHICLE",
+                    "Invalid userId=$userId"
+                )
+
+                return false
+            }
+
+            Log.d(
+                "DELETE_VEHICLE",
+                "Deleting vehicle=$vehicleNumber userId=$userId"
+            )
+
+            val response =
+                api.deleteVehicle(
+                    vehicleNumber,
+                    userId
+                )
+
+            Log.d(
+                "DELETE_VEHICLE",
+                "HTTP=${response.code()}"
+            )
+
+            if (response.isSuccessful) {
+
+                // Remove from Room also
+                try {
+
+                    val agencyId =
+                        getCurrentAgencyId()
+
+                    if (agencyId.isNotBlank()) {
+
+                        vehicleDao.deleteVehicle(
+                            vehicleNumber,
+                            agencyId
+                        )
+                    }
+
+                } catch (e: Exception) {
+
+                    Log.e(
+                        "DELETE_VEHICLE",
+                        "Room delete failed",
+                        e
+                    )
+                }
+
+                true
+
+            } else {
+
+                Log.e(
+                    "DELETE_VEHICLE",
+                    "API error=${
+                        response.errorBody()?.string()
+                    }"
+                )
+
+                false
+            }
+
+        } catch (e: Exception) {
+
+            Log.e(
+                "DELETE_VEHICLE",
+                "Exception",
+                e
+            )
+
+            false
+        }
+    }
+
+
+// =========================================================
+// DELETE MULTIPLE VEHICLES
+// =========================================================
+
+    suspend fun deleteMultipleVehicles(
+        vehicleNumbers: List<String>
+    ): Boolean {
+
+        return try {
+
+            if (vehicleNumbers.isEmpty()) {
+
+                return false
+            }
+
+            val userId =
+                sessionManager.getUserId()
+
+            if (userId <= 0) {
+
+                Log.e(
+                    "BULK_DELETE",
+                    "Invalid userId=$userId"
+                )
+
+                return false
+            }
+
+            val request =
+                com.example.repomaster.models
+                    .BulkDeleteVehicleRequest(
+                        vehicleNumbers
+                    )
+
+            Log.d(
+                "BULK_DELETE",
+                "Deleting ${vehicleNumbers.size} vehicles"
+            )
+
+            val response =
+                api.deleteMultipleVehicles(
+                    userId,
+                    request
+                )
+
+            Log.d(
+                "BULK_DELETE",
+                "HTTP=${response.code()}"
+            )
+
+            if (response.isSuccessful) {
+
+                // Remove from Room
+                try {
+
+                    val agencyId =
+                        getCurrentAgencyId()
+
+                    if (agencyId.isNotBlank()) {
+
+                        vehicleNumbers.forEach {
+
+                            vehicleDao.deleteVehicle(
+                                it,
+                                agencyId
+                            )
+                        }
+                    }
+
+                } catch (e: Exception) {
+
+                    Log.e(
+                        "BULK_DELETE",
+                        "Room cleanup failed",
+                        e
+                    )
+                }
+
+                true
+
+            } else {
+
+                Log.e(
+                    "BULK_DELETE",
+                    "API error=${
+                        response.errorBody()?.string()
+                    }"
+                )
+
+                false
+            }
+
+        } catch (e: Exception) {
+
+            Log.e(
+                "BULK_DELETE",
+                "Exception",
+                e
+            )
+
+            false
+        }
+    }
+
+
+// =========================================================
+// DELETE ALL VEHICLES BY UPLOAD DATE
+// =========================================================
+
+    suspend fun deleteVehiclesByUploadDate(
+        date: String
+    ): Boolean {
+
+        return try {
+
+            val userId =
+                sessionManager.getUserId()
+
+            if (userId <= 0) {
+
+                Log.e(
+                    "DATE_DELETE",
+                    "Invalid userId=$userId"
+                )
+
+                return false
+            }
+
+            Log.d(
+                "DATE_DELETE",
+                "Deleting date=$date userId=$userId"
+            )
+
+            val response =
+                api.deleteVehiclesByDate(
+                    date,
+                    userId
+                )
+
+            Log.d(
+                "DATE_DELETE",
+                "HTTP=${response.code()}"
+            )
+
+            if (response.isSuccessful) {
+
+                // Refresh from server after deletion.
+                // This is safer than trying to guess Room rows.
+
+                Log.d(
+                    "DATE_DELETE",
+                    "Date-wise delete successful"
+                )
+
+                true
+
+            } else {
+
+                Log.e(
+                    "DATE_DELETE",
+                    "API error=${
+                        response.errorBody()?.string()
+                    }"
+                )
+
+                false
+            }
+
+        } catch (e: Exception) {
+
+            Log.e(
+                "DATE_DELETE",
+                "Exception",
+                e
+            )
+
+            false
+        }
+    }
+
+
 
     private fun getCurrentAgencyId(): String {
         return sessionManager.getAgencyId().trim()

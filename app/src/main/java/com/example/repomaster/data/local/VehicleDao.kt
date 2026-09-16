@@ -217,4 +217,16 @@ interface VehicleDao {
         vehicleNumber: String,
         agencyId: String
     )
+
+    @Query("""
+    DELETE FROM vehicles
+    WHERE vehicleNumber = :vehicleNumber
+    AND agencyId = :agencyId
+""")
+    suspend fun deleteVehicle(
+        vehicleNumber: String,
+        agencyId: String
+    )
+
+
 }

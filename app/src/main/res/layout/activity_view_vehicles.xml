@@ -1,104 +1,528 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@drawable/backgrdimg">
 
-    <!-- Toolbar -->
+    <!-- ===================================================== -->
+    <!-- TOOLBAR -->
+    <!-- ===================================================== -->
+
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="88dp"
         android:background="@android:color/transparent"
-        android:title="View Vehicles"
-        android:paddingTop="40dp"
-        android:titleTextColor="#FFFFFF"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:paddingTop="28dp"
+        android:title="Vehicle Management"
+        android:titleTextColor="@android:color/white"
         app:navigationIcon="@drawable/baseline_arrow_back_24"
         app:titleTextAppearance="@style/TextAppearance.Material3.TitleLarge" />
 
-    <!-- Search Bar -->
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/searchLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-        app:boxStrokeColor="@android:color/white"
-        app:hintTextColor="@android:color/white">
+    <!-- ===================================================== -->
+    <!-- MAIN CONTENT -->
+    <!-- ===================================================== -->
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etSearch"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Search Vehicle"
-            android:textColor="@android:color/white"
-            android:textColorHint="@android:color/white"
-            android:textCursorDrawable="@drawable/white_cursor"
-            android:textSize="16sp"
-            android:drawableStart="@drawable/baseline_search_24"
-            android:drawableTint="@android:color/white"
-            android:drawablePadding="12dp"/>
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <!-- Table Header -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="horizontal"
-        android:background="#EAEAEA">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:text="Vehicle No."
-            android:gravity="center"
-            android:textStyle="bold"
-            android:background="@drawable/table_border"/>
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:text="Engine No."
-            android:gravity="center"
-            android:textStyle="bold"
-            android:background="@drawable/table_border"/>
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:text="Chassis No."
-            android:gravity="center"
-            android:textStyle="bold"
-            android:background="@drawable/table_border"/>
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:text="Actions"
-            android:gravity="center"
-            android:textStyle="bold"
-            android:background="@drawable/table_border"/>
-
-    </LinearLayout>
-    <!-- Vehicle List -->
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipeRefresh"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:clipToPadding="false">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerVehicles"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="12dp">
 
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+            <!-- ================================================= -->
+            <!-- SEARCH CARD -->
+            <!-- ================================================= -->
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="10dp"
+                app:cardBackgroundColor="#F8FAFC"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="2dp"
+                app:strokeColor="#E2E8F0"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+
+                    <!-- Search title -->
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Search Vehicles"
+                        android:textColor="#172033"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginBottom="6dp"/>
+
+
+                    <!-- Search -->
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/searchLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                        app:boxBackgroundColor="#FFFFFF"
+                        app:boxCornerRadiusBottomEnd="14dp"
+                        app:boxCornerRadiusBottomStart="14dp"
+                        app:boxCornerRadiusTopEnd="14dp"
+                        app:boxCornerRadiusTopStart="14dp"
+                        app:boxStrokeColor="#CBD5E1"
+                        app:hintTextColor="#64748B"
+                        app:startIconDrawable="@drawable/baseline_search_24"
+                        app:startIconTint="#64748B">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etSearch"
+                            android:layout_width="match_parent"
+                            android:layout_height="52dp"
+                            android:hint="Vehicle number, owner, status..."
+                            android:inputType="text"
+                            android:paddingStart="4dp"
+                            android:textColor="#172033"
+                            android:textColorHint="#94A3B8"
+                            android:textSize="15sp"/>
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ================================================= -->
+            <!-- ADMIN FILTER / DATE CARD -->
+            <!-- ================================================= -->
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="10dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="2dp"
+                app:strokeColor="#E2E8F0"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+
+                    <!-- Section title -->
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="8dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Upload Date"
+                            android:textColor="#172033"
+                            android:textSize="15sp"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:id="@+id/txtDateInfo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="All Upload Dates"
+                            android:textColor="#64748B"
+                            android:textSize="12sp"/>
+
+                    </LinearLayout>
+
+
+                    <!-- Date buttons -->
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnSelectDate"
+                            android:layout_width="0dp"
+                            android:layout_height="50dp"
+                            android:layout_weight="1"
+                            android:text="Select Upload Date"
+                            android:textAllCaps="false"
+                            android:textColor="@android:color/white"
+                            android:textSize="13sp"
+                            android:maxLines="1"
+                            android:ellipsize="none"
+                            android:paddingStart="6dp"
+                            android:paddingEnd="6dp"
+                            app:backgroundTint="#F59E0B"
+                            app:cornerRadius="14dp"
+                            app:icon="@drawable/baseline_calendar_month_24"
+                            app:iconGravity="textStart"
+                            app:iconPadding="5dp"
+                            app:iconTint="@android:color/white"/>
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnClearDate"
+                            android:layout_width="92dp"
+                            android:layout_height="50dp"
+                            android:layout_marginStart="8dp"
+                            android:text="Clear"
+                            android:textAllCaps="false"
+                            android:textColor="#334155"
+                            android:textSize="13sp"
+                            android:maxLines="1"
+                            android:gravity="center"
+                            android:paddingStart="4dp"
+                            android:paddingEnd="4dp"
+                            app:backgroundTint="#F1F5F9"
+                            app:cornerRadius="14dp"
+                            app:strokeColor="#CBD5E1"
+                            app:strokeWidth="1dp"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+            <!-- ================================================= -->
+            <!-- ADMIN ACTION CARD -->
+            <!-- ================================================= -->
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="10dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="2dp"
+                app:strokeColor="#E2E8F0"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <!-- ================================================= -->
+                    <!-- TITLE -->
+                    <!-- ================================================= -->
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginBottom="10dp"
+                        android:text="Vehicle Actions"
+                        android:textColor="#172033"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+
+                    <!-- ================================================= -->
+                    <!-- SELECTION ACTIONS -->
+                    <!-- ================================================= -->
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <!-- SELECT ALL -->
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnSelectAll"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:minWidth="0dp"
+                            android:minHeight="0dp"
+                            android:paddingStart="4dp"
+                            android:paddingEnd="4dp"
+                            android:maxLines="1"
+                            android:ellipsize="none"
+                            android:text="Select All"
+                            android:textAllCaps="false"
+                            android:textColor="#172033"
+                            android:textSize="12sp"
+                            android:visibility="gone"
+                            app:backgroundTint="#F1F5F9"
+                            app:cornerRadius="14dp"
+                            app:strokeColor="#CBD5E1"
+                            app:strokeWidth="1dp" />
+
+
+                        <!-- DELETE SELECTED -->
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnDeleteSelected"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_marginStart="6dp"
+                            android:layout_weight="1.35"
+                            android:minWidth="0dp"
+                            android:minHeight="0dp"
+                            android:paddingStart="4dp"
+                            android:paddingEnd="4dp"
+                            android:maxLines="1"
+                            android:ellipsize="none"
+                            android:text="Delete Selected"
+                            android:textAllCaps="false"
+                            android:textColor="@android:color/white"
+                            android:textSize="12sp"
+                            android:visibility="gone"
+                            app:backgroundTint="#DC2626"
+                            app:cornerRadius="14dp"
+                            app:icon="@drawable/white_delete_24"
+                            app:iconGravity="textStart"
+                            app:iconPadding="3dp"
+                            app:iconTint="@android:color/white" />
+
+
+                        <!-- CANCEL -->
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnCancelSelection"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_marginStart="6dp"
+                            android:layout_weight="0.8"
+                            android:minWidth="0dp"
+                            android:minHeight="0dp"
+                            android:paddingStart="4dp"
+                            android:paddingEnd="4dp"
+                            android:maxLines="1"
+                            android:ellipsize="none"
+                            android:text="Cancel"
+                            android:textAllCaps="false"
+                            android:textColor="#334155"
+                            android:textSize="12sp"
+                            android:visibility="gone"
+                            app:backgroundTint="#F1F5F9"
+                            app:cornerRadius="14dp"
+                            app:strokeColor="#CBD5E1"
+                            app:strokeWidth="1dp" />
+
+                    </LinearLayout>
+
+
+                    <!-- ================================================= -->
+                    <!-- DELETE BY DATE -->
+                    <!-- ================================================= -->
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnDeleteDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginTop="10dp"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:maxLines="1"
+                        android:ellipsize="none"
+                        android:text="Delete Vehicles For Selected Date"
+                        android:textAllCaps="false"
+                        android:textColor="#B91C1C"
+                        android:textSize="13sp"
+                        app:backgroundTint="#FEF2F2"
+                        app:cornerRadius="14dp"
+                        app:icon="@drawable/white_delete_24"
+                        app:iconGravity="textStart"
+                        app:iconPadding="5dp"
+                        app:iconTint="#B91C1C"
+                        app:strokeColor="#FECACA"
+                        app:strokeWidth="1dp" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+            <!-- ================================================= -->
+            <!-- VEHICLE COUNT / LIST TITLE -->
+            <!-- ================================================= -->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="8dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Vehicle List"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/txtVehicleCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_count_badge"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:text="0"
+                    android:textColor="#172033"
+                    android:textSize="12sp"
+                    android:textStyle="bold"/>
+
+            </LinearLayout>
+
+
+            <!-- ================================================= -->
+            <!-- TABLE HEADER -->
+            <!-- ================================================= -->
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginStart="1dp"
+                android:layout_marginEnd="1dp"
+                app:cardBackgroundColor="#172033"
+                app:cardCornerRadius="1dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+
+                    <!-- Checkbox -->
+                    <TextView
+                        android:id="@+id/checkHeader"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.7"
+                        android:gravity="center"
+                        android:text="✓"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:visibility="gone"/>
+
+
+                    <!-- Vehicle -->
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        android:gravity="center_vertical"
+                        android:paddingStart="6dp"
+                        android:text="Vehicle"
+                        android:textColor="@android:color/white"
+                        android:textSize="13sp"
+                        android:textStyle="bold"/>
+
+
+                    <!-- Engine -->
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        android:gravity="center_vertical"
+                        android:paddingStart="6dp"
+                        android:text="Engine"
+                        android:textColor="@android:color/white"
+                        android:textSize="13sp"
+                        android:textStyle="bold"/>
+
+
+                    <!-- Chassis -->
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        android:gravity="center_vertical"
+                        android:paddingStart="6dp"
+                        android:text="Chassis"
+                        android:textColor="@android:color/white"
+                        android:textSize="13sp"
+                        android:textStyle="bold"/>
+
+
+                    <!-- Actions -->
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1.7"
+                        android:gravity="center"
+                        android:text="Actions"
+                        android:textColor="@android:color/white"
+                        android:textSize="13sp"
+                        android:textStyle="bold"/>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <!-- ================================================= -->
+            <!-- VEHICLE LIST -->
+            <!-- ================================================= -->
+
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/swipeRefresh"
+                android:layout_width="match_parent"
+                android:layout_height="500dp"
+                android:layout_marginTop="4dp">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerVehicles"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:paddingBottom="20dp"/>
+
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
 
 </LinearLayout>

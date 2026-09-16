@@ -16,6 +16,7 @@ data class PendingImageUploadEntity(
     val agencyId: String,
 
     val uploadStatus: String = "PENDING",
-
+    val userId: String,
+    val userEmail: String,
     val createdAt: Long = System.currentTimeMillis()
 )

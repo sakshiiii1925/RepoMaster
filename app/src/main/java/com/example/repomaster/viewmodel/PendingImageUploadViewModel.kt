@@ -19,15 +19,26 @@ class PendingImageUploadViewModel(
             LiveData<List<PendingImageUploadEntity>> =
         _pendingUploads
 
-    fun loadPendingUploads() {
+    // =========================================================
+    // LOAD CURRENT USER'S PENDING UPLOADS
+    // =========================================================
+
+    fun loadPendingUploads(
+        agencyId: String,
+        userEmail: String
+    ) {
 
         viewModelScope.launch {
 
             val uploads =
-                repository.getPendingImageUploads()
+                repository.getPendingImageUploads(
+                    agencyId = agencyId,
+                    userEmail = userEmail
+                )
 
-            _pendingUploads.value =
+            _pendingUploads.postValue(
                 uploads
+            )
         }
     }
 }

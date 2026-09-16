@@ -190,4 +190,53 @@ class HomeViewModel(
             repository.deleteMultipleSearchHistory(ids)
         )
     }
+
+// =========================================================
+// DELETE MULTIPLE VEHICLES
+// =========================================================
+
+    val deleteMultipleVehiclesResult =
+        MutableLiveData<Boolean>()
+
+    fun deleteMultipleVehicles(
+        vehicleNumbers: List<String>
+    ) {
+
+        viewModelScope.launch {
+
+            val result =
+                repository.deleteMultipleVehicles(
+                    vehicleNumbers
+                )
+
+            deleteMultipleVehiclesResult.value =
+                result
+        }
+    }
+
+
+// =========================================================
+// DELETE ALL VEHICLES BY UPLOAD DATE
+// =========================================================
+
+    val deleteVehiclesByDateResult =
+        MutableLiveData<Boolean>()
+
+    fun deleteVehiclesByUploadDate(
+        date: String
+    ) {
+
+        viewModelScope.launch {
+
+            val result =
+                repository.deleteVehiclesByUploadDate(
+                    date
+                )
+
+            deleteVehiclesByDateResult.value =
+                result
+        }
+    }
+
+
 }

@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.repomaster.R
+import com.example.repomaster.utils.SessionManager
 import com.example.repomaster.adapters.PendingImageUploadAdapter
 import com.example.repomaster.repository.VehicleRepository
 import com.example.repomaster.viewmodel.PendingImageUploadViewModel
@@ -142,7 +143,19 @@ class PendingImageUploadActivity : AppCompatActivity() {
         // LOAD DATA
         // =====================================================
 
-        viewModel.loadPendingUploads()
+        val sessionManager =
+            SessionManager(this)
+
+        val agencyId =
+            sessionManager.getAgencyId()
+
+        val userEmail =
+            sessionManager.getUserEmail()
+
+        viewModel.loadPendingUploads(
+            agencyId = agencyId,
+            userEmail = userEmail
+        )
     }
 
 
@@ -184,7 +197,19 @@ class PendingImageUploadActivity : AppCompatActivity() {
 
         if (::viewModel.isInitialized) {
 
-            viewModel.loadPendingUploads()
+            val sessionManager =
+                SessionManager(this)
+
+            val agencyId =
+                sessionManager.getAgencyId()
+
+            val userEmail =
+                sessionManager.getUserEmail()
+
+            viewModel.loadPendingUploads(
+                agencyId = agencyId,
+                userEmail = userEmail
+            )
         }
     }
 

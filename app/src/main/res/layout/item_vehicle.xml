@@ -1,10 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="55dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal">
+
+    <!-- SELECT -->
+
+    <LinearLayout
+        android:id="@+id/checkboxvisibility"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.8"
+        android:gravity="center"
+        android:background="@drawable/table_border">
+
+        <CheckBox
+            android:id="@+id/checkVehicle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="#FFA500"
+            android:contentDescription="Select vehicle"/>
+    </LinearLayout>
+
+
+    <!-- VEHICLE NUMBER -->
 
     <TextView
         android:id="@+id/txtVehicleNumber"
@@ -16,6 +38,9 @@
         android:maxLines="1"
         android:ellipsize="end"/>
 
+
+    <!-- ENGINE -->
+
     <TextView
         android:id="@+id/txtEngine"
         android:layout_width="0dp"
@@ -25,6 +50,9 @@
         android:background="@drawable/table_border"
         android:maxLines="1"
         android:ellipsize="end"/>
+
+
+    <!-- CHASSIS -->
 
     <TextView
         android:id="@+id/txtChassis"
@@ -36,11 +64,15 @@
         android:maxLines="1"
         android:ellipsize="end"/>
 
+
+    <!-- ACTIONS -->
+
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="2"
         android:gravity="center"
+        android:orientation="horizontal"
         android:background="@drawable/table_border">
 
         <ImageButton
@@ -63,3 +95,4 @@
     </LinearLayout>
 
 </LinearLayout>
+

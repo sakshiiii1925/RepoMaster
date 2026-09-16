@@ -1,4 +1,7 @@
 package com.example.repomaster.models
 
-class BulkDeleteVehicleRequest {
-}
+
+data class BulkDeleteVehicleRequest(
+    val vehicleNumbers: List<String>
+)
+

@@ -141,10 +141,12 @@ class RepoImageRepository(
                 .replace(".", "")
                 .replace(" ", "")
                 .uppercase()
+
         val agencyId =
             sessionManager
                 .getAgencyId()
                 .trim()
+
         if (agencyId.isEmpty()) {
             Log.e(
                 "IMAGE_UPLOAD",
@@ -153,15 +155,30 @@ class RepoImageRepository(
             return
         }
 
+        val userEmail =
+            sessionManager
+                .getUserEmail()
+                .trim()
+
+        if (userEmail.isEmpty()) {
+            Log.e(
+                "IMAGE_UPLOAD",
+                "Cannot mark upload completed: userEmail is empty"
+            )
+            return
+        }
+
         pendingImageUploadDao.markUploadedByVehicle(
-            number,
-            agencyId
+            vehicleNumber = number,
+            agencyId = agencyId,
+            userEmail = userEmail
         )
 
         Log.d(
             "IMAGE_UPLOAD",
-            "Pending upload completed: $number, agencyId=$agencyId"
+            "Pending upload completed: vehicle=$number, agencyId=$agencyId, userEmail=$userEmail"
         )
     }
+
 
 }

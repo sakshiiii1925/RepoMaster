@@ -1,6 +1,7 @@
 package com.example.repomaster.activities
 
 import android.os.Bundle
+import android.view.View
 import com.example.repomaster.models.SearchHistory
 import android.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -11,6 +12,7 @@ import com.example.repomaster.R
 import com.example.repomaster.adapters.AdminSearchHistoryAdapter
 import com.example.repomaster.viewmodel.HomeViewModel
 import android.widget.*
+import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.textfield.TextInputEditText
 import android.text.TextWatcher
 import android.text.Editable
@@ -26,28 +28,146 @@ class AdminSearchHistoryActivity : AppCompatActivity() {
     private lateinit var etSearchVehicle: TextInputEditText
     private lateinit var adapter: AdminSearchHistoryAdapter
     private lateinit var homeViewModel: HomeViewModel
+    private lateinit var btnClearFilters: MaterialButton
     private lateinit var btnDeleteSelected: MaterialButton
     private lateinit var userViewModel: UserViewModel
     private lateinit var spUser: AutoCompleteTextView
     private lateinit var spDate: AutoCompleteTextView
+    private lateinit var checkSelectAll: MaterialCheckBox
     private lateinit var spSort: AutoCompleteTextView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_admin_search_history)
-        //toolbar
-        toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
-        toolbar.setTitleTextColor(resources.getColor(R.color.white))
-        supportActionBar?.title = "Search History"
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        //initialize variables
+        setContentView(R.layout.activity_admin_search_history)
+
+        // =========================================================
+        // INITIALIZE VIEWS
+        // =========================================================
+
+        toolbar = findViewById(R.id.toolbar)
+
+        recyclerView = findViewById(R.id.recyclerSearchHistory)
+
+        etSearchVehicle = findViewById(R.id.etSearchVehicle)
+
         spUser = findViewById(R.id.spUser)
         spDate = findViewById(R.id.spDate)
         spSort = findViewById(R.id.spSort)
-        btnDeleteSelected =
-            findViewById(R.id.btnDeleteSelected)
-        //sort dropdown
+
+        btnClearFilters = findViewById(R.id.btnClearFilters)
+        btnDeleteSelected = findViewById(R.id.btnDeleteSelected)
+
+        checkSelectAll = findViewById(R.id.checkSelectAll)
+
+
+        // =========================================================
+        // TOOLBAR
+        // =========================================================
+
+        setSupportActionBar(toolbar)
+
+        toolbar.setTitleTextColor(
+            resources.getColor(R.color.white)
+        )
+
+        supportActionBar?.title = "Search History"
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+
+        // =========================================================
+        // RECYCLER VIEW
+        // =========================================================
+
+        recyclerView.layoutManager =
+            LinearLayoutManager(this)
+
+
+        // =========================================================
+        // VIEW MODELS
+        // =========================================================
+
+        val homeFactory =
+            HomeViewModelFactory(applicationContext)
+
+        homeViewModel =
+            ViewModelProvider(
+                this,
+                homeFactory
+            )[HomeViewModel::class.java]
+
+        userViewModel =
+            ViewModelProvider(this)[UserViewModel::class.java]
+
+
+        // =========================================================
+        // ADAPTER
+        // =========================================================
+
+        adapter = AdminSearchHistoryAdapter(
+            emptyList(),
+
+            // Selection changed
+            { selectedCount, totalCount ->
+
+                checkSelectAll.setOnCheckedChangeListener(null)
+
+                checkSelectAll.isChecked =
+                    totalCount > 0 &&
+                            selectedCount == totalCount
+
+                checkSelectAll.setOnCheckedChangeListener { _, isChecked ->
+
+                    if (isChecked) {
+                        adapter.selectAll()
+                    } else {
+                        adapter.clearSelection()
+                    }
+                }
+            },
+
+            // Selection mode changed
+            { selectionMode ->
+
+                if (selectionMode) {
+
+                    checkSelectAll.visibility =
+                        View.VISIBLE
+
+                    btnDeleteSelected.visibility =
+                        View.VISIBLE
+
+                } else {
+
+                    checkSelectAll.visibility =
+                        View.GONE
+
+                    btnDeleteSelected.visibility =
+                        View.GONE
+
+                    checkSelectAll.setOnCheckedChangeListener(null)
+
+                    checkSelectAll.isChecked = false
+
+                    checkSelectAll.setOnCheckedChangeListener { _, isChecked ->
+
+                        if (isChecked) {
+                            adapter.selectAll()
+                        } else {
+                            adapter.clearSelection()
+                        }
+                    }
+                }
+            }
+        )
+
+        recyclerView.adapter = adapter
+
+
+        // =========================================================
+        // SORT DROPDOWN
+        // =========================================================
+
         val sortList = listOf(
             "Newest First",
             "Oldest First"
@@ -60,7 +180,12 @@ class AdminSearchHistoryActivity : AppCompatActivity() {
                 sortList
             )
         )
-        //sort listner
+
+
+        // =========================================================
+        // SORT LISTENER
+        // =========================================================
+
         spSort.setOnItemClickListener { _, _, position, _ ->
 
             val order =
@@ -69,25 +194,37 @@ class AdminSearchHistoryActivity : AppCompatActivity() {
                 else
                     "oldest"
 
-            val agencyId = SessionManager(this).getAgencyId()
+            val agencyId =
+                SessionManager(this).getAgencyId()
 
-            homeViewModel.sortSearchHistory(
-                agencyId,
-                order
-            )
-                .observe(this) {
+            homeViewModel
+                .sortSearchHistory(
+                    agencyId,
+                    order
+                )
+                .observe(this) { response ->
 
-                    if (it.isSuccessful && it.body() != null) {
+                    if (
+                        response.isSuccessful &&
+                        response.body() != null
+                    ) {
 
-                        adapter.updateData(it.body()!!)
+                        adapter.updateData(
+                            response.body()!!
+                        )
                     }
                 }
         }
 
-        //listner for user
+
+        // =========================================================
+        // USER FILTER
+        // =========================================================
+
         spUser.setOnItemClickListener { _, _, _, _ ->
 
-            val selectedUser = spUser.text.toString()
+            val selectedUser =
+                spUser.text.toString()
 
             if (selectedUser == "All Users") {
 
@@ -95,52 +232,74 @@ class AdminSearchHistoryActivity : AppCompatActivity() {
 
             } else {
 
-                val selectedUser = spUser.text.toString()
+                val agencyId =
+                    SessionManager(this).getAgencyId()
 
-                val agencyId = SessionManager(this).getAgencyId()
-
-                homeViewModel.filterByUser(
-                    agencyId,
-                    selectedUser
-                )
+                homeViewModel
+                    .filterByUser(
+                        agencyId,
+                        selectedUser
+                    )
                     .observe(this) { response ->
 
-                        if (response.isSuccessful && response.body() != null) {
+                        if (
+                            response.isSuccessful &&
+                            response.body() != null
+                        ) {
 
-                            adapter.updateData(response.body()!!)
+                            adapter.updateData(
+                                response.body()!!
+                            )
                         }
                     }
             }
         }
-        //datepicker
+
+
+        // =========================================================
+        // DATE FILTER
+        // =========================================================
+
         spDate.setOnClickListener {
 
-            val calendar = Calendar.getInstance()
+            val calendar =
+                Calendar.getInstance()
 
             DatePickerDialog(
                 this,
                 { _, year, month, day ->
 
-                    val selectedDate = String.format(
-                        "%04d-%02d-%02d",
-                        year,
-                        month + 1,
-                        day
+                    val selectedDate =
+                        String.format(
+                            "%04d-%02d-%02d",
+                            year,
+                            month + 1,
+                            day
+                        )
+
+                    spDate.setText(
+                        selectedDate,
+                        false
                     )
 
-                    spDate.setText(selectedDate)
+                    val agencyId =
+                        SessionManager(this).getAgencyId()
 
-                    val agencyId = SessionManager(this).getAgencyId()
+                    homeViewModel
+                        .filterByDate(
+                            agencyId,
+                            selectedDate
+                        )
+                        .observe(this) { response ->
 
-                    homeViewModel.filterByDate(
-                        agencyId,
-                        selectedDate
-                    )
-                        .observe(this) {
+                            if (
+                                response.isSuccessful &&
+                                response.body() != null
+                            ) {
 
-                            if (it.isSuccessful && it.body() != null) {
-
-                                adapter.updateData(it.body()!!)
+                                adapter.updateData(
+                                    response.body()!!
+                                )
                             }
                         }
 
@@ -148,8 +307,32 @@ class AdminSearchHistoryActivity : AppCompatActivity() {
                 calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH)
+
             ).show()
         }
+
+
+        // =========================================================
+        // SELECT ALL
+        // =========================================================
+
+        checkSelectAll.setOnCheckedChangeListener { _, isChecked ->
+
+            if (isChecked) {
+
+                adapter.selectAll()
+
+            } else {
+
+                adapter.clearSelection()
+            }
+        }
+
+
+        // =========================================================
+        // DELETE SELECTED
+        // =========================================================
+
         btnDeleteSelected.setOnClickListener {
 
             val selectedIds =
@@ -166,63 +349,144 @@ class AdminSearchHistoryActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            showBulkDeleteConfirmation(selectedIds)
+            showBulkDeleteConfirmation(
+                selectedIds
+            )
         }
-        etSearchVehicle = findViewById(R.id.etSearchVehicle)
-        //search number
-        etSearchVehicle.addTextChangedListener(object : TextWatcher {
 
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+        // =========================================================
+        // CLEAR FILTERS
+        // =========================================================
 
-                val keyword = s.toString()
+        btnClearFilters.setOnClickListener {
 
-                if (keyword.isEmpty()) {
+            etSearchVehicle.setText("")
 
-                    loadSearchHistory()
+            spUser.setText(
+                "",
+                false
+            )
 
+            spDate.setText(
+                "",
+                false
+            )
+
+            spSort.setText(
+                "",
+                false
+            )
+
+            checkSelectAll.setOnCheckedChangeListener(null)
+
+            checkSelectAll.isChecked = false
+
+            checkSelectAll.setOnCheckedChangeListener { _, isChecked ->
+
+                if (isChecked) {
+                    adapter.selectAll()
                 } else {
-                    val agencyId = SessionManager(this@AdminSearchHistoryActivity).getAgencyId()
-
-                    homeViewModel.searchHistoryByVehicle(
-                        agencyId,
-                        keyword
-                    )
-                        .observe(this@AdminSearchHistoryActivity) { response ->
-
-                            if (response.isSuccessful && response.body() != null) {
-
-                                adapter.updateData(response.body()!!)
-
-                            }
-                        }
+                    adapter.clearSelection()
                 }
             }
 
-            override fun afterTextChanged(s: Editable?) {}
-        })
-        recyclerView = findViewById(R.id.recyclerSearchHistory)
-        recyclerView.layoutManager = LinearLayoutManager(this)
+            loadSearchHistory()
 
-        adapter = AdminSearchHistoryAdapter(
-            emptyList()
+            Toast.makeText(
+                this,
+                "Filters cleared",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
+
+        // =========================================================
+        // VEHICLE SEARCH
+        // =========================================================
+
+        etSearchVehicle.addTextChangedListener(
+            object : TextWatcher {
+
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+                }
+
+                override fun onTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    before: Int,
+                    count: Int
+                ) {
+
+                    val keyword =
+                        s.toString().trim()
+
+                    if (keyword.isEmpty()) {
+
+                        loadSearchHistory()
+
+                    } else {
+
+                        val agencyId =
+                            SessionManager(
+                                this@AdminSearchHistoryActivity
+                            ).getAgencyId()
+
+                        homeViewModel
+                            .searchHistoryByVehicle(
+                                agencyId,
+                                keyword
+                            )
+                            .observe(
+                                this@AdminSearchHistoryActivity
+                            ) { response ->
+
+                                if (
+                                    response.isSuccessful &&
+                                    response.body() != null
+                                ) {
+
+                                    adapter.updateData(
+                                        response.body()!!
+                                    )
+                                }
+                            }
+                    }
+                }
+
+                override fun afterTextChanged(
+                    s: Editable?
+                ) {
+                }
+            }
         )
 
-        recyclerView.adapter = adapter
-//viewmodels
-        val homeFactory =
-            HomeViewModelFactory(applicationContext)
 
-        homeViewModel =
-            ViewModelProvider(
-                this,
-                homeFactory
-            )[HomeViewModel::class.java]
-        userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
+        // =========================================================
+        // LOAD USERS
+        // =========================================================
+
         loadUsers()
+
+
+        // =========================================================
+        // LOAD SEARCH HISTORY
+        // =========================================================
+
         loadSearchHistory()
-        homeViewModel.deleteSearchHistoryResult
+
+
+        // =========================================================
+        // DELETE RESULT
+        // =========================================================
+
+        homeViewModel
+            .deleteSearchHistoryResult
             .observe(this) { success ->
 
                 if (success) {
@@ -245,6 +509,11 @@ class AdminSearchHistoryActivity : AppCompatActivity() {
                 }
             }
     }
+
+
+
+
+
     //load user in dropdown
     private fun loadUsers() {
 

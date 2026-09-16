@@ -44,6 +44,37 @@ object DatabaseProvider {
             }
         }
 
+    /**
+     * Version 4 -> 5
+     *
+     * Adds ownership information for pending image uploads.
+     *
+     * userId    = user who searched/created the pending upload
+     * userEmail = user email used to filter pending uploads
+     */
+    private val MIGRATION_4_5 =
+        object : Migration(4, 5) {
+
+            override fun migrate(
+                database: SupportSQLiteDatabase
+            ) {
+
+                database.execSQL(
+                    """
+                    ALTER TABLE pending_image_uploads
+                    ADD COLUMN userId TEXT NOT NULL DEFAULT ''
+                    """.trimIndent()
+                )
+
+                database.execSQL(
+                    """
+                    ALTER TABLE pending_image_uploads
+                    ADD COLUMN userEmail TEXT NOT NULL DEFAULT ''
+                    """.trimIndent()
+                )
+            }
+        }
+
     @Volatile
     private var INSTANCE: AppDatabase? = null
 
@@ -58,7 +89,8 @@ object DatabaseProvider {
             )
                 .addMigrations(
                     MIGRATION_2_3,
-                    MIGRATION_3_4
+                    MIGRATION_3_4,
+                    MIGRATION_4_5
                 )
                 .build()
 
