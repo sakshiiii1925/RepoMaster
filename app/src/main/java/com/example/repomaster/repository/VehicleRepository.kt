@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.util.Log
+import com.example.repomaster.data.local.SearchHistoryEntity
 import com.example.repomaster.models.BulkDeleteSearchHistoryRequest
 import com.example.repomaster.models.UploadedImage
 import com.example.repomaster.data.local.DatabaseProvider
@@ -16,13 +17,16 @@ import com.example.repomaster.network.RetrofitClient
 import com.example.repomaster.data.local.PendingImageUploadEntity
 import okhttp3.MultipartBody
 import retrofit2.Response
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import com.example.repomaster.models.UploadedImageDetails
 import com.example.repomaster.utils.SessionManager
 
 class VehicleRepository(
     private val context: Context
 ) {
-
+    private val searchHistorySyncMutex =
+        Mutex()
     private val api = RetrofitClient.api
     private val sessionManager =
         SessionManager(context)
@@ -34,124 +38,8 @@ class VehicleRepository(
         DatabaseProvider
             .getDatabase(context)
             .pendingImageUploadDao()
-
-    // =========================================================
-    // SEARCH VEHICLE - ONLINE + OFFLINE
-    // =========================================================
-
-    suspend fun searchVehicle(
-        vehicleNumber: String
-    ): Vehicle? {
-
-        val number = vehicleNumber
-            .trim()
-            .replace("-", "")
-            .replace("/", "")
-            .replace(".", "")
-            .replace(" ", "")
-            .uppercase()
-
-        Log.d("VEHICLE_SEARCH", "Searching: $number")
-
-        // -----------------------------------------------------
-        // 1. CHECK INTERNET
-        // -----------------------------------------------------
-
-        if (isNetworkAvailable()) {
-
-            try {
-
-                val userId =
-                    sessionManager.getUserId()
-
-                if (userId <= 0) {
-
-                    Log.e(
-                        "VEHICLE_SEARCH",
-                        "User not logged in"
-                    )
-
-                    return null
-                }
-
-                Log.d(
-                    "VEHICLE_SEARCH",
-                    "Searching API for userId=$userId"
-                )
-
-                val response =
-                    api.getVehicle(
-                        number,
-                        userId
-                    )
-
-                if (response.isSuccessful) {
-
-                    val vehicle =
-                        response.body()
-
-                    if (vehicle != null) {
-
-                        vehicleDao.insertVehicle(
-                            vehicle.toEntity()
-                        )
-
-                        return vehicle
-                    }
-                }
-
-            } catch (e: Exception) {
-
-                Log.e(
-                    "VEHICLE_SEARCH",
-                    "API failed",
-                    e
-                )
-            }
-        }
-
-
-
-
-        // -----------------------------------------------------
-        // 2. OFFLINE OR API FAILED
-        // -----------------------------------------------------
-
-        Log.d(
-            "VEHICLE_SEARCH",
-            "Searching Room database"
-        )
-
-        val agencyId =
-            sessionManager.getAgencyId()
-
-        if (agencyId.isBlank()) {
-            return null
-        }
-
-        val localVehicle =
-            vehicleDao.getVehicle(
-                number,
-                agencyId
-            )
-
-        if (localVehicle != null) {
-
-            Log.d(
-                "VEHICLE_SEARCH",
-                "Vehicle found offline"
-            )
-
-            return localVehicle.toVehicle()
-        }
-
-        Log.d(
-            "VEHICLE_SEARCH",
-            "Vehicle not found offline"
-        )
-
-        return null
-    }
+    private val searchHistoryDao =
+        DatabaseProvider.getDatabase(context).searchHistoryDao()
 
     // =========================================================
     // INTERNET CHECK
@@ -456,30 +344,224 @@ class VehicleRepository(
             StatusSaveResult.FAILED
         }
     }
+    suspend fun syncPendingSearchHistory(): Boolean {
+
+        return searchHistorySyncMutex.withLock {
+
+            Log.d(
+                "SEARCH_HISTORY_SYNC",
+                "========================================"
+            )
+
+            Log.d(
+                "SEARCH_HISTORY_SYNC",
+                "SYNC STARTED"
+            )
+
+            if (!isNetworkAvailable()) {
+
+                Log.d(
+                    "SEARCH_HISTORY_SYNC",
+                    "No internet - sync skipped"
+                )
+
+                return@withLock false
+            }
+
+            val currentAgencyId =
+                sessionManager
+                    .getAgencyId()
+                    .trim()
+
+            if (currentAgencyId.isBlank()) {
+
+                Log.e(
+                    "SEARCH_HISTORY_SYNC",
+                    "Agency ID is empty"
+                )
+
+                return@withLock false
+            }
+
+            val pending =
+                searchHistoryDao.getPendingSearchHistory(
+                    agencyId = currentAgencyId
+                )
+
+            Log.d(
+                "SEARCH_HISTORY_SYNC",
+                "Pending search count = ${pending.size}"
+            )
+
+            if (pending.isEmpty()) {
+
+                Log.d(
+                    "SEARCH_HISTORY_SYNC",
+                    "Nothing to sync"
+                )
+
+                return@withLock true
+            }
+
+            var allSuccessful = true
+
+            for (history in pending) {
+
+                try {
+
+                    Log.d(
+                        "SEARCH_HISTORY_SYNC",
+                        "----------------------------------------"
+                    )
+
+                    Log.d(
+                        "SEARCH_HISTORY_SYNC",
+                        "ID = ${history.id}"
+                    )
+
+                    Log.d(
+                        "SEARCH_HISTORY_SYNC",
+                        "Vehicle = ${history.vehicleNumber}"
+                    )
+
+                    Log.d(
+                        "SEARCH_HISTORY_SYNC",
+                        "User = ${history.userEmail}"
+                    )
+
+                    Log.d(
+                        "SEARCH_HISTORY_SYNC",
+                        "Agency = ${history.agencyId}"
+                    )
+
+                    val response =
+                        api.saveSearchHistory(
+                            vehicleNumber =
+                                history.vehicleNumber,
+
+                            userEmail =
+                                history.userEmail,
+
+                            userName =
+                                history.userName,
+
+                            agencyId =
+                                history.agencyId
+                        )
+
+                    Log.d(
+                        "SEARCH_HISTORY_SYNC",
+                        "HTTP = ${response.code()}"
+                    )
+
+                    if (response.isSuccessful) {
+
+                        Log.d(
+                            "SEARCH_HISTORY_SYNC",
+                            "SUCCESS = ${history.vehicleNumber}"
+                        )
+
+                        searchHistoryDao.markSynced(
+                            history.id
+                        )
+
+                    } else {
+
+                        allSuccessful = false
+
+                        val errorBody =
+                            response
+                                .errorBody()
+                                ?.string()
+
+                        Log.e(
+                            "SEARCH_HISTORY_SYNC",
+                            "FAILED = ${history.vehicleNumber}"
+                        )
+
+                        Log.e(
+                            "SEARCH_HISTORY_SYNC",
+                            "HTTP = ${response.code()}"
+                        )
+
+                        Log.e(
+                            "SEARCH_HISTORY_SYNC",
+                            "ERROR = $errorBody"
+                        )
+                    }
+
+                } catch (e: Exception) {
+
+                    allSuccessful = false
+
+                    Log.e(
+                        "SEARCH_HISTORY_SYNC",
+                        "Exception syncing ${history.vehicleNumber}",
+                        e
+                    )
+                }
+            }
+
+            Log.d(
+                "SEARCH_HISTORY_SYNC",
+                "SYNC FINISHED = $allSuccessful"
+            )
+
+            Log.d(
+                "SEARCH_HISTORY_SYNC",
+                "========================================"
+            )
+
+            return@withLock allSuccessful
+        }
+    }
+
+
 
 
 
 
     suspend fun syncPendingStatuses(): Boolean {
 
+        // =========================================================
+        // 1. CHECK INTERNET
+        // =========================================================
+
         if (!isNetworkAvailable()) {
+
+            Log.d(
+                "STATUS_SYNC",
+                "No internet - pending status sync skipped"
+            )
+
             return false
         }
+
+        // =========================================================
+        // 2. GET CURRENT AGENCY
+        // =========================================================
 
         val agencyId =
             getCurrentAgencyId()
 
         if (agencyId.isBlank()) {
+
             Log.e(
                 "STATUS_SYNC",
                 "Agency ID not found"
             )
+
             return false
         }
 
-        val pendingVehicles =
+        // =========================================================
+        // 3. GET PENDING VEHICLES FROM ROOM
+        // =========================================================
 
-            vehicleDao.getPendingStatusUpdates(agencyId)
+        val pendingVehicles =
+            vehicleDao.getPendingStatusUpdates(
+                agencyId
+            )
 
         if (pendingVehicles.isEmpty()) {
 
@@ -488,22 +570,61 @@ class VehicleRepository(
                 "No pending status updates"
             )
 
+            // Nothing to synchronize.
+            // It is safe to download server vehicles.
             return true
         }
 
+        Log.d(
+            "STATUS_SYNC",
+            "Pending vehicles count=${pendingVehicles.size}"
+        )
+
         var allSuccessful = true
+
+        // =========================================================
+        // 4. SYNC EACH PENDING VEHICLE
+        // =========================================================
 
         for (vehicle in pendingVehicles) {
 
             val status =
-                vehicle.repoStatus ?: continue
+                vehicle.repoStatus?.trim()
+
+            if (status.isNullOrBlank()) {
+
+                Log.w(
+                    "STATUS_SYNC",
+                    "Skipping ${vehicle.vehicleNumber}: empty status"
+                )
+
+                continue
+            }
 
             try {
 
                 Log.d(
                     "STATUS_SYNC",
-                    "Syncing ${vehicle.vehicleNumber} -> $status"
+                    "----------------------------------------"
                 )
+
+                Log.d(
+                    "STATUS_SYNC",
+                    "Vehicle=${vehicle.vehicleNumber}"
+                )
+
+                Log.d(
+                    "STATUS_SYNC",
+                    "Status=$status"
+                )
+
+                // =================================================
+                // IMPORTANT:
+                // Use the user associated with this pending record.
+                //
+                // VehicleEntity should contain the user information
+                // for the offline status operation.
+                // =================================================
 
                 val userId =
                     sessionManager.getUserId()
@@ -512,11 +633,16 @@ class VehicleRepository(
 
                     Log.e(
                         "STATUS_SYNC",
-                        "Invalid userId: $userId"
+                        "Invalid logged-in userId=$userId"
                     )
 
-                    return false
+                    allSuccessful = false
+                    continue
                 }
+
+                // =================================================
+                // SEND STATUS TO PHP
+                // =================================================
 
                 val response =
                     api.updateStatus(
@@ -527,6 +653,16 @@ class VehicleRepository(
 
                 if (response.isSuccessful) {
 
+                    Log.d(
+                        "STATUS_SYNC",
+                        "Server status update successful: " +
+                                "${vehicle.vehicleNumber} -> $status"
+                    )
+
+                    // =================================================
+                    // MARK LOCAL STATUS AS SYNCHRONIZED
+                    // =================================================
+
                     vehicleDao.markStatusSynced(
                         vehicle.vehicleNumber,
                         agencyId
@@ -534,7 +670,8 @@ class VehicleRepository(
 
                     Log.d(
                         "STATUS_SYNC",
-                        "Synced: ${vehicle.vehicleNumber}"
+                        "Room status marked as synced: " +
+                                vehicle.vehicleNumber
                     )
 
                 } else {
@@ -543,7 +680,22 @@ class VehicleRepository(
 
                     Log.e(
                         "STATUS_SYNC",
-                        "Failed ${vehicle.vehicleNumber}: ${response.code()}"
+                        "Server status update failed"
+                    )
+
+                    Log.e(
+                        "STATUS_SYNC",
+                        "Vehicle=${vehicle.vehicleNumber}"
+                    )
+
+                    Log.e(
+                        "STATUS_SYNC",
+                        "HTTP=${response.code()}"
+                    )
+
+                    Log.e(
+                        "STATUS_SYNC",
+                        "Error=${response.errorBody()?.string()}"
                     )
                 }
 
@@ -553,18 +705,126 @@ class VehicleRepository(
 
                 Log.e(
                     "STATUS_SYNC",
-                    "Sync error: ${vehicle.vehicleNumber}",
+                    "Exception while syncing " +
+                            vehicle.vehicleNumber,
                     e
                 )
             }
         }
 
+        // =========================================================
+        // 5. FINAL RESULT
+        // =========================================================
+
+        if (allSuccessful) {
+
+            Log.d(
+                "STATUS_SYNC",
+                "ALL pending statuses synchronized successfully"
+            )
+
+        } else {
+
+            Log.w(
+                "STATUS_SYNC",
+                "Some pending statuses are still waiting for sync"
+            )
+        }
+
         return allSuccessful
     }
+    private suspend fun saveSearchHistoryLocally(
+        vehicleNumber: String
+    ) {
 
+        val normalizedNumber =
+            vehicleNumber
+                .trim()
+                .replace("-", "")
+                .replace("/", "")
+                .replace(".", "")
+                .replace(" ", "")
+                .uppercase()
 
+        val userEmail =
+            sessionManager
+                .getUserEmail()
+                .trim()
 
+        val userName =
+            sessionManager
+                .getUserName()
+                .trim()
 
+        val agencyId =
+            sessionManager
+                .getAgencyId()
+                .trim()
+
+        if (
+            normalizedNumber.isBlank() ||
+            userEmail.isBlank() ||
+            agencyId.isBlank()
+        ) {
+
+            Log.e(
+                "SEARCH_HISTORY_LOCAL",
+                "Invalid search history data"
+            )
+
+            return
+        }
+
+        /*
+         * Prevent the same unsynced search
+         * from being inserted multiple times.
+         */
+        val existing =
+            searchHistoryDao.getPendingDuplicate(
+                vehicleNumber = normalizedNumber,
+                userEmail = userEmail,
+                agencyId = agencyId
+            )
+
+        if (existing != null) {
+
+            Log.d(
+                "SEARCH_HISTORY_LOCAL",
+                "Pending duplicate ignored: $normalizedNumber"
+            )
+
+            return
+        }
+
+        searchHistoryDao.insert(
+
+            SearchHistoryEntity(
+
+                vehicleNumber =
+                    normalizedNumber,
+
+                userEmail =
+                    userEmail,
+
+                userName =
+                    userName,
+
+                agencyId =
+                    agencyId,
+
+                searchTime =
+                    System.currentTimeMillis(),
+
+                syncPending =
+                    true
+            )
+        )
+
+        Log.d(
+            "SEARCH_HISTORY_LOCAL",
+            "Search saved locally: $normalizedNumber"
+        )
+    }
 
 
     // =========================================================
@@ -637,7 +897,8 @@ class VehicleRepository(
 
                     if (vehicle != null) {
 
-                        val agencyId = getCurrentAgencyId()
+                        val agencyId =
+                            getCurrentAgencyId()
 
                         if (agencyId.isBlank()) {
                             return null
@@ -678,6 +939,11 @@ class VehicleRepository(
                                 mergedEntity
                             )
 
+                            // Record actual search
+                            saveSearchHistoryLocally(number)
+
+                            syncPendingSearchHistory()
+
                             return mergedEntity.toVehicle()
 
                         } else {
@@ -686,9 +952,16 @@ class VehicleRepository(
                                 vehicle.toEntity()
                             )
 
+                            // Record actual search
+                            saveSearchHistoryLocally(number)
+
+                            syncPendingSearchHistory()
+
                             return vehicle
                         }
                     }
+
+
                 }
 
             } catch (e: Exception) {
@@ -734,6 +1007,13 @@ class VehicleRepository(
             Log.d(
                 "VEHICLE_GET",
                 "Vehicle found in Room"
+            )
+
+            saveSearchHistoryLocally(number)
+
+            Log.d(
+                "VEHICLE_GET",
+                "Offline search recorded locally: $number"
             )
 
             return localVehicle.toVehicle()
@@ -1993,7 +2273,152 @@ class VehicleRepository(
             false
         }
     }
+    suspend fun searchVehicle(
+        vehicleNumber: String
+    ): Vehicle? {
 
+        val number =
+            vehicleNumber
+                .trim()
+                .replace("-", "")
+                .replace("/", "")
+                .replace(".", "")
+                .replace(" ", "")
+                .uppercase()
+
+        if (number.isBlank()) {
+            return null
+        }
+
+        Log.d(
+            "VEHICLE_SEARCH",
+            "Searching: $number"
+        )
+
+        // =========================================================
+        // 1. ONLINE SEARCH
+        // =========================================================
+
+        if (isNetworkAvailable()) {
+
+            try {
+
+                val userId =
+                    sessionManager.getUserId()
+
+                if (userId <= 0) {
+
+                    Log.e(
+                        "VEHICLE_SEARCH",
+                        "User not logged in"
+                    )
+
+                    return null
+                }
+
+                val response =
+                    api.getVehicle(
+                        number,
+                        userId
+                    )
+
+                if (response.isSuccessful) {
+
+                    val vehicle =
+                        response.body()
+
+                    if (vehicle != null) {
+
+                        vehicleDao.insertVehicle(
+                            vehicle.toEntity()
+                        )
+
+                        // IMPORTANT
+                        // Save every search locally first.
+                        saveSearchHistoryLocally(
+                            number
+                        )
+
+                        // Immediately try to send it to PHP.
+                        syncPendingSearchHistory()
+
+                        Log.d(
+                            "VEHICLE_SEARCH",
+                            "Online search history saved"
+                        )
+
+                        return vehicle
+                    }
+                }
+
+                Log.w(
+                    "VEHICLE_SEARCH",
+                    "API search unsuccessful: ${response.code()}"
+                )
+
+            } catch (e: Exception) {
+
+                Log.e(
+                    "VEHICLE_SEARCH",
+                    "API failed - trying Room",
+                    e
+                )
+            }
+        }
+
+        // =========================================================
+        // 2. OFFLINE / API FAILED
+        // =========================================================
+
+        val agencyId =
+            sessionManager.getAgencyId().trim()
+
+        if (agencyId.isBlank()) {
+
+            Log.e(
+                "VEHICLE_SEARCH",
+                "Agency ID missing"
+            )
+
+            return null
+        }
+
+        Log.d(
+            "VEHICLE_SEARCH",
+            "Searching Room: $number"
+        )
+
+        val localVehicle =
+            vehicleDao.getVehicle(
+                number,
+                agencyId
+            )
+
+        if (localVehicle != null) {
+
+            // =====================================================
+            // THIS IS THE IMPORTANT FIX
+            // =====================================================
+
+            saveSearchHistoryLocally(
+                number
+            )
+
+            Log.d(
+                "VEHICLE_SEARCH",
+                "Offline search recorded locally: $number"
+            )
+
+            return localVehicle.toVehicle()
+        }
+
+        Log.d(
+            "VEHICLE_SEARCH",
+            "Vehicle not found offline"
+        )
+
+        return null
+    }
 
 
     private fun getCurrentAgencyId(): String {

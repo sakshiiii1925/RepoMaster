@@ -5,6 +5,10 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -40,10 +44,30 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var btnSearch: MaterialButton
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var rvSuggestions: RecyclerView
+
     private lateinit var suggestionAdapter: SearchSuggestionAdapter
 
 
     private lateinit var recentSearchAdapter: RecentSearchAdapter
+    private lateinit var connectivityManager: ConnectivityManager
+
+    private val networkCallback =
+        object : ConnectivityManager.NetworkCallback() {
+
+            override fun onAvailable(network: Network) {
+                super.onAvailable(network)
+
+                runOnUiThread {
+
+                    android.util.Log.d(
+                        "NETWORK_SYNC",
+                        "Internet connection available"
+                    )
+
+                    homeViewModel.syncVehicles()
+                }
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -103,6 +127,22 @@ class HomeActivity : AppCompatActivity() {
                 this,
                 factory
             )[HomeViewModel::class.java]
+        connectivityManager =
+            getSystemService(
+                Context.CONNECTIVITY_SERVICE
+            ) as ConnectivityManager
+
+        val networkRequest =
+            android.net.NetworkRequest.Builder()
+                .addCapability(
+                    NetworkCapabilities.NET_CAPABILITY_INTERNET
+                )
+                .build()
+
+        connectivityManager.registerNetworkCallback(
+            networkRequest,
+            networkCallback
+        )
         StatusSyncScheduler.start(this)
 
         homeViewModel.syncVehicles(
@@ -136,6 +176,22 @@ class HomeActivity : AppCompatActivity() {
         rvSuggestions =
             findViewById(R.id.rvSuggestions)
 
+    }
+    override fun onDestroy() {
+
+        try {
+            connectivityManager.unregisterNetworkCallback(
+                networkCallback
+            )
+        } catch (e: Exception) {
+            android.util.Log.e(
+                "NETWORK_SYNC",
+                "Failed to unregister network callback",
+                e
+            )
+        }
+
+        super.onDestroy()
     }
     private fun setupToolbar() {
         setSupportActionBar(toolbar)
@@ -332,7 +388,9 @@ class HomeActivity : AppCompatActivity() {
 
         suggestionAdapter =
             SearchSuggestionAdapter(emptyList()) { vehicle ->
+
                 rvSuggestions.visibility = View.GONE
+
                 val vehicleNumber =
                     vehicle.vehicleNumber
                         ?.trim()
@@ -348,41 +406,22 @@ class HomeActivity : AppCompatActivity() {
                 etVehicleNumber.setSelection(
                     etVehicleNumber.text?.length ?: 0
                 )
-                // Open details
-                val intent =
-                    Intent(
-                        this,
-                        UserVehicleDetails::class.java
-                    )
 
-                intent.putExtra(
-                    "vehicleNumber",
+                /*
+                 * Use the same search flow as the normal
+                 * Search button.
+                 *
+                 * This ensures:
+                 * Online search  -> local history -> PHP
+                 * Offline search -> local history -> pending
+                 */
+                homeViewModel.searchVehicle(
                     vehicleNumber
                 )
-
-                startActivity(intent)
-
-                // Save search history
-                val session =
-                    SessionManager(this)
-
-                homeViewModel.saveSearchHistory(
-                    vehicleNumber,
-                    session.getUserEmail(),
-                    session.getUserName(),
-                    session.getAgencyId()
-                ).observe(this) {
-
-                    loadRecentSearches()
-                }
             }
 
         rvSuggestions.adapter =
             suggestionAdapter
-
-        // ----------------------------------------
-        // SEARCH SUGGESTIONS WHILE TYPING
-        // ----------------------------------------
 
         etVehicleNumber.addTextChangedListener(
             object : TextWatcher {
@@ -394,6 +433,7 @@ class HomeActivity : AppCompatActivity() {
                     after: Int
                 ) {
                 }
+
                 override fun onTextChanged(
                     s: CharSequence?,
                     start: Int,
@@ -410,14 +450,15 @@ class HomeActivity : AppCompatActivity() {
                             ?.replace(" ", "")
                             ?.uppercase()
                             ?: ""
+
                     if (keyword.length < 2) {
 
                         rvSuggestions.visibility =
                             View.GONE
 
                         return
-
                     }
+
                     homeViewModel
                         .searchVehicles(keyword)
                         .observe(
@@ -444,7 +485,6 @@ class HomeActivity : AppCompatActivity() {
 
                                     rvSuggestions.visibility =
                                         View.GONE
-
                                 }
 
                             } else {
@@ -462,6 +502,8 @@ class HomeActivity : AppCompatActivity() {
             }
         )
     }
+
+
     private fun setupSearchButton() {
         btnSearch.setOnClickListener {
 

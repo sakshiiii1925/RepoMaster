@@ -6,9 +6,10 @@ import androidx.room.RoomDatabase
 @Database(
     entities = [
         VehicleEntity::class,
-        PendingImageUploadEntity::class
+        PendingImageUploadEntity::class,
+        SearchHistoryEntity::class
     ],
-    version = 5,
+    version = 7,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -16,4 +17,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun vehicleDao(): VehicleDao
 
     abstract fun pendingImageUploadDao(): PendingImageUploadDao
+
+    abstract fun searchHistoryDao(): SearchHistoryDao
 }

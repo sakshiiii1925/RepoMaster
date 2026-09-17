@@ -8,6 +8,7 @@ import com.example.repomaster.repository.VehicleRepository
 import kotlinx.coroutines.launch
 import androidx.lifecycle.liveData
 import okhttp3.MultipartBody
+import android.util.Log
 import com.example.repomaster.repository.StatusSaveResult
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -154,12 +155,35 @@ class HomeViewModel(
 
         }
     }
+
     fun syncVehicles() {
 
         viewModelScope.launch {
 
-            repository.syncAllVehicles()
+            val searchHistorySync =
+                repository.syncPendingSearchHistory()
 
+            Log.d(
+                "APP_SYNC",
+                "Search history sync = $searchHistorySync"
+            )
+
+            val statusSync =
+                repository.syncPendingStatuses()
+
+            Log.d(
+                "APP_SYNC",
+                "Status sync = $statusSync"
+            )
+
+            /*
+             * Vehicle download should not depend
+             * on search-history synchronization.
+             */
+            if (statusSync) {
+
+                repository.syncAllVehicles()
+            }
         }
     }
     // =========================================================

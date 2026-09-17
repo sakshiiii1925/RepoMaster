@@ -30,7 +30,6 @@ class RepoImageUploadViewModel(
     val error: LiveData<String?> =
         _error
 
-
     fun uploadImages(
         vehicleNumber: String,
         status: String,
@@ -51,6 +50,7 @@ class RepoImageUploadViewModel(
 
                 _isLoading.value = true
                 _error.value = null
+                _uploadResult.value = null
 
                 val result =
                     repository.uploadRepoImages(
@@ -69,11 +69,13 @@ class RepoImageUploadViewModel(
 
                 if (result.isSuccessful) {
 
-                    val body = result.body()
+                    val body =
+                        result.body()
 
                     if (body?.success == true) {
 
-                        _uploadResult.value = body
+                        _uploadResult.value =
+                            body
 
                     } else {
 
@@ -84,23 +86,42 @@ class RepoImageUploadViewModel(
 
                 } else {
 
-                    _error.value =
-                        "Server error: ${result.code()}"
+                    /*
+                     * Server returned HTTP error.
+                     *
+                     * Example:
+                     *
+                     * 400 Bad Request
+                     *
+                     * {
+                     *   "success": false,
+                     *   "message":
+                     *   "SQLSTATE[23000]..."
+                     * }
+                     */
 
+                    val errorMessage =
+                        repository.getUploadErrorMessage(
+                            result
+                        )
+
+                    _error.value =
+                        errorMessage
                 }
 
             } catch (e: Exception) {
 
                 _error.value =
-                    e.message ?: "Upload failed"
+                    e.message
+                        ?: "Upload failed"
 
             } finally {
 
                 _isLoading.value = false
-
             }
         }
     }
+
     fun markUploadCompleted(
         vehicleNumber: String
     ) {

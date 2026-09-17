@@ -44,14 +44,6 @@ object DatabaseProvider {
             }
         }
 
-    /**
-     * Version 4 -> 5
-     *
-     * Adds ownership information for pending image uploads.
-     *
-     * userId    = user who searched/created the pending upload
-     * userEmail = user email used to filter pending uploads
-     */
     private val MIGRATION_4_5 =
         object : Migration(4, 5) {
 
@@ -75,6 +67,97 @@ object DatabaseProvider {
             }
         }
 
+    // =========================================================
+    // VERSION 5 -> 6
+    // ADD SEARCH HISTORY
+    // =========================================================
+
+    private val MIGRATION_5_6 =
+        object : Migration(5, 6) {
+
+            override fun migrate(
+                database: SupportSQLiteDatabase
+            ) {
+
+                database.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS search_history (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        vehicleNumber TEXT NOT NULL,
+                        userEmail TEXT NOT NULL,
+                        userName TEXT NOT NULL,
+                        agencyId TEXT NOT NULL,
+                        searchTime INTEGER NOT NULL,
+                        syncPending INTEGER NOT NULL
+                    )
+                    """.trimIndent()
+                )
+            }
+        }
+
+    // =========================================================
+    // VERSION 6 -> 7
+    // ADD PENDING IMAGE FILE PATHS
+    // =========================================================
+
+    private val MIGRATION_6_7 =
+        object : Migration(6, 7) {
+
+            override fun migrate(
+                database: SupportSQLiteDatabase
+            ) {
+
+                database.execSQL(
+                    """
+                    ALTER TABLE pending_image_uploads
+                    ADD COLUMN inventoryImage1Path TEXT
+                    """.trimIndent()
+                )
+
+                database.execSQL(
+                    """
+                    ALTER TABLE pending_image_uploads
+                    ADD COLUMN inventoryImage2Path TEXT
+                    """.trimIndent()
+                )
+
+                database.execSQL(
+                    """
+                    ALTER TABLE pending_image_uploads
+                    ADD COLUMN vehicleImage1Path TEXT
+                    """.trimIndent()
+                )
+
+                database.execSQL(
+                    """
+                    ALTER TABLE pending_image_uploads
+                    ADD COLUMN vehicleImage2Path TEXT
+                    """.trimIndent()
+                )
+
+                database.execSQL(
+                    """
+                    ALTER TABLE pending_image_uploads
+                    ADD COLUMN vehicleImage3Path TEXT
+                    """.trimIndent()
+                )
+
+                database.execSQL(
+                    """
+                    ALTER TABLE pending_image_uploads
+                    ADD COLUMN vehicleImage4Path TEXT
+                    """.trimIndent()
+                )
+
+                database.execSQL(
+                    """
+                    ALTER TABLE pending_image_uploads
+                    ADD COLUMN vehicleImage5Path TEXT
+                    """.trimIndent()
+                )
+            }
+        }
+
     @Volatile
     private var INSTANCE: AppDatabase? = null
 
@@ -90,7 +173,9 @@ object DatabaseProvider {
                 .addMigrations(
                     MIGRATION_2_3,
                     MIGRATION_3_4,
-                    MIGRATION_4_5
+                    MIGRATION_4_5,
+                    MIGRATION_5_6,
+                    MIGRATION_6_7
                 )
                 .build()
 

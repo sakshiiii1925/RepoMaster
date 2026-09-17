@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.*
+import com.google.android.material.card.MaterialCardView
 import android.widget.Toast
 import android.view.View
 import androidx.appcompat.app.AlertDialog
@@ -77,6 +78,8 @@ class ViewVehicleActivity :
             MaterialButton
     private lateinit var btnCancelSelection: MaterialButton
     private lateinit var txtVehicleCount: TextView
+    private lateinit var uploadDate:MaterialCardView
+    private lateinit var vehicleaction: MaterialCardView
     private lateinit var txtDateInfo:
             android.widget.TextView
     private var isAdmin = false
@@ -179,6 +182,9 @@ class ViewVehicleActivity :
             )
         checkHeader =
             findViewById(R.id.checkHeader)
+        uploadDate=findViewById(R.id.uploaddate)
+        vehicleaction=findViewById(R.id.vehicleaction)
+
         // =====================================================
         // TOOLBAR
         // =====================================================
@@ -1059,6 +1065,8 @@ class ViewVehicleActivity :
 
             btnCancelSelection.visibility =
                 View.GONE
+            uploadDate.visibility= View.VISIBLE
+            vehicleaction.visibility= View.VISIBLE
 
         } else {
 
@@ -1089,6 +1097,8 @@ class ViewVehicleActivity :
 
             checkHeader.visibility =
                 View.GONE
+            uploadDate.visibility= View.GONE
+            vehicleaction.visibility= View.GONE
         }
     }
 

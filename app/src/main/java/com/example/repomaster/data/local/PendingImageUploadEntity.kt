@@ -16,7 +16,24 @@ data class PendingImageUploadEntity(
     val agencyId: String,
 
     val uploadStatus: String = "PENDING",
+
     val userId: String,
+
     val userEmail: String,
-    val createdAt: Long = System.currentTimeMillis()
+
+    val createdAt: Long = System.currentTimeMillis(),
+
+    val inventoryImage1Path: String? = null,
+
+    val inventoryImage2Path: String? = null,
+
+    val vehicleImage1Path: String? = null,
+
+    val vehicleImage2Path: String? = null,
+
+    val vehicleImage3Path: String? = null,
+
+    val vehicleImage4Path: String? = null,
+
+    val vehicleImage5Path: String? = null
 )

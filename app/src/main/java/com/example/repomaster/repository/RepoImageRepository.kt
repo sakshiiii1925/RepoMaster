@@ -1,18 +1,19 @@
 package com.example.repomaster.repository
 
 import android.content.Context
+import android.util.Log
 import com.example.repomaster.api.RepoImageApi
+import com.example.repomaster.data.local.DatabaseProvider
 import com.example.repomaster.models.RepoImageUploadResponse
+import com.example.repomaster.network.RetrofitClient
+import com.example.repomaster.utils.SessionManager
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Response
 import java.io.File
-import com.example.repomaster.utils.SessionManager
-import android.util.Log
-import com.example.repomaster.data.local.DatabaseProvider
-import com.example.repomaster.network.RetrofitClient
+
 class RepoImageRepository(
     private val context: Context
 ) {
@@ -20,6 +21,13 @@ class RepoImageRepository(
     private val api: RepoImageApi =
         RetrofitClient.repoImageApi
 
+    private val pendingImageUploadDao =
+        DatabaseProvider
+            .getDatabase(context)
+            .pendingImageUploadDao()
+
+    private val sessionManager =
+        SessionManager(context)
 
     suspend fun uploadRepoImages(
         vehicleNumber: String,
@@ -28,13 +36,11 @@ class RepoImageRepository(
         userName: String,
         inventoryImage1: File,
         inventoryImage2: File,
-
         vehicleImage1: File,
         vehicleImage2: File,
         vehicleImage3: File,
         vehicleImage4: File,
         vehicleImage5: File
-
     ): Response<RepoImageUploadResponse> {
 
         val textType =
@@ -42,8 +48,10 @@ class RepoImageRepository(
 
         val statusBody =
             status.toRequestBody(textType)
+
         val userEmailBody =
             userEmail.toRequestBody(textType)
+
         val userNameBody =
             userName.toRequestBody(textType)
 
@@ -89,17 +97,13 @@ class RepoImageRepository(
                 vehicleImage5
             )
 
-
         return api.uploadRepoImages(
-
             vehicleNumber,
-
             statusBody,
             userEmailBody,
             userNameBody,
             inventory1,
             inventory2,
-
             vehicle1,
             vehicle2,
             vehicle3,
@@ -124,11 +128,74 @@ class RepoImageRepository(
             requestBody
         )
     }
-    private val pendingImageUploadDao =
-        DatabaseProvider
-            .getDatabase(context)
-            .pendingImageUploadDao()
-    private val sessionManager = SessionManager(context)
+
+    /**
+     * Returns a user-friendly message for an upload response.
+     */
+    fun getUploadErrorMessage(
+        response: Response<RepoImageUploadResponse>
+    ): String {
+
+        val errorBody =
+            response.errorBody()
+                ?.string()
+                .orEmpty()
+
+        Log.e(
+            "IMAGE_UPLOAD",
+            "Upload failed: HTTP ${response.code()}"
+        )
+
+        Log.e(
+            "IMAGE_UPLOAD",
+            "Server response: $errorBody"
+        )
+
+        return when {
+
+            errorBody.contains(
+                "unique_vehicle_repo_image",
+                ignoreCase = true
+            ) -> {
+
+                "Images already uploaded for this vehicle number"
+            }
+
+            errorBody.contains(
+                "Duplicate entry",
+                ignoreCase = true
+            ) -> {
+
+                "Images already uploaded for this vehicle number"
+            }
+
+            response.code() == 400 -> {
+
+                "Invalid image upload request"
+            }
+
+            response.code() == 401 -> {
+
+                "Unauthorized request"
+            }
+
+            response.code() == 404 -> {
+
+                "Vehicle not found"
+            }
+
+            response.code() >= 500 -> {
+
+                "Server error. Please try again later."
+            }
+
+            else -> {
+
+                "Image upload failed. Please try again."
+            }
+        }
+    }
+
     suspend fun markImageUploadCompleted(
         vehicleNumber: String
     ) {
@@ -148,10 +215,12 @@ class RepoImageRepository(
                 .trim()
 
         if (agencyId.isEmpty()) {
+
             Log.e(
                 "IMAGE_UPLOAD",
                 "Cannot mark upload completed: agencyId is empty"
             )
+
             return
         }
 
@@ -161,10 +230,12 @@ class RepoImageRepository(
                 .trim()
 
         if (userEmail.isEmpty()) {
+
             Log.e(
                 "IMAGE_UPLOAD",
                 "Cannot mark upload completed: userEmail is empty"
             )
+
             return
         }
 
@@ -179,6 +250,4 @@ class RepoImageRepository(
             "Pending upload completed: vehicle=$number, agencyId=$agencyId, userEmail=$userEmail"
         )
     }
-
-
 }

@@ -13,10 +13,6 @@ interface PendingImageUploadDao {
         item: PendingImageUploadEntity
     )
 
-    // =========================================================
-    // GET CURRENT USER'S PENDING UPLOADS
-    // =========================================================
-
     @Query("""
         SELECT *
         FROM pending_image_uploads
@@ -29,12 +25,6 @@ interface PendingImageUploadDao {
         agencyId: String,
         userEmail: String
     ): List<PendingImageUploadEntity>
-
-
-    // =========================================================
-    // GET PENDING UPLOAD FOR VEHICLE
-    // CURRENT USER ONLY
-    // =========================================================
 
     @Query("""
         SELECT *
@@ -51,11 +41,33 @@ interface PendingImageUploadDao {
         userEmail: String
     ): PendingImageUploadEntity?
 
-
-    // =========================================================
-    // MARK UPLOAD AS UPLOADED
-    // CURRENT USER ONLY
-    // =========================================================
+    @Query("""
+        UPDATE pending_image_uploads
+        SET
+            inventoryImage1Path = :inventoryImage1Path,
+            inventoryImage2Path = :inventoryImage2Path,
+            vehicleImage1Path = :vehicleImage1Path,
+            vehicleImage2Path = :vehicleImage2Path,
+            vehicleImage3Path = :vehicleImage3Path,
+            vehicleImage4Path = :vehicleImage4Path,
+            vehicleImage5Path = :vehicleImage5Path,
+            uploadStatus = 'PENDING'
+        WHERE id = :id
+        AND agencyId = :agencyId
+        AND userEmail = :userEmail
+    """)
+    suspend fun updateImagePaths(
+        id: Int,
+        agencyId: String,
+        userEmail: String,
+        inventoryImage1Path: String,
+        inventoryImage2Path: String,
+        vehicleImage1Path: String,
+        vehicleImage2Path: String,
+        vehicleImage3Path: String,
+        vehicleImage4Path: String,
+        vehicleImage5Path: String
+    )
 
     @Query("""
         UPDATE pending_image_uploads
@@ -70,12 +82,6 @@ interface PendingImageUploadDao {
         userEmail: String
     )
 
-
-    // =========================================================
-    // DELETE PENDING UPLOAD
-    // CURRENT USER ONLY
-    // =========================================================
-
     @Query("""
         DELETE FROM pending_image_uploads
         WHERE id = :id
@@ -87,12 +93,6 @@ interface PendingImageUploadDao {
         agencyId: String,
         userEmail: String
     )
-
-
-    // =========================================================
-    // MARK VEHICLE UPLOAD COMPLETED
-    // CURRENT USER ONLY
-    // =========================================================
 
     @Query("""
         UPDATE pending_image_uploads
