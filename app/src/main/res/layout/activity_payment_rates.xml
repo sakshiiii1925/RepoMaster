@@ -8,155 +8,335 @@
     android:orientation="vertical"
     android:background="@drawable/backgrdimg">
 
-    <!-- Toolbar -->
+    <!-- ===================================================== -->
+    <!-- TOP HEADER -->
+    <!-- ===================================================== -->
+
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbarPaymentRate"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="70dp"
-        android:paddingTop="25dp"
+        android:layout_height="92dp"
         android:background="@android:color/transparent"
+        android:paddingTop="25dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
         android:title="Payment Rates"
-        app:navigationIcon="@drawable/baseline_arrow_back_24"
         android:titleTextColor="@android:color/white"
-        app:navigationIconTint="@android:color/white" />
+        app:navigationIcon="@drawable/baseline_arrow_back_24"
+        app:navigationIconTint="@android:color/white"
+        app:titleCentered="false" />
+
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:clipToPadding="false">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingStart="18dp"
+            android:paddingEnd="18dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="30dp">
 
-            <!-- Page title -->
+
+            <!-- ================================================= -->
+            <!-- PAGE HEADER -->
+            <!-- ================================================= -->
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Vehicle Payment Rates"
-                android:textColor="@android:color/white"
-                android:textSize="22sp"
-                android:textStyle="bold"
-                android:layout_marginTop="10dp" />
+                android:textColor="#FFA500"
+                android:textSize="24sp"
+                android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/txtAgency"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Agency"
-                android:textColor="#FF8D2A"
-                android:textStyle="bold"
-                android:textSize="14sp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="18dp"/>
+                android:layout_marginTop="4dp"
+                android:text="Manage payment rates for your vehicle types"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+
+            <!-- Agency chip -->
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_marginTop="14dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:background="@drawable/bg_agency_chip">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/outline_business_24"
+                    app:tint="#FF8D2A" />
+
+                <TextView
+                    android:id="@+id/txtAgency"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="7dp"
+                    android:text="Agency ID: --"
+                    android:textColor="#334155"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
 
 
-            <!-- Add / Edit Rate Card -->
+            <!-- ================================================= -->
+            <!-- ADD / EDIT RATE CARD -->
+            <!-- ================================================= -->
+
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                android:layout_marginBottom="26dp"
                 android:backgroundTint="@android:color/white"
-                app:cardCornerRadius="18dp"
-                app:cardElevation="6dp"
-                android:layout_marginBottom="20dp">
+                app:cardCornerRadius="22dp"
+                app:cardElevation="2dp"
+                app:strokeColor="#E5E7EB"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="18dp">
+                    android:padding="20dp">
 
-                    <TextView
-                        android:id="@+id/txtFormTitle"
-                        android:layout_width="wrap_content"
+
+                    <!-- Form Header -->
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Add Vehicle Type Rate"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="#222222"
-                        android:layout_marginBottom="15dp" />
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/txtFormTitle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Add Vehicle Type Rate"
+                                android:textColor="#172033"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="3dp"
+                                android:text="Set repo mark and parked charges"
+                                android:textColor="#64748B"
+                                android:textSize="13sp" />
+
+                        </LinearLayout>
 
 
-                    <!-- Vehicle Type -->
+                        <ImageView
+                            android:layout_width="42dp"
+                            android:layout_height="42dp"
+                            android:padding="10dp"
+                            android:background="@drawable/bg_orange_circle"
+                            android:src="@drawable/outline_directions_car_24"
+                            app:tint="@color/white" />
+
+                    </LinearLayout>
+
+
+                    <!-- Divider -->
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="18dp"
+                        android:layout_marginBottom="18dp"
+                        android:background="#EEF0F4" />
+
+
+                    <!-- ================================================= -->
+                    <!-- VEHICLE TYPE DROPDOWN -->
+                    <!-- ================================================= -->
+
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/layoutVehicleType"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Vehicle Type"
-                        android:layout_marginBottom="12dp">
+                        app:boxCornerRadiusBottomEnd="14dp"
+                        app:boxCornerRadiusBottomStart="14dp"
+                        app:boxCornerRadiusTopEnd="14dp"
+                        app:boxCornerRadiusTopStart="14dp"
+                        app:boxStrokeColor="#CBD5E1"
+                        app:startIconDrawable="@drawable/outline_directions_car_24"
+                        app:startIconTint="#64748B">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/actvVehicleType"
+                            android:layout_width="match_parent"
+                            android:layout_height="56dp"
+                            android:focusable="false"
+                            android:cursorVisible="false"
+                            android:inputType="none"
+                            android:maxLines="1"
+                            android:paddingEnd="16dp" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+
+                    <!-- ================================================= -->
+                    <!-- OTHER VEHICLE TYPE -->
+                    <!-- ================================================= -->
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/layoutOtherVehicleType"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:hint="Enter Vehicle Type"
+                        android:visibility="gone"
+                        app:boxCornerRadiusBottomEnd="14dp"
+                        app:boxCornerRadiusBottomStart="14dp"
+                        app:boxCornerRadiusTopEnd="14dp"
+                        app:boxCornerRadiusTopStart="14dp"
+                        app:boxStrokeColor="#CBD5E1">
 
                         <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/edtVehicleType"
+                            android:id="@+id/edtOtherVehicleType"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="56dp"
                             android:inputType="textCapCharacters"
                             android:maxLines="1" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
 
-                    <!-- Repo Mark Rate -->
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/layoutRepoMarkRate"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Repo Mark Rate"
-                        android:layout_marginBottom="12dp">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/edtRepoMarkRate"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="numberDecimal"
-                            android:maxLines="1" />
-
-                    </com.google.android.material.textfield.TextInputLayout>
-
-
-                    <!-- Parked Rate -->
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/layoutParkedRate"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Parked Rate"
-                        android:layout_marginBottom="16dp">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/edtParkedRate"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="numberDecimal"
-                            android:maxLines="1" />
-
-                    </com.google.android.material.textfield.TextInputLayout>
-
+                    <!-- ================================================= -->
+                    <!-- RATE ROW -->
+                    <!-- ================================================= -->
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:orientation="horizontal">
+
+                        <!-- Repo Mark -->
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/layoutRepoMarkRate"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:hint="Repo Mark"
+                            app:boxCornerRadiusBottomEnd="14dp"
+                            app:boxCornerRadiusBottomStart="14dp"
+                            app:boxCornerRadiusTopEnd="14dp"
+                            app:boxCornerRadiusTopStart="14dp"
+                            app:boxStrokeColor="#CBD5E1"
+                            app:prefixText="₹ "
+                            app:prefixTextColor="#172033">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/edtRepoMarkRate"
+                                android:layout_width="match_parent"
+                                android:layout_height="56dp"
+                                android:inputType="numberDecimal"
+                                android:maxLines="1" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+
+                        <!-- Space -->
+
+                        <Space
+                            android:layout_width="10dp"
+                            android:layout_height="1dp" />
+
+
+                        <!-- Parked -->
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/layoutParkedRate"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:hint="Parked"
+                            app:boxCornerRadiusBottomEnd="14dp"
+                            app:boxCornerRadiusBottomStart="14dp"
+                            app:boxCornerRadiusTopEnd="14dp"
+                            app:boxCornerRadiusTopStart="14dp"
+                            app:boxStrokeColor="#CBD5E1"
+                            app:prefixText="₹ "
+                            app:prefixTextColor="#172033">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/edtParkedRate"
+                                android:layout_width="match_parent"
+                                android:layout_height="56dp"
+                                android:inputType="numberDecimal"
+                                android:maxLines="1" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                    </LinearLayout>
+
+
+                    <!-- ================================================= -->
+                    <!-- BUTTONS -->
+                    <!-- ================================================= -->
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:gravity="center_vertical"
                         android:orientation="horizontal">
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnSaveRate"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="52dp"
                             android:layout_weight="1"
                             android:text="Save Rate"
-                            android:textAllCaps="false" />
+                            android:textAllCaps="false"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:backgroundTint="#172033"
+                            app:cornerRadius="14dp" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnCancelEdit"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
+                            android:layout_height="52dp"
+                            android:layout_marginStart="10dp"
+                            android:layout_weight="0.55"
                             android:text="Cancel"
                             android:textAllCaps="false"
+                            android:textColor="#64748B"
+                            android:textSize="14sp"
                             android:visibility="gone"
                             style="@style/Widget.MaterialComponents.Button.TextButton" />
 
@@ -166,56 +346,114 @@
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Existing Rates -->
-            <TextView
-                android:layout_width="wrap_content"
+
+            <!-- ================================================= -->
+            <!-- EXISTING RATES HEADER -->
+            <!-- ================================================= -->
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Existing Rates"
-                android:textColor="@android:color/white"
-                android:textSize="19sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="10dp" />
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Existing Rates"
+                        android:textColor="#172033"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:text="Manage configured vehicle rates"
+                        android:textColor="@color/white"
+                        android:textSize="13sp" />
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+
+            <!-- ================================================= -->
+            <!-- SEARCH -->
+            <!-- ================================================= -->
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layoutSearchRate"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:hint="Search vehicle type"
+                app:boxBackgroundColor="@android:color/white"
+                app:boxCornerRadiusBottomEnd="14dp"
+                app:boxCornerRadiusBottomStart="14dp"
+                app:boxCornerRadiusTopEnd="14dp"
+                app:boxCornerRadiusTopStart="14dp"
+                app:boxStrokeColor="#E2E8F0"
+                app:startIconDrawable="@drawable/outline_search_24"
+                app:startIconTint="#64748B">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtSearchRate"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:inputType="text"
+                    android:maxLines="1" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <!-- ================================================= -->
+            <!-- LOADING -->
+            <!-- ================================================= -->
 
             <ProgressBar
                 android:id="@+id/progressRates"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginTop="25dp"
                 android:visibility="gone" />
+
+
+            <!-- ================================================= -->
+            <!-- NO RATES -->
+            <!-- ================================================= -->
 
             <TextView
                 android:id="@+id/txtNoRates"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="No payment rates configured"
-                android:textColor="@android:color/white"
-                android:textSize="15sp"
+                android:layout_marginTop="15dp"
                 android:gravity="center"
-                android:padding="20dp"
+                android:padding="30dp"
+                android:text="No payment rates configured"
+                android:textColor="#64748B"
+                android:textSize="14sp"
                 android:visibility="gone" />
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/layoutSearchRate"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                app:hintTextColor="@color/black"
-                android:background="@color/white"
-                android:layout_marginTop="12dp"
-                android:hint="Search vehicle type">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edtSearchRate"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:maxLines="1" />
 
-            </com.google.android.material.textfield.TextInputLayout>
+            <!-- ================================================= -->
+            <!-- RATE CARDS -->
+            <!-- ================================================= -->
+
             <LinearLayout
                 android:id="@+id/ratesContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
                 android:orientation="vertical" />
 
         </LinearLayout>
@@ -223,4 +461,3 @@
     </androidx.core.widget.NestedScrollView>
 
 </LinearLayout>
-

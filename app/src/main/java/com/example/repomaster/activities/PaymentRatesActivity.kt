@@ -8,7 +8,12 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.repomaster.R
+import com.google.android.material.textfield.TextInputLayout
 import com.example.repomaster.models.PaymentRate
+import android.text.Editable
+import android.text.TextWatcher
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import com.example.repomaster.models.SavePaymentRateRequest
 import com.example.repomaster.network.RetrofitClient
 import com.example.repomaster.repository.AdminPaymentRepository
@@ -23,7 +28,9 @@ class PaymentRatesActivity : AppCompatActivity() {
     private lateinit var repository: AdminPaymentRepository
     private lateinit var sessionManager: SessionManager
 
-    private lateinit var edtVehicleType: TextInputEditText
+    private lateinit var actvVehicleType: AutoCompleteTextView
+    private lateinit var layoutOtherVehicleType: TextInputLayout
+    private lateinit var edtOtherVehicleType: TextInputEditText
     private lateinit var edtRepoMarkRate: TextInputEditText
     private lateinit var edtParkedRate: TextInputEditText
 
@@ -74,8 +81,14 @@ class PaymentRatesActivity : AppCompatActivity() {
             finish()
         }
 
-        edtVehicleType =
-            findViewById(R.id.edtVehicleType)
+        actvVehicleType =
+            findViewById(R.id.actvVehicleType)
+
+        layoutOtherVehicleType =
+            findViewById(R.id.layoutOtherVehicleType)
+
+        edtOtherVehicleType =
+            findViewById(R.id.edtOtherVehicleType)
 
         edtRepoMarkRate =
             findViewById(R.id.edtRepoMarkRate)
@@ -152,13 +165,57 @@ class PaymentRatesActivity : AppCompatActivity() {
         // -----------------------------------------------------
         setupRateSearch()
         loadRates()
+        setupVehicleTypeDropdown()
     }
 
 
     // =========================================================
-    // LOAD RATES
+    // LOAD types
     // =========================================================
+    private fun setupVehicleTypeDropdown() {
 
+        val vehicleTypes = listOf(
+            "CAR",
+            "BIKE",
+            "AUTO",
+            "TRUCK",
+            "BUS",
+            "OTHER"
+        )
+
+        val adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_dropdown_item_1line,
+            vehicleTypes
+        )
+
+        actvVehicleType.setAdapter(adapter)
+
+        actvVehicleType.setOnItemClickListener { _, _, position, _ ->
+
+            val selectedType =
+                vehicleTypes[position]
+
+            if (selectedType == "OTHER") {
+
+                layoutOtherVehicleType.visibility =
+                    View.VISIBLE
+
+                edtOtherVehicleType.requestFocus()
+
+            } else {
+
+                layoutOtherVehicleType.visibility =
+                    View.GONE
+
+                edtOtherVehicleType.text =
+                    null
+            }
+        }
+    }
+    // =========================================================
+    // LOAD types
+    // =========================================================
     private fun loadRates() {
 
         progressRates.visibility =
@@ -433,13 +490,28 @@ class PaymentRatesActivity : AppCompatActivity() {
 
     private fun saveRate() {
 
-        val vehicleType =
-            edtVehicleType
+        val selectedType =
+            actvVehicleType
                 .text
                 ?.toString()
                 ?.trim()
                 ?.uppercase()
                 ?: ""
+
+        val customType =
+            edtOtherVehicleType
+                .text
+                ?.toString()
+                ?.trim()
+                ?.uppercase()
+                ?: ""
+
+        val vehicleType =
+            if (selectedType == "OTHER") {
+                customType
+            } else {
+                selectedType
+            }
 
         val repoMarkText =
             edtRepoMarkRate
@@ -457,18 +529,40 @@ class PaymentRatesActivity : AppCompatActivity() {
 
 
         // -----------------------------------------------------
-        // Validation
+        // Validate Vehicle Type
         // -----------------------------------------------------
 
-        if (vehicleType.isEmpty()) {
+        if (selectedType.isEmpty()) {
 
-            edtVehicleType.error =
-                "Vehicle type is required"
+            actvVehicleType.error =
+                "Select vehicle type"
 
-            edtVehicleType.requestFocus()
+            actvVehicleType.requestFocus()
 
             return
         }
+
+
+        // -----------------------------------------------------
+        // Validate Custom Vehicle Type
+        // -----------------------------------------------------
+
+        if (selectedType == "OTHER" &&
+            customType.isEmpty()
+        ) {
+
+            edtOtherVehicleType.error =
+                "Enter vehicle type"
+
+            edtOtherVehicleType.requestFocus()
+
+            return
+        }
+
+
+        // -----------------------------------------------------
+        // Validate Repo Mark Rate
+        // -----------------------------------------------------
 
         if (repoMarkText.isEmpty()) {
 
@@ -479,6 +573,11 @@ class PaymentRatesActivity : AppCompatActivity() {
 
             return
         }
+
+
+        // -----------------------------------------------------
+        // Validate Parked Rate
+        // -----------------------------------------------------
 
         if (parkedText.isEmpty()) {
 
@@ -621,9 +720,49 @@ class PaymentRatesActivity : AppCompatActivity() {
         btnCancelEdit.visibility =
             View.VISIBLE
 
-        edtVehicleType.setText(
-            rate.vehicle_type
+
+        val predefinedTypes = listOf(
+            "CAR",
+            "BIKE",
+            "AUTO",
+            "TRUCK",
+            "BUS"
         )
+
+        val existingType =
+            rate.vehicle_type
+                .trim()
+                .uppercase()
+
+
+        if (predefinedTypes.contains(existingType)) {
+
+            actvVehicleType.setText(
+                existingType,
+                false
+            )
+
+            layoutOtherVehicleType.visibility =
+                View.GONE
+
+            edtOtherVehicleType.text =
+                null
+
+        } else {
+
+            actvVehicleType.setText(
+                "OTHER",
+                false
+            )
+
+            layoutOtherVehicleType.visibility =
+                View.VISIBLE
+
+            edtOtherVehicleType.setText(
+                existingType
+            )
+        }
+
 
         edtRepoMarkRate.setText(
             rate.repo_mark_rate
@@ -633,17 +772,7 @@ class PaymentRatesActivity : AppCompatActivity() {
             rate.parked_rate
         )
 
-        edtVehicleType.requestFocus()
-
-        window.decorView.post {
-
-            edtVehicleType
-                .parent
-                ?.parent
-                ?.let {
-                    // Form is already near the top.
-                }
-        }
+        actvVehicleType.requestFocus()
     }
 
 
@@ -745,7 +874,12 @@ class PaymentRatesActivity : AppCompatActivity() {
         editingRateId =
             null
 
-        edtVehicleType.text =
+        actvVehicleType.setText(
+            "",
+            false
+        )
+
+        edtOtherVehicleType.text =
             null
 
         edtRepoMarkRate.text =
@@ -753,6 +887,9 @@ class PaymentRatesActivity : AppCompatActivity() {
 
         edtParkedRate.text =
             null
+
+        layoutOtherVehicleType.visibility =
+            View.GONE
 
         txtFormTitle.text =
             "Add Vehicle Type Rate"

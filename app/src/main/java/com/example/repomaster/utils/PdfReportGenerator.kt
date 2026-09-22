@@ -844,46 +844,6 @@ class PdfReportGenerator(
             document.add(paymentTable)
 
 
-
-
-
-
-
-            // ============================================================
-            // REMARKS
-            // ============================================================
-
-            document.add(
-                Paragraph(
-                    "REMARKS"
-                )
-                    .setBold()
-                    .setFontSize(11f)
-                    .setMarginTop(10f)
-                    .setMarginBottom(3f)
-            )
-
-            val remarksTable =
-                Table(
-                    UnitValue.createPercentArray(
-                        floatArrayOf(100f)
-                    )
-                )
-
-            remarksTable.setWidth(
-                UnitValue.createPercentValue(100f)
-            )
-
-            remarksTable.addCell(
-                invoiceCell(
-                    invoice.remarks ?: "N/A",
-                    8f
-                )
-            )
-
-            document.add(remarksTable)
-
-
             // ============================================================
             // CREATED INFORMATION
             // ============================================================
@@ -925,24 +885,16 @@ class PdfReportGenerator(
             // ============================================================
             // FOOTER
             // ============================================================
-
-            // --------------------------------
-// SIGNATURE SECTION
-// --------------------------------
+// ============================================================
+// DIGITAL SIGNATURE SECTION
+// ============================================================
 
             document.add(
-                Paragraph(
-                    "Kindly process the bill as soon as possible."
-                )
-                    .setFontSize(8f)
+                Paragraph("DIGITAL SIGNATURE")
+                    .setBold()
+                    .setFontSize(11f)
                     .setMarginTop(12f)
-            )
-
-            document.add(
-                Paragraph(
-                    "Thanking you,"
-                )
-                    .setFontSize(8f)
+                    .setMarginBottom(5f)
             )
 
             val signatureTable =
@@ -957,83 +909,166 @@ class PdfReportGenerator(
             )
 
 
-// --------------------------------
-// LEFT - AUTHORIZED BY
-// --------------------------------
+// ============================================================
+// LEFT SIDE - AUTHORIZED BY
+// ============================================================
 
-            signatureTable.addCell(
-                invoiceCell(
-                    "\n\n\nAuthorized By",
-                    8f,
-                    TextAlignment.LEFT
-                )
+            val authorizedCell = Cell()
+
+            authorizedCell.setBorder(Border.NO_BORDER)
+            authorizedCell.setPadding(5f)
+
+            authorizedCell.add(
+                Paragraph("Authorized By")
+                    .setBold()
+                    .setFontSize(8f)
             )
 
+            authorizedCell.add(
+                Paragraph(
+                    invoice.createdBy ?: "Repo Master"
+                )
+                    .setFontSize(8f)
+                    .setMarginTop(3f)
+            )
 
-// --------------------------------
-// RIGHT - DIGITAL SIGNATURE
-// --------------------------------
+            authorizedCell.add(
+                Paragraph("\n\n")
+                    .setFontSize(6f)
+            )
 
-            val signatureCell =
-                Cell()
+            authorizedCell.add(
+                Paragraph("____________________________")
+                    .setFontSize(8f)
+            )
 
-            signatureCell.setBorder(Border.NO_BORDER)
-            signatureCell.setTextAlignment(
+            authorizedCell.add(
+                Paragraph("Authorized Signatory")
+                    .setFontSize(8f)
+            )
+
+            signatureTable.addCell(authorizedCell)
+
+
+// ============================================================
+// RIGHT SIDE - DIGITAL SIGNATURE
+// ============================================================
+
+            val digitalSignatureCell = Cell()
+
+            digitalSignatureCell.setBorder(Border.NO_BORDER)
+            digitalSignatureCell.setPadding(5f)
+            digitalSignatureCell.setTextAlignment(
                 TextAlignment.CENTER
             )
 
-            signatureCell.add(
-                Paragraph(" ")
-                    .setFontSize(4f)
+            digitalSignatureCell.add(
+                Paragraph("Digitally Signed By")
+                    .setBold()
+                    .setFontSize(8f)
+                    .setTextAlignment(TextAlignment.CENTER)
+            )
+
+            digitalSignatureCell.add(
+                Paragraph("REPO MASTER")
+                    .setBold()
+                    .setFontSize(9f)
+                    .setTextAlignment(TextAlignment.CENTER)
+                    .setMarginTop(2f)
             )
 
 
-// Load signature image
+// ============================================================
+// SIGNATURE IMAGE
+// ============================================================
+
             val signatureBitmap =
                 BitmapFactory.decodeResource(
                     context.resources,
                     R.drawable.digital_sign
                 )
 
-            val signatureStream =
-                ByteArrayOutputStream()
+            if (signatureBitmap != null) {
 
-            signatureBitmap.compress(
-                android.graphics.Bitmap.CompressFormat.PNG,
-                100,
-                signatureStream
-            )
+                val signatureStream =
+                    ByteArrayOutputStream()
 
-            val signatureImageData =
-                ImageDataFactory.create(
-                    signatureStream.toByteArray()
+                signatureBitmap.compress(
+                    android.graphics.Bitmap.CompressFormat.PNG,
+                    100,
+                    signatureStream
                 )
 
-            val signatureImage =
-                Image(signatureImageData)
-
-            signatureImage
-                .setWidth(110f)
-                .setHeight(45f)
-                .setHorizontalAlignment(
-                    com.itextpdf.layout.properties.HorizontalAlignment.CENTER
-                )
-
-            signatureCell.add(signatureImage)
-
-            signatureCell.add(
-                Paragraph("Authorized Signature")
-                    .setFontSize(8f)
-                    .setBold()
-                    .setTextAlignment(
-                        TextAlignment.CENTER
+                val signatureImageData =
+                    ImageDataFactory.create(
+                        signatureStream.toByteArray()
                     )
+
+                val signatureImage =
+                    Image(signatureImageData)
+
+                signatureImage
+                    .setWidth(110f)
+                    .setHeight(45f)
+                    .setHorizontalAlignment(
+                        com.itextpdf.layout.properties.HorizontalAlignment.CENTER
+                    )
+
+                digitalSignatureCell.add(signatureImage)
+            }
+
+
+// ============================================================
+// SIGNATURE LINE
+// ============================================================
+
+            digitalSignatureCell.add(
+                Paragraph("____________________________")
+                    .setFontSize(8f)
+                    .setTextAlignment(TextAlignment.CENTER)
             )
 
-            signatureTable.addCell(signatureCell)
+            digitalSignatureCell.add(
+                Paragraph("Authorized Signature")
+                    .setBold()
+                    .setFontSize(8f)
+                    .setTextAlignment(TextAlignment.CENTER)
+            )
+
+
+// ============================================================
+// DIGITAL SIGNING DATE + TIME
+// ============================================================
+
+            val digitalSignedDateTime =
+                getDigitalSignatureDateTime()
+
+            digitalSignatureCell.add(
+                Paragraph(
+                    "Digitally signed on:\n$digitalSignedDateTime"
+                )
+                    .setFontSize(7f)
+                    .setTextAlignment(TextAlignment.CENTER)
+                    .setMarginTop(5f)
+            )
+
+            digitalSignatureCell.add(
+                Paragraph(
+                    "This document is digitally signed."
+                )
+                    .setFontSize(6.5f)
+                    .setTextAlignment(TextAlignment.CENTER)
+                    .setMarginTop(2f)
+            )
+
+            signatureTable.addCell(digitalSignatureCell)
+
+
+// ============================================================
+// ADD SIGNATURE TABLE
+// ============================================================
 
             document.add(signatureTable)
-
             // ============================================================
             // CLOSE PDF
             // ============================================================
@@ -1254,5 +1289,11 @@ class PdfReportGenerator(
             date
         }
     }
+    private fun getDigitalSignatureDateTime(): String {
 
+        return SimpleDateFormat(
+            "dd/MM/yyyy hh:mm:ss a",
+            Locale.getDefault()
+        ).format(Date())
+    }
 }

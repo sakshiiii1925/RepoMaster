@@ -8,6 +8,10 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.repomaster.R
 import com.example.repomaster.models.Yard
 import com.example.repomaster.utils.SessionManager
+import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
+import com.google.android.material.textfield.TextInputLayout
 import com.example.repomaster.viewmodel.YardViewModel
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.button.MaterialButton
@@ -17,7 +21,9 @@ class AddYard : AppCompatActivity() {
 
     private lateinit var toolbar: MaterialToolbar
 
-    private lateinit var edtYardName: TextInputEditText
+    private lateinit var actvYard: AutoCompleteTextView
+    private lateinit var tilOtherYardName: TextInputLayout
+    private lateinit var edtOtherYardName: TextInputEditText
     private lateinit var edtYardAddress: TextInputEditText
     private lateinit var edtYardManager: TextInputEditText
     private lateinit var edtYardContact: TextInputEditText
@@ -50,8 +56,14 @@ class AddYard : AppCompatActivity() {
         // Initialize Views
         // =========================
 
-        edtYardName =
-            findViewById(R.id.edtYardName)
+        actvYard =
+            findViewById(R.id.actvYard)
+
+        tilOtherYardName =
+            findViewById(R.id.tilOtherYardName)
+
+        edtOtherYardName =
+            findViewById(R.id.edtOtherYardName)
 
         edtYardAddress =
             findViewById(R.id.edtYardAddress)
@@ -64,6 +76,39 @@ class AddYard : AppCompatActivity() {
 
         btnSaveYard =
             findViewById(R.id.btnSaveYard)
+        //dropdown
+        val yardList = listOf(
+            "Yard A",
+            "Yard B",
+            "Yard C",
+            "Other"
+        )
+
+        val adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_dropdown_item_1line,
+            yardList
+        )
+
+        actvYard.setAdapter(adapter)
+
+        actvYard.setOnItemClickListener { _, _, position, _ ->
+
+            val selectedYard = yardList[position]
+
+            if (selectedYard == "Other") {
+
+                tilOtherYardName.visibility = View.VISIBLE
+
+                edtOtherYardName.requestFocus()
+
+            } else {
+
+                tilOtherYardName.visibility = View.GONE
+
+                edtOtherYardName.setText("")
+            }
+        }
 
         // =========================
         // Session
@@ -120,8 +165,13 @@ class AddYard : AppCompatActivity() {
 
     private fun saveYard() {
 
-        val yardName =
-            edtYardName.text
+        val selectedYard =
+            actvYard.text
+                ?.toString()
+                ?.trim()
+
+        val otherYardName =
+            edtOtherYardName.text
                 ?.toString()
                 ?.trim()
 
@@ -141,18 +191,41 @@ class AddYard : AppCompatActivity() {
                 ?.trim()
 
         // =========================
-        // Validate Yard Name
+        // Validate Yard Selection
         // =========================
 
-        if (yardName.isNullOrEmpty()) {
+        if (selectedYard.isNullOrEmpty()) {
 
-            edtYardName.error =
-                "Enter yard name"
+            actvYard.error = "Select yard"
 
-            edtYardName.requestFocus()
+            actvYard.requestFocus()
 
             return
         }
+
+        // =========================
+        // Get Final Yard Name
+        // =========================
+
+        val finalYardName =
+            if (selectedYard == "Other") {
+
+                if (otherYardName.isNullOrEmpty()) {
+
+                    edtOtherYardName.error =
+                        "Enter yard name"
+
+                    edtOtherYardName.requestFocus()
+
+                    return
+                }
+
+                otherYardName
+
+            } else {
+
+                selectedYard
+            }
 
         // =========================
         // Get Agency ID
@@ -180,7 +253,7 @@ class AddYard : AppCompatActivity() {
 
             id = null,
 
-            yardName = yardName,
+            yardName = finalYardName,
 
             yardAddress =
                 yardAddress?.ifEmpty { null },
@@ -201,11 +274,14 @@ class AddYard : AppCompatActivity() {
         btnSaveYard.isEnabled = false
 
         // =========================
-        // API Call
+        // API
         // =========================
 
         yardViewModel.addYard(yard)
     }
+
+
+
 
     override fun onSupportNavigateUp(): Boolean {
 

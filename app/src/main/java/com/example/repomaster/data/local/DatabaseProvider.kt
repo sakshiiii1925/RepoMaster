@@ -157,6 +157,20 @@ object DatabaseProvider {
                 )
             }
         }
+    // =========================================================
+// VERSION 7 -> 8
+// ADD IMAGE UPLOAD PENDING TO VEHICLES
+// =========================================================
+
+    private val MIGRATION_7_8 =
+        object : Migration(7, 8) {
+
+            override fun migrate(
+                database: SupportSQLiteDatabase
+            ) {
+                // imageUploadPending already exists
+            }
+        }
 
     @Volatile
     private var INSTANCE: AppDatabase? = null
@@ -175,7 +189,8 @@ object DatabaseProvider {
                     MIGRATION_3_4,
                     MIGRATION_4_5,
                     MIGRATION_5_6,
-                    MIGRATION_6_7
+                    MIGRATION_6_7,
+                    MIGRATION_7_8
                 )
                 .build()
 

@@ -337,13 +337,12 @@ private lateinit var layout1: LinearLayout
         year: String,
         month: String
     ) {
-        header1.text = "Repo Year"
-
-        header2.text = "Repo Month"
+        header1.text = "Year"
+        header2.text = "Month"
+        header3.text = "Vehicles"
+        header4.text = "Repo Mark"
+        header5.text = "Parked"
         header6.text = "Released"
-        header3.text="Vehicles"
-        header4.text="Repo Mark"
-        header5.text="Parked"
 
         userViewModel.getMonthlyReport(
             agencyId,
@@ -657,6 +656,7 @@ private lateinit var layout1: LinearLayout
             VehicleReportActivity::class.java
         )
 
+        intent.putExtra("REPORT_TYPE", "MONTHLY")
         intent.putExtra("YEAR", year)
         intent.putExtra("MONTH", month)
         intent.putExtra("STATUS", status)

@@ -9,7 +9,7 @@ import androidx.room.RoomDatabase
         PendingImageUploadEntity::class,
         SearchHistoryEntity::class
     ],
-    version = 7,
+    version = 8,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

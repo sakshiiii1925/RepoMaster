@@ -393,7 +393,8 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etDescription1"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:inputType="textCapWords"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -422,7 +423,8 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etDescription2"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:inputType="textCapWords"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -487,6 +489,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minLines="3"
+                android:inputType="textCapWords"
                 android:gravity="top"/>
 
         </com.google.android.material.textfield.TextInputLayout>

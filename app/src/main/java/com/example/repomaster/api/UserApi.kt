@@ -157,13 +157,16 @@ interface UserApi {
         @Query("toDate") toDate: String? = null,
         @Query("userEmail") userEmail: String? = null
     ): Response<ResponseBody>
+
     @GET("api/reports/monthly/excel/{agencyId}")
     @Streaming
     suspend fun downloadMonthlyExcel(
-        @Query("agencyId") agencyId: String,
+        @Path("agencyId") agencyId: String,
         @Query("year") year: String,
         @Query("month") month: String
     ): Response<ResponseBody>
+
+
     @GET("api/reports/finance-list")
     suspend fun getfinanceList(
         @Query("agencyId") agencyId:String
