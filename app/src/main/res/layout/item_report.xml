@@ -3,61 +3,107 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:layout_height="55dp"
-    android:orientation="vertical">
+    android:layout_height="64dp"
+    android:orientation="vertical"
+    android:background="@android:color/white">
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="55dp"
+        android:layout_height="63dp"
         android:gravity="center_vertical"
         android:background="@android:color/white">
+
+        <!-- USER -->
 
         <TextView
             android:id="@+id/txtCol1"
             android:layout_width="140dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"/>
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:textColor="#172033"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:ellipsize="end"/>
+
+        <!-- EMAIL -->
 
         <TextView
             android:id="@+id/txtCol2"
             android:layout_width="220dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"/>
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:textColor="#475569"
+            android:textSize="12sp"
+            android:maxLines="1"
+            android:ellipsize="end"/>
+
+        <!-- SEARCHES -->
 
         <TextView
             android:id="@+id/txtCol3"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"/>
+            android:layout_width="110dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textColor="#334155"
+            android:textSize="14sp"
+            android:textStyle="bold"/>
+
+        <!-- REPO MARK -->
 
         <TextView
             android:id="@+id/txtCol4"
-            android:layout_width="110dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"/>
+            android:layout_width="120dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textColor="#D97706"
+            android:textSize="14sp"
+            android:textStyle="bold"/>
+
+        <!-- PARKED -->
 
         <TextView
             android:id="@+id/txtCol5"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"/>
+            android:layout_width="110dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textColor="#2563EB"
+            android:textSize="14sp"
+            android:textStyle="bold"/>
+
+        <!-- RELEASED -->
 
         <TextView
             android:id="@+id/txtCol6"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"/>
-        <TextView
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"/>
+            android:layout_width="110dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textColor="#16A34A"
+            android:textSize="14sp"
+            android:textStyle="bold"/>
 
+        <!-- LAST SEARCH -->
+
+        <TextView
+            android:layout_width="140dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textColor="#64748B"
+            android:textSize="12sp"
+            android:maxLines="1"
+            android:ellipsize="end"/>
 
     </LinearLayout>
+
+    <!-- ROW DIVIDER -->
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#DDDDDD"/>
+        android:background="#E2E8F0"/>
 
 </LinearLayout>

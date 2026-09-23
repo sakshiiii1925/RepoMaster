@@ -8,266 +8,598 @@
     android:orientation="vertical"
     android:background="@drawable/backgrdimg">
 
+    <!-- ===================================================== -->
+    <!-- TOOLBAR -->
+    <!-- ===================================================== -->
+
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:background="@android:color/transparent"
+        android:paddingTop="35dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
         android:title="User Activity Report"
         android:titleTextColor="@android:color/white"
-        android:paddingTop="40dp"
-        app:navigationIcon="@drawable/baseline_arrow_back_24"/>
+        android:titleTextAppearance="@style/TextAppearance.Material3.TitleLarge"
+        app:navigationIcon="@drawable/baseline_arrow_back_24"
+        app:navigationIconTint="@android:color/white" />
 
-    <!-- Download Buttons -->
+    <!-- ===================================================== -->
+    <!-- MAIN CONTENT -->
+    <!-- ===================================================== -->
 
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:padding="12dp">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnDownloadPdf"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:text="PDF"
-            android:textAllCaps="false"
-            android:layout_marginEnd="8dp"
-            android:backgroundTint="#E53935"
-            app:icon="@drawable/baseline_picture_as_pdf_24"/>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnDownloadExcel"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:text="Excel"
-            android:textAllCaps="false"
-            android:layout_marginStart="8dp"
-            android:backgroundTint="#43A047"
-            app:icon="@drawable/ic_excel"/>
-
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/layout1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="10dp"
-        android:layout_margin="10dp"
-        android:background="@color/white"
-        android:gravity="center">
-
-        <!-- Month -->
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
-
-            <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                android:id="@+id/spMonth"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Month"
-                android:focusable="false"
-                android:clickable="true"
-                android:inputType="none"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Year -->
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="3dp"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
-
-            <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                android:id="@+id/spYear"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Year"
-                android:focusable="false"
-                android:clickable="true"
-                android:inputType="none"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Search Button -->
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSearch"
-            android:backgroundTint="@color/white"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:textColor="@color/black"
-            android:text="Search"/>
-
-    </LinearLayout>
-    <LinearLayout
-    android:id="@+id/layout2"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="10dp"
-    android:layout_margin="10dp"
-    android:background="@color/white"
-    android:gravity="center">
-
-    <!-- Month -->
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_weight="1"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
-
-        <com.google.android.material.textfield.MaterialAutoCompleteTextView
-            android:id="@+id/spfinance"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="finance"
-            android:focusable="false"
-            android:clickable="true"
-            android:inputType="none"/>
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <!-- Year -->
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:layout_marginStart="3dp"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
-
-        <com.google.android.material.textfield.MaterialAutoCompleteTextView
-            android:id="@+id/spbranch"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="branch"
-            android:focusable="false"
-            android:clickable="true"
-            android:inputType="none"/>
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <!-- Search Button -->
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnSearch1"
-        android:backgroundTint="@color/white"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:textColor="@color/black"
-        android:text="Search"/>
-
-</LinearLayout>
-    <TextView
-        android:id="@+id/txtInfo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="8dp"
-        android:padding="12dp"
-        android:background="@drawable/bg_info_message"
-        android:text="Select Finance and Branch, then tap Search to view the report."
-        android:textColor="#8A6D3B"
-        android:textStyle="bold"
-        android:textSize="14sp"
-        android:gravity="center"
-        android:visibility="gone"/>
-
-    <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:clipToPadding="false"
+        android:paddingBottom="20dp">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Header -->
+            <!-- ================================================= -->
+            <!-- REPORT ACTIONS CARD -->
+            <!-- ================================================= -->
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:background="@color/white"
-                android:gravity="center_vertical">
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="12dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="3dp"
+                app:strokeColor="#E6EAF0"
+                app:strokeWidth="1dp">
 
-                <TextView
-                    android:id="@+id/header1"
-                    android:layout_width="140dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:textColor="@android:color/black"
-                    android:textStyle="bold" />
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-                <TextView
-                    android:id="@+id/header2"
-                    android:layout_width="220dp"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Report Actions"
+                        android:textColor="#172033"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:text="Download the activity report"
+                        android:textColor="#7A8494"
+                        android:textSize="13sp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:orientation="horizontal">
+
+                        <!-- PDF -->
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnDownloadPdf"
+                            android:layout_width="0dp"
+                            android:layout_height="50dp"
+                            android:layout_weight="1"
+                            android:text="PDF"
+                            android:textAllCaps="false"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:textColor="@android:color/white"
+                            android:layout_marginEnd="6dp"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            app:cornerRadius="14dp"
+                            app:backgroundTint="#D32F2F"
+                            app:icon="@drawable/baseline_picture_as_pdf_24"
+                            app:iconTint="@android:color/white"
+                            app:iconPadding="8dp" />
+
+                        <!-- Excel -->
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnDownloadExcel"
+                            android:layout_width="0dp"
+                            android:layout_height="50dp"
+                            android:layout_weight="1"
+                            android:text="Excel"
+                            android:textAllCaps="false"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:textColor="@android:color/white"
+                            android:layout_marginStart="6dp"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            app:cornerRadius="14dp"
+                            app:backgroundTint="#2E7D32"
+                            app:icon="@drawable/ic_excel"
+                            app:iconTint="@android:color/white"
+                            app:iconPadding="8dp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <!-- ================================================= -->
+            <!-- DATE FILTER CARD -->
+            <!-- ================================================= -->
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="12dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="3dp"
+                app:strokeColor="#E6EAF0"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:id="@+id/layout1"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-                    android:textColor="@android:color/black"
-                    android:textStyle="bold" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/header3"
-                    android:layout_width="100dp"
+                        <ImageView
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:src="@drawable/baseline_calendar_month_24"
+                            app:tint="#172033" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="9dp"
+                            android:text="Date Filter"
+                            android:textColor="#172033"
+                            android:textSize="17sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:text="Select month and year to view activity"
+                        android:textColor="#7A8494"
+                        android:textSize="13sp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <!-- MONTH -->
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="5dp"
+                            android:hint="Month"
+                            app:boxBackgroundMode="outline"
+                            app:boxCornerRadiusBottomEnd="14dp"
+                            app:boxCornerRadiusBottomStart="14dp"
+                            app:boxCornerRadiusTopEnd="14dp"
+                            app:boxCornerRadiusTopStart="14dp"
+                            app:boxStrokeColor="#CBD5E1"
+                            app:endIconMode="dropdown_menu">
+
+                            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                                android:id="@+id/spMonth"
+                                android:layout_width="match_parent"
+                                android:layout_height="54dp"
+                                android:focusable="false"
+                                android:clickable="true"
+                                android:inputType="none"
+                                android:paddingStart="14dp"
+                                android:paddingEnd="14dp"
+                                android:textColor="#172033"
+                                android:textSize="14sp" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+
+                        <!-- YEAR -->
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="5dp"
+                            android:hint="Year"
+                            app:boxBackgroundMode="outline"
+                            app:boxCornerRadiusBottomEnd="14dp"
+                            app:boxCornerRadiusBottomStart="14dp"
+                            app:boxCornerRadiusTopEnd="14dp"
+                            app:boxCornerRadiusTopStart="14dp"
+                            app:boxStrokeColor="#CBD5E1"
+                            app:endIconMode="dropdown_menu">
+
+                            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                                android:id="@+id/spYear"
+                                android:layout_width="match_parent"
+                                android:layout_height="54dp"
+                                android:focusable="false"
+                                android:clickable="true"
+                                android:inputType="none"
+                                android:paddingStart="14dp"
+                                android:paddingEnd="14dp"
+                                android:textColor="#172033"
+                                android:textSize="14sp" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                    </LinearLayout>
+
+                    <!-- SEARCH -->
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSearch"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_marginTop="12dp"
+                        android:text="View Report"
+                        android:textAllCaps="false"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        app:backgroundTint="#002147"
+                        app:cornerRadius="14dp"
+                        app:iconGravity="textStart"
+                        app:icon="@drawable/view_vehicle"
+                        app:iconTint="@android:color/white"
+                        app:iconPadding="8dp" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <!-- ================================================= -->
+            <!-- FINANCE FILTER CARD -->
+            <!-- ================================================= -->
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="12dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="3dp"
+                app:strokeColor="#E6EAF0"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:id="@+id/layout2"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-                    android:textColor="@android:color/black"
-                    android:textStyle="bold" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical">
 
-                <TextView
-                    android:id="@+id/header4"
-                    android:layout_width="110dp"
+                        <ImageView
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:src="@drawable/outline_filter_list_24"
+                            app:tint="#172033" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="9dp"
+                            android:text="Finance Filter"
+                            android:textColor="#172033"
+                            android:textSize="17sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:text="Filter activity by finance and branch"
+                        android:textColor="#7A8494"
+                        android:textSize="13sp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:gravity="center_vertical">
+
+                        <!-- FINANCE -->
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="5dp"
+                            android:hint="Finance"
+                            app:boxBackgroundMode="outline"
+                            app:boxCornerRadiusBottomEnd="14dp"
+                            app:boxCornerRadiusBottomStart="14dp"
+                            app:boxCornerRadiusTopEnd="14dp"
+                            app:boxCornerRadiusTopStart="14dp"
+                            app:boxStrokeColor="#CBD5E1"
+                            app:endIconMode="dropdown_menu">
+
+                            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                                android:id="@+id/spfinance"
+                                android:layout_width="match_parent"
+                                android:layout_height="54dp"
+                                android:focusable="false"
+                                android:clickable="true"
+                                android:inputType="none"
+                                android:paddingStart="14dp"
+                                android:paddingEnd="14dp"
+                                android:textColor="#172033"
+                                android:textSize="14sp" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+
+                        <!-- BRANCH -->
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="5dp"
+                            android:hint="Branch"
+                            app:boxBackgroundMode="outline"
+                            app:boxCornerRadiusBottomEnd="14dp"
+                            app:boxCornerRadiusBottomStart="14dp"
+                            app:boxCornerRadiusTopEnd="14dp"
+                            app:boxCornerRadiusTopStart="14dp"
+                            app:boxStrokeColor="#CBD5E1"
+                            app:endIconMode="dropdown_menu">
+
+                            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                                android:id="@+id/spbranch"
+                                android:layout_width="match_parent"
+                                android:layout_height="54dp"
+                                android:focusable="false"
+                                android:clickable="true"
+                                android:inputType="none"
+                                android:paddingStart="14dp"
+                                android:paddingEnd="14dp"
+                                android:textColor="#172033"
+                                android:textSize="14sp" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                    </LinearLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSearch1"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_marginTop="12dp"
+                        android:text="Apply Finance Filter"
+                        android:textAllCaps="false"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        app:backgroundTint="#002147"
+                        app:cornerRadius="14dp"
+                        app:iconGravity="textStart"
+                        app:icon="@drawable/baseline_search_24"
+                        app:iconTint="@android:color/white"
+                        app:iconPadding="8dp" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <!-- ================================================= -->
+            <!-- INFORMATION -->
+            <!-- ================================================= -->
+
+            <TextView
+                android:id="@+id/txtInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="12dp"
+                android:padding="14dp"
+                android:background="@drawable/bg_info_message"
+                android:text="Select filters and tap View Report to display activity."
+                android:textColor="#7A5A12"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:visibility="gone" />
+
+
+            <!-- ================================================= -->
+            <!-- REPORT TABLE CARD -->
+            <!-- ================================================= -->
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="3dp"
+                app:strokeColor="#E6EAF0"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:textColor="@android:color/black"
-                    android:textStyle="bold" />
+                    android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/header5"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:textColor="@android:color/black"
-                    android:textStyle="bold" />
+                    <!-- TABLE TITLE -->
 
-                <TextView
-                    android:id="@+id/header6"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:textColor="@android:color/black"
-                    android:textStyle="bold" />
-<TextView
-    android:layout_width="100dp"
-    android:layout_height="wrap_content"
-    android:gravity="center">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp"
+                        android:gravity="center_vertical">
 
-</TextView>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
 
-            </LinearLayout>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Activity Details"
+                                android:textColor="#172033"
+                                android:textSize="17sp"
+                                android:textStyle="bold" />
 
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvUserActivity"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <!-- ================================================= -->
+                    <!-- HORIZONTAL TABLE -->
+                    <!-- ================================================= -->
+
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fillViewport="false"
+                        android:scrollbars="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <!-- TABLE HEADER -->
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="52dp"
+                                android:background="#F1F5F9"
+                                android:gravity="center_vertical">
+
+                                <TextView
+                                    android:id="@+id/header1"
+                                    android:layout_width="140dp"
+                                    android:layout_height="match_parent"
+                                    android:gravity="center"
+                                    android:textColor="#172033"
+                                    android:textSize="13sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/header2"
+                                    android:layout_width="220dp"
+                                    android:layout_height="match_parent"
+                                    android:gravity="center"
+                                    android:textColor="#172033"
+                                    android:textSize="13sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/header3"
+                                    android:layout_width="110dp"
+                                    android:layout_height="match_parent"
+                                    android:gravity="center"
+                                    android:textColor="#172033"
+                                    android:textSize="13sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/header4"
+                                    android:layout_width="120dp"
+                                    android:layout_height="match_parent"
+                                    android:gravity="center"
+                                    android:textColor="#172033"
+                                    android:textSize="13sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/header5"
+                                    android:layout_width="110dp"
+                                    android:layout_height="match_parent"
+                                    android:gravity="center"
+                                    android:textColor="#172033"
+                                    android:textSize="13sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/header6"
+                                    android:layout_width="110dp"
+                                    android:layout_height="match_parent"
+                                    android:gravity="center"
+                                    android:textColor="#172033"
+                                    android:textSize="13sp"
+                                    android:textStyle="bold" />
+
+                            </LinearLayout>
+
+                            <!-- TABLE DATA -->
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/rvUserActivity"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:nestedScrollingEnabled="false" />
+
+                        </LinearLayout>
+
+                    </HorizontalScrollView>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
 
-    </HorizontalScrollView>
+    </androidx.core.widget.NestedScrollView>
 
 </LinearLayout>
