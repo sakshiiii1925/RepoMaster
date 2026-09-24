@@ -19,11 +19,6 @@
         android:paddingTop="40dp"
         app:navigationIcon="@drawable/baseline_arrow_back_24" />
 
-    <!-- Title -->
-
-    <!-- Select Yard -->
-
-
     <!-- ================================================= -->
     <!-- YARD SELECTION -->
     <!-- ================================================= -->

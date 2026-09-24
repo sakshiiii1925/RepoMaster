@@ -15,9 +15,9 @@
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbarPaymentRate"
         android:layout_width="match_parent"
-        android:layout_height="92dp"
+        android:layout_height="10dp"
         android:background="@android:color/transparent"
-        android:paddingTop="25dp"
+        android:paddingTop="35dp"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
         android:title="Payment Rates"

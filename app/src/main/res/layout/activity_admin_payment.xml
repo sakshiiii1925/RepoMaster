@@ -1,261 +1,588 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/backgrdimg"
     android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:orientation="vertical">
 
         <!-- ================================================= -->
-        <!-- TITLE -->
+        <!-- TOP APP BAR -->
         <!-- ================================================= -->
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="90dp"
+            android:layout_height="100dp"
             android:background="@android:color/transparent"
-            android:paddingTop="30dp"
-            android:title="Add Vehicle"
-            android:titleTextColor="@android:color/black"
+            android:elevation="2dp"
+            android:title="Add Payment"
+            android:paddingTop="35dp"
+            android:titleTextColor="#172033"
             app:navigationIcon="@drawable/baseline_arrow_back_24"
-            app:navigationIconTint="@color/black"/>
+            app:navigationIconTint="@color/white"
+            app:titleTextAppearance="@style/TextAppearance.Material3.TitleLarge" />
 
-        <!-- ================================================= -->
-        <!-- SEARCH USER -->
-        <!-- ================================================= -->
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layoutUserSearch"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Search User">
+            android:orientation="vertical"
+            android:padding="18dp">
 
-            <AutoCompleteTextView
-                android:id="@+id/autoUser"
+            <!-- ================================================= -->
+            <!-- PAGE DESCRIPTION -->
+            <!-- ================================================= -->
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Record a payment"
+                android:textColor="#FFA500"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text"
-                android:completionThreshold="1" />
+                android:layout_marginTop="4dp"
+                android:text="Select a user and vehicle to add a payment."
+                android:textColor="@color/white"
+                android:textSize="14sp" />
 
-        </com.google.android.material.textfield.TextInputLayout>
+            <!-- ================================================= -->
+            <!-- USER & VEHICLE CARD -->
+            <!-- ================================================= -->
 
-        <!-- ================================================= -->
-        <!-- SELECT VEHICLE / WORK -->
-        <!-- ================================================= -->
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layoutVehicle"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:hint="Select Vehicle / Work">
-
-            <AutoCompleteTextView
-                android:id="@+id/autoVehicle"
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="none" />
+                android:layout_marginTop="20dp"
+                app:cardBackgroundColor="@android:color/white"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="0dp"
+                app:strokeColor="#E7EAF0"
+                app:strokeWidth="1dp">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-        <!-- ================================================= -->
-        <!-- VEHICLE INFORMATION -->
-        <!-- ================================================= -->
+                    <!-- Section title -->
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardVehicleInfo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:cardCornerRadius="12dp">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Payment For"
+                        android:textColor="#172033"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
 
-            <LinearLayout
+                    <!-- USER -->
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/layoutUserSearch"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:hint="Select User"
+                        app:boxCornerRadiusBottomEnd="12dp"
+                        app:boxCornerRadiusBottomStart="12dp"
+                        app:boxCornerRadiusTopEnd="12dp"
+                        app:boxCornerRadiusTopStart="12dp"
+                        app:boxStrokeColor="#C9CED8"
+                        app:hintTextColor="#697386">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/autoUser"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="text"
+                            android:paddingTop="14dp"
+                            android:paddingBottom="14dp"
+                            android:completionThreshold="1" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- VEHICLE -->
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/layoutVehicle"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:hint="Select Vehicle / Work"
+                        app:boxCornerRadiusBottomEnd="12dp"
+                        app:boxCornerRadiusBottomStart="12dp"
+                        app:boxCornerRadiusTopEnd="12dp"
+                        app:boxCornerRadiusTopStart="12dp"
+                        app:boxStrokeColor="#C9CED8"
+                        app:hintTextColor="#697386">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/autoVehicle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="none"
+                            android:paddingTop="14dp"
+                            android:paddingBottom="14dp" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <!-- ================================================= -->
+            <!-- VEHICLE INFORMATION -->
+            <!-- ================================================= -->
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardVehicleInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:layout_marginTop="14dp"
+                app:cardBackgroundColor="@android:color/white"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="0dp"
+                app:strokeColor="#E7EAF0"
+                app:strokeWidth="1dp">
 
-                <TextView
-                    android:id="@+id/txtVehicleNumber"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Vehicle: -" />
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-                <TextView
-                    android:id="@+id/txtVehicleType"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="Vehicle Type: -" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Vehicle Details"
+                        android:textColor="#172033"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/txtWorkType"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="Repo Status: -" />
+                    <!-- VEHICLE NUMBER -->
 
-                <TextView
-                    android:id="@+id/txtCompletedAt"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="Completed: -" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
 
-            </LinearLayout>
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Vehicle Number"
+                            android:textColor="#7A8495"
+                            android:textSize="13sp" />
 
-        </com.google.android.material.card.MaterialCardView>
+                        <TextView
+                            android:id="@+id/txtVehicleNumber"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="-"
+                            android:textColor="#172033"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
 
-        <!-- ================================================= -->
-        <!-- PAYMENT CALCULATION -->
-        <!-- ================================================= -->
+                    </LinearLayout>
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardCalculation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:cardCornerRadius="12dp">
+                    <!-- VEHICLE TYPE -->
 
-            <LinearLayout
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Vehicle Type"
+                            android:textColor="#7A8495"
+                            android:textSize="13sp" />
+
+                        <TextView
+                            android:id="@+id/txtVehicleType"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="-"
+                            android:textColor="#172033"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                    <!-- WORK TYPE -->
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Work Status"
+                            android:textColor="#7A8495"
+                            android:textSize="13sp" />
+
+                        <TextView
+                            android:id="@+id/txtWorkType"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="-"
+                            android:textColor="#172033"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                    <!-- COMPLETED -->
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Completed"
+                            android:textColor="#7A8495"
+                            android:textSize="13sp" />
+
+                        <TextView
+                            android:id="@+id/txtCompletedAt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="-"
+                            android:textColor="#172033"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <!-- ================================================= -->
+            <!-- PAYMENT SUMMARY -->
+            <!-- ================================================= -->
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardCalculation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:layout_marginTop="14dp"
+                app:cardBackgroundColor="#002147"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="0dp">
 
-                <TextView
-                    android:id="@+id/txtTotalAmount"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Total Due: ₹0.00"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:orientation="vertical"
+                    android:padding="18dp">
 
-                <TextView
-                    android:id="@+id/txtPaidAmount"
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Payment Summary"
+                        android:textColor="#FFFFFF"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+
+                    <!-- TOTAL -->
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="18dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Total Due"
+                            android:textColor="#B9C0CC"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/txtTotalAmount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="₹0.00"
+                            android:textColor="#FFFFFF"
+                            android:textSize="21sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                    <!-- PAID -->
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Paid Till Date"
+                            android:textColor="#B9C0CC"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/txtPaidAmount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="₹0.00"
+                            android:textColor="#FFFFFF"
+                            android:textSize="15sp" />
+
+                    </LinearLayout>
+
+                    <!-- DIVIDER -->
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="14dp"
+                        android:background="#394354" />
+
+                    <!-- REMAINING -->
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Remaining"
+                            android:textColor="#FFFFFF"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/txtRemainingAmount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="₹0.00"
+                            android:textColor="#FFB44A"
+                            android:textSize="21sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <!-- ================================================= -->
+            <!-- PAYMENT DETAILS -->
+            <!-- ================================================= -->
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                app:cardBackgroundColor="@android:color/white"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="0dp"
+                app:strokeColor="#E7EAF0"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Paid Till Date: ₹0.00" />
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-                <TextView
-                    android:id="@+id/txtRemainingAmount"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Remaining: ₹0.00"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Payment Details"
+                        android:textColor="#172033"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
 
-            </LinearLayout>
+                    <!-- PAYMENT AMOUNT -->
 
-        </com.google.android.material.card.MaterialCardView>
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/layoutPaymentAmount"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:hint="Payment Amount"
+                        app:boxCornerRadiusBottomEnd="12dp"
+                        app:boxCornerRadiusBottomStart="12dp"
+                        app:boxCornerRadiusTopEnd="12dp"
+                        app:boxCornerRadiusTopStart="12dp"
+                        app:prefixText="₹ "
+                        app:boxStrokeColor="#C9CED8"
+                        app:hintTextColor="#697386">
 
-        <!-- ================================================= -->
-        <!-- PAYMENT AMOUNT -->
-        <!-- ================================================= -->
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/edtPaymentAmount"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="numberDecimal"
+                            android:paddingTop="14dp"
+                            android:paddingBottom="14dp" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layoutPaymentAmount"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:hint="Payment Amount">
+                    </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edtPaymentAmount"
+                    <!-- PAYMENT METHOD -->
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/layoutPaymentMethod"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:hint="Payment Method"
+                        app:boxCornerRadiusBottomEnd="12dp"
+                        app:boxCornerRadiusBottomStart="12dp"
+                        app:boxCornerRadiusTopEnd="12dp"
+                        app:boxCornerRadiusTopStart="12dp"
+                        app:boxStrokeColor="#C9CED8"
+                        app:hintTextColor="#697386">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/autoPaymentMethod"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="none"
+                            android:paddingTop="14dp"
+                            android:paddingBottom="14dp" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- REMARKS -->
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/layoutRemarks"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:hint="Remarks (Optional)"
+                        app:boxCornerRadiusBottomEnd="12dp"
+                        app:boxCornerRadiusBottomStart="12dp"
+                        app:boxCornerRadiusTopEnd="12dp"
+                        app:boxCornerRadiusTopStart="12dp"
+                        app:boxStrokeColor="#C9CED8"
+                        app:hintTextColor="#697386">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/edtRemarks"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="top"
+                            android:inputType="textCapSentences|textMultiLine"
+                            android:minLines="3"
+                            android:paddingTop="14dp"
+                            android:paddingBottom="14dp" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <!-- ================================================= -->
+            <!-- SUBMIT BUTTON -->
+            <!-- ================================================= -->
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSubmitPayment"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="numberDecimal" />
+                android:layout_height="56dp"
+                android:layout_marginTop="20dp"
+                android:text="Submit Payment"
+                android:textAllCaps="false"
+                android:textSize="16sp"
+                android:backgroundTint="#002147"
+                android:textStyle="bold"
+                app:cornerRadius="14dp"
+                app:icon="@drawable/outline_check_small_24"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp" />
 
-        </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- ================================================= -->
-        <!-- PAYMENT METHOD -->
-        <!-- ================================================= -->
+            <!-- ================================================= -->
+            <!-- HISTORY BUTTON -->
+            <!-- ================================================= -->
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layoutPaymentMethod"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:hint="Payment Method">
-
-            <AutoCompleteTextView
-                android:id="@+id/autoPaymentMethod"
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnPaymentHistory"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="20dp"
+                android:text="View User Payment History"
+                android:textAllCaps="false"
+                android:textColor="#172033"
+                android:textSize="15sp"
+                app:cornerRadius="14dp"
+                app:strokeColor="@color/white"
+                app:strokeWidth="1dp" />
+
+
+            <!-- ================================================= -->
+            <!-- LOADING -->
+            <!-- ================================================= -->
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="none" />
+                android:layout_gravity="center"
+                android:layout_marginBottom="24dp"
+                android:visibility="gone" />
 
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- ================================================= -->
-        <!-- REMARKS -->
-        <!-- ================================================= -->
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layoutRemarks"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:hint="Remarks">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edtRemarks"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="top"
-                android:minLines="3" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- ================================================= -->
-        <!-- SUBMIT -->
-        <!-- ================================================= -->
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSubmitPayment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="Submit Payment" />
-
-        <!-- ================================================= -->
-        <!-- HISTORY BUTTON -->
-        <!-- ================================================= -->
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnPaymentHistory"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="View User Payment History" />
-
-        <!-- ================================================= -->
-        <!-- LOADING -->
-        <!-- ================================================= -->
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="16dp"
-            android:visibility="gone" />
+        </LinearLayout>
 
     </LinearLayout>
 
-</ScrollView>
+</androidx.core.widget.NestedScrollView>
+

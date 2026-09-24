@@ -5,11 +5,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:cardCornerRadius="14dp"
-    app:cardElevation="4dp"
-    app:strokeWidth="1dp"
-    app:strokeColor="#D0D7DE">
+    android:layout_marginStart="6dp"
+    android:layout_marginTop="6dp"
+    android:layout_marginEnd="6dp"
+    android:layout_marginBottom="8dp"
+    app:cardBackgroundColor="@android:color/white"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="3dp"
+    app:strokeColor="#E2E8F0"
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,78 +21,198 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Yard Name -->
-        <TextView
-            android:id="@+id/txtYardName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Pune Recovery Yard"
-            android:textColor="#001F3F"
-            android:textSize="19sp"
-            android:textStyle="bold" />
-
-        <!-- Address -->
-        <TextView
-            android:id="@+id/txtYardAddress"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Pune"
-            android:textColor="#555555"
-            android:textSize="14sp" />
-
-        <!-- Manager -->
-        <TextView
-            android:id="@+id/txtYardManager"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="Manager: Rahul Patil"
-            android:textColor="#555555"
-            android:textSize="14sp" />
-
-        <!-- Contact -->
-        <TextView
-            android:id="@+id/txtYardContact"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="Contact: 9876543210"
-            android:textColor="#555555"
-            android:textSize="14sp" />
-
-        <!-- Buttons -->
+        <!-- Header -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <!-- Yard Icon -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                app:cardBackgroundColor="#EEF2FF"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="0dp">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="Yard"
+                    android:padding="12dp"
+                    android:src="@drawable/baseline_warehouse_24"
+                    android:tint="#3949AB" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Yard Name -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txtYardName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:text="Pune Recovery Yard"
+                    android:textColor="#0F172A"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:text="Recovery Yard"
+                    android:textColor="#64748B"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="13dp"
+            android:background="#E2E8F0" />
+
+        <!-- Address -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:contentDescription="Address"
+                android:padding="2dp"
+                android:src="@drawable/baseline_location_pin_24"
+                android:tint="#64748B" />
+
+            <TextView
+                android:id="@+id/txtYardAddress"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:text="Pune, Maharashtra"
+                android:textColor="#334155"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+        <!-- Manager -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:contentDescription="Manager"
+                android:padding="2dp"
+                android:src="@drawable/baseline_person_24"
+                android:tint="#64748B" />
+
+            <TextView
+                android:id="@+id/txtYardManager"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:textColor="#334155"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+        <!-- Contact -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:contentDescription="Contact"
+                android:padding="2dp"
+                android:src="@drawable/baseline_call_24"
+                android:tint="#64748B" />
+
+            <TextView
+                android:id="@+id/txtYardContact"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:text="9876543210"
+                android:textColor="#334155"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+        <!-- Actions -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:gravity="end"
             android:orientation="horizontal">
 
+            <!-- Edit -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnEditYard"
-                android:layout_width="wrap_content"
-                android:layout_height="45dp"
+                android:layout_width="0dp"
+                android:layout_height="46dp"
+                android:layout_weight="1"
                 android:text="Edit"
+                android:textAllCaps="false"
+                android:textColor="@color/status_parked"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:backgroundTint="#E8F5E9"
+                app:cornerRadius="13dp"
                 app:icon="@drawable/outline_edit_24"
                 app:iconGravity="textStart"
-                app:iconTint="@color/white"
-                android:textStyle="bold"
-                android:backgroundTint="@color/status_parked"
-                android:textAllCaps="false"
-                android:textSize="14sp" />
+                app:iconTint="@color/status_parked"
+                app:strokeWidth="0dp" />
 
+            <!-- Delete -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnDeleteYard"
-                android:layout_width="wrap_content"
-                android:layout_height="45dp"
-                android:layout_marginStart="8dp"
-                app:icon="@drawable/white_delete_24"
+                android:layout_width="0dp"
+                android:layout_height="46dp"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
                 android:text="Delete"
-                android:textStyle="bold"
-                android:backgroundTint="#E53935"
                 android:textAllCaps="false"
-                android:textSize="14sp" />
+                android:textColor="#DC2626"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:backgroundTint="#FEF2F2"
+                app:cornerRadius="13dp"
+                app:icon="@drawable/white_delete_24"
+                app:iconGravity="textStart"
+                app:iconTint="#DC2626"
+                app:strokeWidth="0dp" />
 
         </LinearLayout>
 

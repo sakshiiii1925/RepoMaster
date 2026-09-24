@@ -1078,4 +1078,13 @@ class InvoiceDetailsActivity : AppCompatActivity() {
     private fun roundMoney(value: Double): Double {
         return kotlin.math.round(value * 100.0) / 100.0
     }
+    override fun onSupportNavigateUp(): Boolean {
+
+
+        finish()
+
+
+        return true
+
+    }
 }

@@ -5,63 +5,142 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:background="@drawable/backgrdimg"
+    android:fillViewport="true"
+    android:clipToPadding="false">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="32dp">
 
-        <!-- TITLE -->
+
+        <!-- ===================================================== -->
+        <!-- TOOLBAR -->
+        <!-- ===================================================== -->
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar1"
             android:layout_width="match_parent"
-            android:layout_height="90dp"
+            android:layout_height="100dp"
             android:background="@android:color/transparent"
-            android:paddingTop="30dp"
             android:title="Add Vehicle"
-            android:titleTextColor="@android:color/black"
+            android:paddingTop="35dp"
+            android:titleTextColor="@android:color/white"
+            android:titleTextAppearance="@style/TextAppearance.Material3.TitleLarge"
             app:navigationIcon="@drawable/baseline_arrow_back_24"
-            app:navigationIconTint="@color/black"/>
+            app:navigationIconTint="@android:color/white" />
 
 
+        <!-- ===================================================== -->
+        <!-- PAGE INTRO -->
+        <!-- ===================================================== -->
 
-        <!-- ========================= -->
-        <!-- VEHICLE & CUSTOMER -->
-        <!-- ========================= -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Create Vehicle Invoice"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginTop="4dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Enter the vehicle and invoice details below."
+            android:textColor="#D9E1EC"
+            android:textSize="14sp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="20dp"/>
+
+
+        <!-- ===================================================== -->
+        <!-- 1. CUSTOMER & VEHICLE -->
+        <!-- ===================================================== -->
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="4dp"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="16dp"
+            app:cardBackgroundColor="#FFFFFF"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="2dp"
+            app:strokeColor="#E7EBF0"
+            app:strokeWidth="1dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="18dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
+
+                <!-- SECTION HEADER -->
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Customer and Vehicle"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="#002147"
-                    android:layout_marginBottom="12dp"/>
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="42dp"
+                        android:layout_height="42dp"
+                        app:cardBackgroundColor="#EAF2FF"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="0dp">
+
+                        <ImageView
+                            android:layout_width="23dp"
+                            android:layout_height="23dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/outline_directions_car_24"
+                            android:contentDescription="Vehicle"
+                            app:tint="#1A73E8"/>
+
+                    </com.google.android.material.card.MaterialCardView>
 
 
-                <!-- Vehicle Number -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="12dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Customer And Vehicle"
+                            android:textColor="#172033"
+                            android:textSize="18sp"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Basic vehicle information"
+                            android:textColor="#667085"
+                            android:textSize="12sp"
+                            android:layout_marginTop="2dp"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+
+                <!-- VEHICLE NUMBER -->
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/vehicleNumberLayout"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
                     android:hint="Vehicle Number"
                     app:endIconMode="dropdown_menu">
 
@@ -72,41 +151,51 @@
                         android:inputType="textCapCharacters"
                         android:maxLines="1"
                         android:completionThreshold="1"
-                        android:paddingStart="16dp"
-                        android:paddingEnd="16dp"
-                        android:singleLine="true"/>
+                        android:singleLine="true"
+                        android:paddingStart="14dp"
+                        android:paddingEnd="14dp"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
+
+
+                <!-- SEARCH -->
+
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnSearchVehicle"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
                     android:layout_marginTop="10dp"
                     android:text="Search Vehicle"
                     android:textAllCaps="false"
-                    android:backgroundTint="#002147"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="#1A73E8"
+                    android:backgroundTint="#EEF5FF"
                     app:cornerRadius="12dp"
                     app:iconGravity="textStart"
-                    app:icon="@drawable/baseline_search_24"/>
+                    app:icon="@drawable/baseline_search_24"
+                    app:iconTint="#1A73E8"/>
 
 
-                <!-- Customer Name -->
+                <!-- CUSTOMER NAME -->
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="16dp"
                     android:hint="Customer Name">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etCustomerName"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:inputType="textCapWords"
+                        android:maxLines="1"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
 
-                <!-- Loan Number -->
+                <!-- LOAN NUMBER -->
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
@@ -117,12 +206,14 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etLoanNumber"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:inputType="textCapCharacters"
+                        android:maxLines="1"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
 
-                <!-- Vehicle Type -->
+                <!-- VEHICLE TYPE -->
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
@@ -133,12 +224,14 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etVehicleType"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:inputType="textCapWords"
+                        android:maxLines="1"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
 
-                <!-- Vehicle Make -->
+                <!-- VEHICLE MAKE -->
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
@@ -149,12 +242,14 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etVehicleMake"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:inputType="textCapWords"
+                        android:maxLines="1"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
 
-                <!-- Vehicle Model -->
+                <!-- VEHICLE MODEL -->
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
@@ -165,12 +260,14 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etVehicleModel"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:inputType="textCapWords"
+                        android:maxLines="1"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
 
-                <!-- Engine -->
+                <!-- ENGINE -->
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
@@ -181,12 +278,14 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etEngineNumber"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:inputType="textCapCharacters"
+                        android:maxLines="1"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
 
-                <!-- Chassis -->
+                <!-- CHASSIS -->
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
@@ -197,12 +296,14 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etChassisNumber"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:inputType="textCapCharacters"
+                        android:maxLines="1"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
 
-                <!-- Address -->
+                <!-- CUSTOMER ADDRESS -->
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
@@ -215,7 +316,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:minLines="2"
-                        android:gravity="top"/>
+                        android:gravity="top"
+                        android:inputType="textCapSentences|textMultiLine"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -224,51 +326,149 @@
         </com.google.android.material.card.MaterialCardView>
 
 
-        <!-- ========================= -->
-        <!-- INVOICE INFORMATION -->
-        <!-- ========================= -->
+        <!-- ===================================================== -->
+        <!-- 2. INVOICE & YARD -->
+        <!-- ===================================================== -->
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="4dp"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="16dp"
+            app:cardBackgroundColor="#FFFFFF"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="2dp"
+            app:strokeColor="#E7EBF0"
+            app:strokeWidth="1dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="18dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Invoice/Yard Information"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="#002147"/>
+                    android:gravity="center_vertical">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="42dp"
+                        android:layout_height="42dp"
+                        app:cardBackgroundColor="#FFF3E8"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="0dp">
+
+                        <ImageView
+                            android:layout_width="23dp"
+                            android:layout_height="23dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/baseline_receipt_long_24"
+                            android:contentDescription="Invoice"
+                            app:tint="#F57C00"/>
+
+                    </com.google.android.material.card.MaterialCardView>
 
 
-                <com.google.android.material.textfield.TextInputLayout
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginStart="12dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Invoice And Yard"
+                            android:textColor="#172033"
+                            android:textSize="18sp"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Invoice and storage information"
+                            android:textColor="#667085"
+                            android:textSize="12sp"
+                            android:layout_marginTop="2dp"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+
+                <!-- INVOICE NUMBER -->
+
+                <!-- Invoice Number - Auto Generated -->
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:hint="Invoice Number">
+                    app:cardBackgroundColor="#F5F7FA"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="#D9DEE7"
+                    app:strokeWidth="1dp">
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etInvoiceNumber"
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:padding="14dp">
 
-                </com.google.android.material.textfield.TextInputLayout>
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/baseline_receipt_long_24"
+                            android:contentDescription="Invoice Number"
+                            app:tint="#FF8D2A" />
 
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="12dp"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Invoice Number"
+                                android:textColor="#172033"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="3dp"
+                                android:text="Will be generated automatically"
+                                android:textColor="#7A8494"
+                                android:textSize="13sp" />
+
+                        </LinearLayout>
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_auto_generate"
+                            android:contentDescription="Automatically generated"
+                            app:tint="#4CAF50" />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- INVOICE DATE -->
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:hint="Invoice Date">
+                    android:hint="Invoice Date"
+                    app:endIconMode="custom"
+                    app:endIconDrawable="@drawable/baseline_calendar_month_24">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etInvoiceDate"
@@ -280,7 +480,7 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
 
-                <!-- Invoice Bank -->
+                <!-- INVOICE BANK -->
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
@@ -293,12 +493,13 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:focusable="false"
-                        android:clickable="false"/>
+                        android:clickable="false"
+                        android:textColor="#667085"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
 
-                <!-- Area -->
+                <!-- BRANCH -->
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
@@ -311,12 +512,13 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:focusable="false"
-                        android:clickable="false"/>
+                        android:clickable="false"
+                        android:textColor="#667085"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
 
-                <!-- Yard Name -->
+                <!-- YARD -->
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
@@ -329,12 +531,13 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:focusable="false"
-                        android:clickable="false"/>
+                        android:clickable="false"
+                        android:textColor="#667085"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
 
-                <!-- Yard Address -->
+                <!-- YARD ADDRESS -->
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
@@ -349,7 +552,8 @@
                         android:minLines="2"
                         android:gravity="top"
                         android:focusable="false"
-                        android:clickable="false"/>
+                        android:clickable="false"
+                        android:textColor="#667085"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -358,52 +562,103 @@
         </com.google.android.material.card.MaterialCardView>
 
 
-        <!-- ========================= -->
-        <!-- AMOUNT -->
-        <!-- ========================= -->
+        <!-- ===================================================== -->
+        <!-- 3. AMOUNT DETAILS -->
+        <!-- ===================================================== -->
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="4dp"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="16dp"
+            app:cardBackgroundColor="#FFFFFF"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="2dp"
+            app:strokeColor="#E7EBF0"
+            app:strokeWidth="1dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="18dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Amount Details"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="#002147"/>
+                    android:gravity="center_vertical">
 
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="42dp"
+                        android:layout_height="42dp"
+                        app:cardBackgroundColor="#EAF7EF"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="0dp">
+
+                        <ImageView
+                            android:layout_width="23dp"
+                            android:layout_height="23dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/outline_money_24"
+                            android:contentDescription="Amount"
+                            app:tint="#188038"/>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginStart="12dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Amount Details"
+                            android:textColor="#172033"
+                            android:textSize="18sp"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Add charges and calculate GST"
+                            android:textColor="#667085"
+                            android:textSize="12sp"
+                            android:layout_marginTop="2dp"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+
+                <!-- DESCRIPTION 1 -->
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="18dp"
                     android:hint="Description 1">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etDescription1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textCapWords"/>
+                        android:inputType="textCapSentences"
+                        android:maxLines="1"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
+
+                <!-- BASIC 1 -->
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:hint="Basic Amount 1">
+                    android:hint="Basic Amount 1"
+                    app:prefixText="₹ ">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etBasic1Amount"
@@ -413,6 +668,8 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
 
+
+                <!-- DESCRIPTION 2 -->
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
@@ -424,16 +681,20 @@
                         android:id="@+id/etDescription2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textCapWords"/>
+                        android:inputType="textCapSentences"
+                        android:maxLines="1"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
+
+                <!-- BASIC 2 -->
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:hint="Basic Amount 2">
+                    android:hint="Basic Amount 2"
+                    app:prefixText="₹ ">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etBasic2Amount"
@@ -444,11 +705,14 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
 
+                <!-- GST -->
+
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:hint="GST %">
+                    android:hint="GST %"
+                    app:suffixText="%">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etGstPercent"
@@ -459,56 +723,137 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
 
-                <TextView
-                    android:id="@+id/txtTotalPreview"
+                <!-- TOTAL -->
+
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="Total: ₹0.00"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="#002147"/>
+                    android:layout_marginTop="18dp"
+                    app:cardBackgroundColor="#F1F8F3"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="#C9E6D0"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="16dp">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Invoice Total"
+                                android:textColor="#667085"
+                                android:textSize="12sp"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Including GST"
+                                android:textColor="#98A2B3"
+                                android:textSize="11sp"
+                                android:layout_marginTop="2dp"/>
+
+                        </LinearLayout>
+
+
+                        <TextView
+                            android:id="@+id/txtTotalPreview"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="₹0.00"
+                            android:textColor="#188038"
+                            android:textSize="22sp"
+                            android:textStyle="bold"/>
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
 
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
 
 
-        <!-- ========================= -->
-        <!-- REMARKS -->
-        <!-- ========================= -->
+        <!-- ===================================================== -->
+        <!-- 4. REMARKS -->
+        <!-- ===================================================== -->
 
-        <com.google.android.material.textfield.TextInputLayout
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Remarks"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="16dp"
+            app:cardBackgroundColor="#FFFFFF"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="2dp"
+            app:strokeColor="#E7EBF0"
+            app:strokeWidth="1dp">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etRemarks"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minLines="3"
-                android:inputType="textCapWords"
-                android:gravity="top"/>
+                android:orientation="vertical"
+                android:padding="18dp">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Additional Information"
+                    android:textColor="#172033"
+                    android:textSize="17sp"
+                    android:textStyle="bold"/>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:hint="Remarks(Optional)">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etRemarks"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minLines="3"
+                        android:gravity="top"
+                        android:inputType="textCapSentences|textMultiLine"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
 
 
-        <!-- CREATE -->
+        <!-- ===================================================== -->
+        <!-- CREATE INVOICE -->
+        <!-- ===================================================== -->
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCreateInvoice"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
+            android:layout_height="58dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="10dp"
             android:text="Create Invoice"
             android:textAllCaps="false"
+            android:textColor="@android:color/white"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:textColor="@android:color/white"
-            android:backgroundTint="#FF8D2A"
-            android:layout_marginBottom="30dp"
-            app:cornerRadius="16dp"/>
+            app:iconGravity="textStart"
+            android:backgroundTint="#002147"
+            app:cornerRadius="16dp"
+            app:icon="@drawable/baseline_receipt_long_24"
+            app:iconTint="@android:color/white"/>
+
 
     </LinearLayout>
 

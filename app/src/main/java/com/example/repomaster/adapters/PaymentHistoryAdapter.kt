@@ -59,18 +59,18 @@ class PaymentHistoryAdapter(
             payments[position]
 
         holder.txtPaymentDate.text =
-            "Date: ${payment.paymentDate ?: "N/A"}"
+            "${payment.paymentDate ?: "N/A"}"
 
         holder.txtPaymentAmount.text =
-            "Amount: ₹%.2f".format(
+            "₹%.2f".format(
                 payment.paymentAmount ?: 0.0
             )
 
         holder.txtPaymentRemarks.text =
-            "Remarks: ${payment.remarks ?: "N/A"}"
+            "${payment.remarks ?: "N/A"}"
 
         holder.txtPaymentCreatedBy.text =
-            "Created By: ${payment.createdBy ?: "N/A"}"
+            "${payment.createdBy ?: "N/A"}"
 
         holder.btnDeletePayment.setOnClickListener {
 

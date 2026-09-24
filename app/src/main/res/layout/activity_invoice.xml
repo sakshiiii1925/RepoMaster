@@ -4,66 +4,141 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/backgrdimg">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:orientation="vertical">
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
+                <!-- Toolbar -->
+                <com.google.android.material.appbar.MaterialToolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:background="@android:color/transparent"
+                    android:title="Invoices"
+                    android:paddingTop="35dp"
+                    android:titleTextColor="@android:color/white"
+                    app:navigationIcon="@drawable/baseline_arrow_back_24"
+                    app:navigationIconTint="@android:color/white" />
+
+                <!-- Header Subtitle -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="8dp"
+                    android:text="Manage and track your invoices"
+                    android:textColor="#D9E2F0"
+                    android:textSize="14sp" />
+
+
+        <!-- Search -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="90dp"
-            android:background="@android:color/transparent"
-            android:paddingTop="30dp"
-            android:title="Add Vehicle"
-            android:titleTextColor="@android:color/black"
-            app:navigationIcon="@drawable/baseline_arrow_back_24"
-            app:navigationIconTint="@color/black"/>
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            app:cardBackgroundColor="@android:color/white"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="2dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp">
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:contentDescription="Search"
+                    android:src="@drawable/baseline_search_24"
+                    app:tint="#7A8494" />
+
+                <EditText
+                    android:id="@+id/edtSearchInvoice"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:hint="Search invoice number"
+                    android:inputType="text"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="8dp"
+                    android:textColor="#172033"
+                    android:textColorHint="#9AA3B2"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
 
 
+        <!-- Section Title -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="18dp"
+            android:layout_marginTop="18dp"
+            android:layout_marginEnd="18dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="All Invoices"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+
+        <!-- Progress -->
         <ProgressBar
             android:id="@+id/progressInvoice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_gravity="center"
-            android:visibility="gone"/>
+            android:layout_marginTop="12dp"
+            android:visibility="gone" />
 
-        <EditText
-            android:id="@+id/edtSearchInvoice"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="12dp"
-            android:hint="Search Invoice Number"
-            android:inputType="text"
-            android:padding="12dp"/>
 
+        <!-- Invoice List -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerInvoices"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:paddingTop="10dp"
             android:clipToPadding="false"
-            android:paddingBottom="90dp"/>
+            android:paddingStart="16dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="100dp" />
 
     </LinearLayout>
 
 
-    <!-- Floating Create Invoice Button -->
-
+    <!-- Create Invoice FAB -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnCreateInvoice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="24dp"
         android:contentDescription="Create Invoice"
         android:src="@drawable/baseline_add_24"
         app:backgroundTint="#002147"
-        app:tint="@android:color/white"
-        app:elevation="8dp"/>
+        app:borderWidth="0dp"
+        app:elevation="8dp"
+        app:maxImageSize="24dp"
+        app:tint="@android:color/white" />
 
 </FrameLayout>

@@ -51,7 +51,7 @@ class CreateInvoice : AppCompatActivity() {
     private lateinit var etCustomerAddress: TextInputEditText
 
     // Invoice/yard details
-    private lateinit var etInvoiceNumber: TextInputEditText
+
     private lateinit var etInvoiceDate: TextInputEditText
     private lateinit var etInvoiceBank: TextInputEditText
 
@@ -84,8 +84,7 @@ private lateinit var txtTotalPreview: TextView
         toolbar.setTitleTextColor(
             getColor(R.color.black)
         )
-        supportActionBar?.title =
-            "Generate Invoice"
+
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         initializeViews()
 
@@ -143,9 +142,8 @@ private lateinit var txtTotalPreview: TextView
         etCustomerAddress =
             findViewById(R.id.etCustomerAddress)
 
-        // Invoice
-        etInvoiceNumber =
-            findViewById(R.id.etInvoiceNumber)
+
+
 
         etInvoiceDate =
             findViewById(R.id.etInvoiceDate)
@@ -216,7 +214,7 @@ private lateinit var txtTotalPreview: TextView
 
                 Toast.makeText(
                     this,
-                    "Invoice created successfully",
+                    "Invoice ${invoice.invoiceNumber} created successfully",
                     Toast.LENGTH_LONG
                 ).show()
 
@@ -572,18 +570,8 @@ private lateinit var txtTotalPreview: TextView
             return
         }
 
-        val invoiceNumber =
-            etInvoiceNumber.text
-                ?.toString()
-                ?.trim()
 
-        if (invoiceNumber.isNullOrEmpty()) {
 
-            etInvoiceNumber.error =
-                "Enter Invoice Number"
-
-            return
-        }
 
         val vehicleNumber =
             etVehicleNumber.text
@@ -629,7 +617,7 @@ private lateinit var txtTotalPreview: TextView
             Invoice(
 
                 invoiceNumber =
-                    invoiceNumber,
+                    "",
 
                 invoiceDate =
                     etInvoiceDate.text

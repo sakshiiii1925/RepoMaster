@@ -7,114 +7,463 @@
     android:orientation="vertical"
     android:background="@drawable/backgrdimg">
 
+    <!-- ==================== TOOLBAR ==================== -->
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:background="@android:color/transparent"
+        android:elevation="0dp"
+        android:paddingTop="35dp"
         android:title="Bulk Upload"
+        android:titleTextColor="@android:color/white"
+        android:titleTextAppearance="@style/TextAppearance.Material3.TitleLarge"
         app:navigationIcon="@drawable/baseline_arrow_back_24"
-        android:paddingTop="40dp"
-        android:titleTextColor="@android:color/white" />
+        app:navigationIconTint="@android:color/white" />
 
+
+    <!-- ==================== CONTENT ==================== -->
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:clipToPadding="false">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="20dp">
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="32dp">
 
-            <ImageView
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_gravity="center"
-                android:src="@drawable/outline_upload_file_24" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Upload Vehicle Excel File"
-                android:textSize="22sp"
-                android:textColor="@color/white"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:layout_marginTop="12dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Download the template, fill in the vehicle details, then upload the completed Excel file."
-                android:textSize="15sp"
-                android:textColor="@color/white"
-                android:layout_marginTop="8dp"
-                android:layout_gravity="center"
-                android:gravity="center"/>
-
+            <!-- ==================== HEADER CARD ==================== -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="5dp"
-                android:backgroundTint="@color/white">
+                android:layout_marginTop="8dp"
+                app:cardBackgroundColor="#F7F9FC"
+                app:cardCornerRadius="22dp"
+                app:cardElevation="0dp"
+                app:strokeColor="#E4E8EF"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="20dp">
-                    <Button
-                        android:id="@+id/btnDownloadTemplate"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Download Excel Format"
-                        android:backgroundTint="#4CAF50"
-                        android:textStyle="bold"
-                        />
+                    android:gravity="center"
+                    android:padding="24dp">
 
-                    <Button
-                        android:id="@+id/btnChooseFile"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Attached Excel File"
-                        android:textStyle="bold"
-                        android:backgroundTint="#002147"/>
 
+                    <!-- Upload Icon -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="76dp"
+                        android:layout_height="76dp"
+                        app:cardBackgroundColor="#E8F0FE"
+                        app:cardCornerRadius="38dp"
+                        app:cardElevation="0dp">
+
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/outline_upload_file_24"
+                            android:contentDescription="Upload Excel file"
+                            app:tint="#1A73E8" />
+
+                    </com.google.android.material.card.MaterialCardView>
+
+
+                    <!-- Title -->
                     <TextView
-                        android:id="@+id/txtFileName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="Upload Vehicle Data"
+                        android:textColor="#172033"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:fontFamily="sans" />
+
+
+                    <!-- Description -->
+                    <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="No file selected"
-                        android:textStyle="bold"
-                        android:textColor="@android:color/black"
-                        android:layout_marginTop="16dp"/>
+                        android:layout_marginTop="8dp"
+                        android:gravity="center"
+                        android:text="Import multiple vehicle records at once using an Excel file."
+                        android:textColor="#667085"
+                        android:textSize="14sp"
+                        android:lineSpacingExtra="2dp" />
 
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
 
-            <ProgressBar
-                android:id="@+id/progressBar"
+
+            <!-- ==================== HOW IT WORKS ==================== -->
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:visibility="gone"
-                android:layout_marginTop="30dp"/>
+                android:layout_marginTop="24dp"
+                android:text="How it works"
+                android:textColor="@android:color/white"
+                android:textSize="17sp"
+                android:textStyle="bold" />
 
-            <Button
-                android:id="@+id/btnUpload"
+
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                android:text="Upload File"
-                android:layout_marginTop="30dp"
-                android:backgroundTint="#002147"/>
+                android:layout_marginTop="10dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="2dp">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="18dp">
+
+
+                    <!-- STEP 1 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="34dp"
+                            android:layout_height="34dp"
+                            android:gravity="center"
+                            android:text="1"
+                            android:textColor="#1A73E8"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:background="@drawable/bg_step_circle" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="14dp"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Download the template"
+                                android:textColor="#172033"
+                                android:textSize="15sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="3dp"
+                                android:text="Use the provided Excel format."
+                                android:textColor="#667085"
+                                android:textSize="13sp" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+
+                    <!-- DIVIDER -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginStart="17dp"
+                        android:layout_marginTop="14dp"
+                        android:layout_marginBottom="14dp"
+                        android:background="#EEF1F5" />
+
+
+                    <!-- STEP 2 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="34dp"
+                            android:layout_height="34dp"
+                            android:gravity="center"
+                            android:text="2"
+                            android:textColor="#1A73E8"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:background="@drawable/bg_step_circle" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="14dp"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Fill vehicle details"
+                                android:textColor="#172033"
+                                android:textSize="15sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="3dp"
+                                android:text="Enter the required vehicle information."
+                                android:textColor="#667085"
+                                android:textSize="13sp" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+
+                    <!-- DIVIDER -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginStart="17dp"
+                        android:layout_marginTop="14dp"
+                        android:layout_marginBottom="14dp"
+                        android:background="#EEF1F5" />
+
+
+                    <!-- STEP 3 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="34dp"
+                            android:layout_height="34dp"
+                            android:gravity="center"
+                            android:text="3"
+                            android:textColor="#1A73E8"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:background="@drawable/bg_step_circle" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="14dp"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Upload your Excel file"
+                                android:textColor="#172033"
+                                android:textSize="15sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="3dp"
+                                android:text="Select the completed file and upload it."
+                                android:textColor="#667085"
+                                android:textSize="13sp" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <!-- ==================== ACTIONS ==================== -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Excel File"
+                android:textColor="@android:color/white"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="2dp">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+
+                    <!-- DOWNLOAD TEMPLATE -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnDownloadTemplate"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:text="Download Excel Template"
+                        android:textAllCaps="false"
+                        android:textColor="#188038"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        app:cornerRadius="14dp"
+                        app:icon="@drawable/baseline_download_24"
+                        app:iconTint="#188038"
+                        app:strokeColor="#B7DFBE"
+                        app:strokeWidth="1dp"
+                        android:backgroundTint="#F1F8F3" />
+
+
+                    <!-- CHOOSE FILE -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnChooseFile"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:layout_marginTop="12dp"
+                        android:text="Choose Excel File"
+                        android:textAllCaps="false"
+                        android:textColor="#1A73E8"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        app:cornerRadius="14dp"
+                        app:icon="@drawable/outline_upload_file_24"
+                        app:iconTint="#1A73E8"
+                        app:strokeColor="#B8D4F8"
+                        app:strokeWidth="1dp"
+                        android:backgroundTint="#F4F8FE" />
+
+
+                    <!-- SELECTED FILE -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/fileContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        app:cardBackgroundColor="#F8FAFC"
+                        app:cardCornerRadius="14dp"
+                        app:cardElevation="0dp"
+                        app:strokeColor="#E5E7EB"
+                        app:strokeWidth="1dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="14dp">
+
+
+                            <!-- FILE ICON -->
+                            <com.google.android.material.card.MaterialCardView
+                                android:layout_width="44dp"
+                                android:layout_height="44dp"
+                                app:cardBackgroundColor="#E8F5E9"
+                                app:cardCornerRadius="12dp"
+                                app:cardElevation="0dp">
+
+                                <ImageView
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:layout_gravity="center"
+                                    android:src="@drawable/outline_upload_file_24"
+                                    android:contentDescription="Excel file"
+                                    app:tint="#188038" />
+
+                            </com.google.android.material.card.MaterialCardView>
+
+
+                            <!-- FILE NAME -->
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginStart="12dp"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/txtFileName"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="No file selected"
+                                    android:textColor="#172033"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold"
+                                    android:maxLines="1"
+                                    android:ellipsize="middle" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="3dp"
+                                    android:text="Excel file"
+                                    android:textColor="#98A2B3"
+                                    android:textSize="12sp" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <!-- ==================== PROGRESS ==================== -->
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="24dp"
+                android:visibility="gone" />
+
+
+            <!-- ==================== UPLOAD BUTTON ==================== -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnUpload"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="20dp"
+                android:text="Upload Vehicle Data"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:backgroundTint="#172033"
+                app:cornerRadius="16dp"
+                app:iconGravity="textStart"
+                app:icon="@drawable/outline_upload_file_24"
+                app:iconTint="@android:color/white" />
 
         </LinearLayout>
 
     </ScrollView>
 
 </LinearLayout>
+
+
+
