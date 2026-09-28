@@ -333,27 +333,27 @@ class InvoiceDetailsActivity : AppCompatActivity() {
         findViewById<TextView>(
             R.id.txtInvoiceNumber
         ).text =
-            "Invoice Number: ${invoice.invoiceNumber ?: "N/A"}"
+            "${invoice.invoiceNumber ?: "N/A"}"
 
         findViewById<TextView>(
             R.id.txtInvoiceDate
         ).text =
-            "Invoice Date: ${invoice.invoiceDate ?: "N/A"}"
+            "${invoice.invoiceDate ?: "N/A"}"
 
         findViewById<TextView>(
             R.id.txtCustomerName
         ).text =
-            "Customer Name: ${invoice.customerName ?: "N/A"}"
+            "${invoice.customerName ?: "N/A"}"
 
         findViewById<TextView>(
             R.id.txtVehicleNumber
         ).text =
-            "Vehicle Number: ${invoice.vehicleNumber ?: "N/A"}"
+            "${invoice.vehicleNumber ?: "N/A"}"
 
         findViewById<TextView>(
             R.id.txtLoanNumber
         ).text =
-            "Loan Number: ${invoice.loanNumber ?: "N/A"}"
+            "${invoice.loanNumber ?: "N/A"}"
 
         findViewById<TextView>(
             R.id.txtVehicleType
@@ -383,32 +383,32 @@ class InvoiceDetailsActivity : AppCompatActivity() {
         findViewById<TextView>(
             R.id.txtBasicAmount
         ).text =
-            "Basic Amount: ₹${invoice.totalBasic ?: 0.0}"
+            "₹${invoice.totalBasic ?: 0.0}"
 
         findViewById<TextView>(
             R.id.txtCgst
         ).text =
-            "CGST: ₹${invoice.cgst ?: 0.0}"
+            "₹${invoice.cgst ?: 0.0}"
 
         findViewById<TextView>(
             R.id.txtSgst
         ).text =
-            "SGST: ₹${invoice.sgst ?: 0.0}"
+            "₹${invoice.sgst ?: 0.0}"
 
         findViewById<TextView>(
             R.id.txtIgst
         ).text =
-            "IGST: ₹${invoice.igst ?: 0.0}"
+            "₹${invoice.igst ?: 0.0}"
 
         findViewById<TextView>(
             R.id.txtGst
         ).text =
-            "GST: ₹${invoice.gst ?: 0.0}"
+            "₹${invoice.gst ?: 0.0}"
 
         findViewById<TextView>(
             R.id.txtInvoiceTotal
         ).text =
-            "Invoice Total: ₹${invoice.invoiceTotal ?: 0.0}"
+            "₹${invoice.invoiceTotal ?: 0.0}"
 
         findViewById<TextView>(
             R.id.txtPaymentStatus
@@ -418,7 +418,7 @@ class InvoiceDetailsActivity : AppCompatActivity() {
         findViewById<TextView>(
             R.id.txtPaymentDate
         ).text =
-            "Payment Date: ${invoice.paymentDate ?: "N/A"}"
+            "${invoice.paymentDate ?: "N/A"}"
 
         findViewById<TextView>(
             R.id.txtPaymentReceived
@@ -469,7 +469,7 @@ class InvoiceDetailsActivity : AppCompatActivity() {
         findViewById<TextView>(
             R.id.txtRemainingAmount
         ).text =
-            "Remaining Amount: ₹%.2f".format(
+            "₹%.2f".format(
                 remainingAmount
             )
 
@@ -485,7 +485,7 @@ class InvoiceDetailsActivity : AppCompatActivity() {
         findViewById<TextView>(
             R.id.txtRemarks
         ).text =
-            "Remarks: ${invoice.remarks ?: "N/A"}"
+            "${invoice.remarks ?: "N/A"}"
         txtDpd.text =
             "${invoice.dpd ?: 0} Days"
 
@@ -640,7 +640,7 @@ class InvoiceDetailsActivity : AppCompatActivity() {
             "Already Paid: ₹%.2f".format(alreadyPaid)
 
         txtRemainingAmount.text =
-            "Remaining: ₹%.2f".format(currentRemaining)
+            "₹%.2f".format(currentRemaining)
 
 
         // Default today's date
@@ -967,7 +967,7 @@ class InvoiceDetailsActivity : AppCompatActivity() {
         findViewById<TextView>(
             R.id.txtRemainingAmount
         ).text =
-            "Remaining Amount: ₹%.2f".format(
+            "₹%.2f".format(
                 remainingAmount
             )
 

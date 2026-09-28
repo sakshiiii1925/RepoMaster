@@ -23,9 +23,11 @@
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbarInvoiceDetails"
             android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:background="@android:color/white"
+            android:layout_height="92dp"
+            android:background="@android:color/transparent"
+            android:paddingStart="20dp"
             android:elevation="2dp"
+            android:paddingTop="35dp"
             android:title="Invoice Details"
             android:titleTextColor="#172033"
             android:titleTextAppearance="@style/TextAppearance.Material3.TitleMedium"
@@ -109,7 +111,6 @@
                                 android:id="@+id/txtPaymentStatus"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:background="@drawable/bg_invoice_status"
                                 android:gravity="center"
                                 android:minWidth="64dp"
                                 android:paddingStart="10dp"
@@ -216,7 +217,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Customer & Vehicle"
+                            android:text="Customer And Vehicle"
                             android:textColor="#172033"
                             android:textSize="15sp"
                             android:textStyle="bold" />
@@ -612,7 +613,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="DPD & Extra Charge"
+                            android:text="DPD And Extra Charge"
                             android:textColor="#172033"
                             android:textSize="15sp"
                             android:textStyle="bold" />

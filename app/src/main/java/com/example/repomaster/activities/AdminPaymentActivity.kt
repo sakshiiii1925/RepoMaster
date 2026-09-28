@@ -180,7 +180,6 @@ class AdminPaymentActivity : AppCompatActivity() {
 
     }
 
-
     // =========================================================
     // VEHICLE DROPDOWN
     // =========================================================
@@ -286,13 +285,13 @@ class AdminPaymentActivity : AppCompatActivity() {
             if (calculation == null) return@observe
 
             binding.txtTotalAmount.text =
-                "Total Due: ₹${calculation.total_amount}"
+                "₹${calculation.total_amount}"
 
             binding.txtPaidAmount.text =
-                "Paid Till Date: ₹${calculation.paid_amount}"
+                "₹${calculation.paid_amount}"
 
             binding.txtRemainingAmount.text =
-                "Remaining: ₹${calculation.remaining_amount}"
+                "₹${calculation.remaining_amount}"
 
             // Automatically suggest remaining amount.
             if (!calculation.already_paid) {
@@ -484,20 +483,20 @@ class AdminPaymentActivity : AppCompatActivity() {
     ) {
 
         binding.txtVehicleNumber.text =
-            "Vehicle: ${vehicle.vehicle_number}"
+            "${vehicle.vehicle_number}"
 
         binding.txtVehicleType.text =
-            "Vehicle Type: ${
+            "${
                 vehicle.vehicle_type ?: "-"
             }"
 
         binding.txtWorkType.text =
-            "Work Type: ${
+            "${
                 vehicle.work_type ?: "-"
             }"
 
         binding.txtCompletedAt.text =
-            "Completed: ${
+            "${
                 vehicle.completed_at ?: "-"
             }"
 

@@ -3,6 +3,7 @@ package com.example.repomaster.activities
 import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
+import com.google.android.material.card.MaterialCardView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModelProvider
@@ -20,10 +21,6 @@ class UserReportActivity : AppCompatActivity() {
     private lateinit var txtRepoMarked: TextView
     private lateinit var txtParked: TextView
     private lateinit var txtReleased: TextView
-
-    private lateinit var btnDownloadPdf: MaterialButton
-    private lateinit var btnDownloadexcel: MaterialButton
-
     private lateinit var userViewModel: UserViewModel
     private lateinit var sessionManager: SessionManager
     private lateinit var toolbar:Toolbar
@@ -52,9 +49,8 @@ class UserReportActivity : AppCompatActivity() {
             finish()
         }
         // PDF button
-        btnDownloadPdf = findViewById(R.id.btnDownloadPdf)
-        //excelButton
-        btnDownloadexcel=findViewById(R.id.btnDownloadExcel)
+        val pdfCard = findViewById<MaterialCardView>(R.id.cardDownloadPdf)
+        val excelCard = findViewById<MaterialCardView>(R.id.cardDownloadExcel)
 
         // Session
         sessionManager = SessionManager(this)
@@ -87,12 +83,12 @@ class UserReportActivity : AppCompatActivity() {
         }
 
         // Download PDF
-        btnDownloadPdf.setOnClickListener {
+        pdfCard.setOnClickListener {
 
             downloadUserReportPdf()
         }
         //download Excel
-        btnDownloadexcel.setOnClickListener {
+        excelCard.setOnClickListener {
             downloadUserActivityExcel()
         }
 

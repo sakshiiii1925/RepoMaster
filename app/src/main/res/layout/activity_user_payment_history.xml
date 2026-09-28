@@ -23,9 +23,10 @@
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbarUserPayment"
             android:layout_width="match_parent"
-            android:layout_height="72dp"
-            android:background="@android:color/white"
+            android:layout_height="92dp"
+            android:background="@android:color/transparent"
             android:elevation="3dp"
+            android:paddingTop="35dp"
             android:title="My Payments"
             android:titleTextColor="#172033"
             android:titleTextAppearance="@style/TextAppearance.Material3.TitleLarge"
