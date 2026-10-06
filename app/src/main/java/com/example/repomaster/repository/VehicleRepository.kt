@@ -1759,64 +1759,6 @@ class VehicleRepository(
 
 
 
-
-    suspend fun getUploadedImages(): List<UploadedImage> {
-
-        val response =
-            RetrofitClient.repoImageApi.getUploadedImages()
-
-        if (response.isSuccessful) {
-
-            return response.body()?.data
-                ?: emptyList()
-
-        } else {
-
-            throw Exception(
-                "Failed to load uploaded images: ${response.code()}"
-            )
-        }
-    }
-    suspend fun getUploadedImage(
-        id: Int
-    ): UploadedImageDetails? {
-
-        val response =
-            RetrofitClient.repoImageApi.getUploadedImage(id)
-
-        if (response.isSuccessful) {
-
-            return response.body()?.data
-
-        } else {
-
-            throw Exception(
-                "Failed to load uploaded image details: ${response.code()}"
-            )
-        }
-    }
-    suspend fun deleteUploadedImage(
-        id: Int
-    ): Boolean {
-
-        val response =
-            RetrofitClient.repoImageApi.deleteUploadedImage(id)
-
-        if (response.isSuccessful) {
-
-            return response.body()?.success == true
-
-        } else {
-
-            val error =
-                response.errorBody()?.string()
-
-            throw Exception(
-                "Delete failed (${response.code()}): $error"
-            )
-        }
-    }
-
     suspend fun removePendingImageUpload(
         vehicleNumber: String
     ) {
@@ -2419,7 +2361,184 @@ class VehicleRepository(
 
         return null
     }
+// =========================================================
+// GET UPLOADED IMAGES
+// CURRENT USER / AGENCY
+// =========================================================
 
+    suspend fun getUploadedImages(): List<UploadedImage> {
+
+        val userEmail =
+            sessionManager
+                .getUserEmail()
+                .trim()
+
+        if (userEmail.isBlank()) {
+
+            Log.e(
+                "UPLOADED_IMAGES",
+                "User email not found"
+            )
+
+            throw Exception(
+                "User email not found"
+            )
+        }
+
+        Log.d(
+            "UPLOADED_IMAGES",
+            "Loading uploaded images for user=$userEmail"
+        )
+
+        val response =
+            RetrofitClient.repoImageApi.getUploadedImages(
+                userEmail = userEmail
+            )
+
+        if (response.isSuccessful) {
+
+            return response.body()?.data
+                ?: emptyList()
+
+        } else {
+
+            val error =
+                response.errorBody()?.string()
+
+            Log.e(
+                "UPLOADED_IMAGES",
+                "Failed: HTTP ${response.code()} - $error"
+            )
+
+            throw Exception(
+                "Failed to load uploaded images: ${response.code()}"
+            )
+        }
+    }
+
+
+// =========================================================
+// GET UPLOADED IMAGE DETAILS
+// CURRENT USER / AGENCY
+// =========================================================
+
+    suspend fun getUploadedImage(
+        id: Int
+    ): UploadedImageDetails? {
+
+        val userEmail =
+            sessionManager
+                .getUserEmail()
+                .trim()
+
+        if (userEmail.isBlank()) {
+
+            Log.e(
+                "UPLOADED_IMAGE_DETAILS",
+                "User email not found"
+            )
+
+            throw Exception(
+                "User email not found"
+            )
+        }
+
+        Log.d(
+            "UPLOADED_IMAGE_DETAILS",
+            "Loading image id=$id for user=$userEmail"
+        )
+
+        val response =
+            RetrofitClient.repoImageApi.getUploadedImage(
+                id = id,
+                userEmail = userEmail
+            )
+
+        if (response.isSuccessful) {
+
+            return response.body()?.data
+
+        } else {
+
+            val error =
+                response.errorBody()?.string()
+
+            Log.e(
+                "UPLOADED_IMAGE_DETAILS",
+                "Failed: HTTP ${response.code()} - $error"
+            )
+
+            throw Exception(
+                "Failed to load uploaded image details: ${response.code()}"
+            )
+        }
+    }
+
+
+// =========================================================
+// DELETE UPLOADED IMAGE
+// CURRENT USER / AGENCY
+// =========================================================
+
+    suspend fun deleteUploadedImage(
+        id: Int
+    ): Boolean {
+
+        val userEmail =
+            sessionManager
+                .getUserEmail()
+                .trim()
+
+        if (userEmail.isBlank()) {
+
+            Log.e(
+                "UPLOADED_IMAGE_DELETE",
+                "User email not found"
+            )
+
+            throw Exception(
+                "User email not found"
+            )
+        }
+
+        Log.d(
+            "UPLOADED_IMAGE_DELETE",
+            "Deleting image id=$id for user=$userEmail"
+        )
+
+        val response =
+            RetrofitClient.repoImageApi.deleteUploadedImage(
+                id = id,
+                userEmail = userEmail
+            )
+
+        if (response.isSuccessful) {
+
+            val success =
+                response.body()?.success == true
+
+            Log.d(
+                "UPLOADED_IMAGE_DELETE",
+                "Delete success=$success"
+            )
+
+            return success
+
+        } else {
+
+            val error =
+                response.errorBody()?.string()
+
+            Log.e(
+                "UPLOADED_IMAGE_DELETE",
+                "Delete failed: HTTP ${response.code()} - $error"
+            )
+
+            throw Exception(
+                "Delete failed (${response.code()}): $error"
+            )
+        }
+    }
 
     private fun getCurrentAgencyId(): String {
         return sessionManager.getAgencyId().trim()

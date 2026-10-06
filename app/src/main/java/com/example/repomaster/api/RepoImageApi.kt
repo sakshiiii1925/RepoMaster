@@ -9,13 +9,17 @@ import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
 import com.example.repomaster.models.DeleteResponse
-import okhttp3.ResponseBody
 import retrofit2.http.DELETE
 import com.example.repomaster.models.UploadedImageDetailsResponse
 import com.example.repomaster.models.UploadedImageListResponse
 
 interface RepoImageApi {
+
+    // =========================================================
+    // UPLOAD REPO IMAGES
+    // =========================================================
 
     @Multipart
     @POST("api/vehicles/{vehicleNumber}/repo-images")
@@ -26,8 +30,10 @@ interface RepoImageApi {
 
         @Part("status")
         status: RequestBody,
+
         @Part("user_email")
         userEmail: RequestBody,
+
         @Part("user_name")
         userName: RequestBody,
 
@@ -53,15 +59,50 @@ interface RepoImageApi {
         MultipartBody.Part
 
     ): Response<RepoImageUploadResponse>
+
+
+    // =========================================================
+    // GET UPLOADED IMAGES
+    // USER EMAIL IS USED BY PHP TO DETERMINE AGENCY
+    // =========================================================
+
     @GET("api/admin/repo-images")
-    suspend fun getUploadedImages(): Response<UploadedImageListResponse>
+    suspend fun getUploadedImages(
+        @Query("user_email")
+        userEmail: String
+    ): Response<UploadedImageListResponse>
+
+
+    // =========================================================
+    // GET SINGLE UPLOADED IMAGE
+    // USER EMAIL IS USED BY PHP TO CHECK AGENCY
+    // =========================================================
 
     @GET("api/admin/repo-images/{id}")
     suspend fun getUploadedImage(
-        @Path("id") id: Int
+
+        @Path("id")
+        id: Int,
+
+        @Query("user_email")
+        userEmail: String
+
     ): Response<UploadedImageDetailsResponse>
+
+
+    // =========================================================
+    // DELETE UPLOADED IMAGE
+    // USER EMAIL IS USED BY PHP TO CHECK AGENCY
+    // =========================================================
+
     @DELETE("api/admin/repo-images/{id}")
     suspend fun deleteUploadedImage(
-        @Path("id") id: Int
+
+        @Path("id")
+        id: Int,
+
+        @Query("user_email")
+        userEmail: String
+
     ): Response<DeleteResponse>
 }
