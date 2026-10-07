@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.repomaster.R
 import android.widget.*
 import android.util.Log
+import org.json.JSONObject
 import com.example.repomaster.viewmodel.HomeViewModelFactory
 import android.net.Uri
 import androidx.activity.result.contract.ActivityResultContracts
@@ -402,7 +403,9 @@ class BulkUploadActivity : AppCompatActivity() {
 
                     AlertDialog.Builder(this)
                         .setTitle("Upload Failed")
-                        .setMessage(result.errors.joinToString("\n"))
+                        .setMessage(
+                            result.errors.joinToString("\n")
+                        )
                         .setPositiveButton("OK", null)
                         .show()
 
@@ -427,12 +430,115 @@ class BulkUploadActivity : AppCompatActivity() {
 
             } else {
 
-                Toast.makeText(
-                    this,
-                    "Upload failed (${response.code()})",
-                    Toast.LENGTH_LONG
-                ).show()
+                /*
+                 * HTTP 400 / 500 response.
+                 *
+                 * Retrofit keeps the PHP JSON error response
+                 * inside errorBody(), not response.body().
+                 */
+
+                val errorBody =
+                    response.errorBody()?.string()
+
+                Log.e(
+                    "UPLOAD_ERROR",
+                    "HTTP ${response.code()}"
+                )
+
+                Log.e(
+                    "UPLOAD_ERROR",
+                    "Error body = $errorBody"
+                )
+
+                var errorMessage =
+                    "Upload failed (${response.code()})"
+
+                try {
+
+                    if (!errorBody.isNullOrBlank()) {
+
+                        val json =
+                            JSONObject(errorBody)
+
+                        /*
+                         * First try the errors array.
+                         */
+
+                        if (
+                            json.has("errors") &&
+                            !json.isNull("errors")
+                        ) {
+
+                            val errors =
+                                json.getJSONArray("errors")
+
+                            if (errors.length() > 0) {
+
+                                val messages =
+                                    mutableListOf<String>()
+
+                                for (i in 0 until errors.length()) {
+
+                                    val message =
+                                        errors.optString(i)
+
+                                    if (message.isNotBlank()) {
+                                        messages.add(message)
+                                    }
+                                }
+
+                                if (messages.isNotEmpty()) {
+
+                                    errorMessage =
+                                        messages.joinToString("\n")
+                                }
+                            }
+                        }
+
+                        /*
+                         * If there is no errors array,
+                         * use the normal message.
+                         */
+
+                        if (
+                            errorMessage ==
+                            "Upload failed (${response.code()})"
+                        ) {
+
+                            val serverMessage =
+                                json.optString(
+                                    "message",
+                                    ""
+                                )
+
+                            if (
+                                serverMessage.isNotBlank()
+                            ) {
+                                errorMessage =
+                                    serverMessage
+                            }
+                        }
+                    }
+
+                } catch (e: Exception) {
+
+                    Log.e(
+                        "UPLOAD_ERROR",
+                        "Could not parse error response",
+                        e
+                    )
+                }
+
+                AlertDialog.Builder(this)
+                    .setTitle("Upload Failed")
+                    .setMessage(errorMessage)
+                    .setPositiveButton("OK", null)
+                    .show()
             }
+
+
+
+
 
 
 
