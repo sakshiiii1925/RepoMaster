@@ -102,9 +102,13 @@
                             android:textColor="#212121"/>
 
                         <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/vehicleSearchLayout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="15dp"
+                            app:endIconMode="custom"
+                            app:endIconDrawable="@drawable/outline_mic_24"
+                            app:endIconContentDescription="Search vehicle number by voice"
                             app:startIconDrawable="@drawable/baseline_search_24">
 
                             <com.google.android.material.textfield.TextInputEditText

@@ -301,9 +301,6 @@ class BulkUploadActivity : AppCompatActivity() {
        )
    }
 
-
-
-
     private fun getFileName(uri: Uri): String {
 
         var name = "Excel File"

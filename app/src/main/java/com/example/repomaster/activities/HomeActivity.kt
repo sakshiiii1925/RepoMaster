@@ -14,6 +14,10 @@ import android.text.TextWatcher
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import android.content.ActivityNotFoundException
+import android.speech.RecognizerIntent
+import android.speech.SpeechRecognizer
+import java.util.Locale
 import com.example.repomaster.viewmodel.HomeViewModelFactory
 import androidx.appcompat.app.AlertDialog
 import com.example.repomaster.worker.StatusSyncScheduler
@@ -68,7 +72,46 @@ class HomeActivity : AppCompatActivity() {
                 }
             }
         }
+//mic
+private lateinit var speechRecognizer: SpeechRecognizer
 
+    private val speechLauncher =
+        registerForActivityResult(
+            androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+
+            if (result.resultCode == RESULT_OK) {
+
+                val data = result.data
+
+                val results =
+                    data?.getStringArrayListExtra(
+                        RecognizerIntent.EXTRA_RESULTS
+                    )
+
+                val spokenText =
+                    results
+                        ?.firstOrNull()
+                        ?.trim()
+                        ?: return@registerForActivityResult
+
+                val vehicleNumber =
+                    cleanVehicleNumber(spokenText)
+
+                if (vehicleNumber.isNotEmpty()) {
+
+                    etVehicleNumber.setText(vehicleNumber)
+
+                    etVehicleNumber.setSelection(
+                        etVehicleNumber.text?.length ?: 0
+                    )
+
+                    homeViewModel.searchVehicle(
+                        vehicleNumber
+                    )
+                }
+            }
+        }
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -159,7 +202,7 @@ class HomeActivity : AppCompatActivity() {
         setupSearchSuggestion()
 
         setupSearchButton()
-
+        setupVoiceSearch()
     }
     private fun initializeViews() {
 
@@ -528,5 +571,77 @@ class HomeActivity : AppCompatActivity() {
                 .searchVehicle(vehicleNumber)
         }
     }
+    private fun setupVoiceSearch() {
 
+        val searchLayout =
+            findViewById<com.google.android.material.textfield.TextInputLayout>(
+                R.id.vehicleSearchLayout
+            )
+
+        searchLayout.setEndIconOnClickListener {
+
+            startVoiceSearch()
+        }
+    }
+    private fun startVoiceSearch() {
+
+        if (!SpeechRecognizer.isRecognitionAvailable(this)) {
+
+            Toast.makeText(
+                this,
+                "Voice search is not available on this device.",
+                Toast.LENGTH_LONG
+            ).show()
+
+            return
+        }
+
+        val intent =
+            Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+
+                putExtra(
+                    RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                    RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+                )
+
+                putExtra(
+                    RecognizerIntent.EXTRA_LANGUAGE,
+                    Locale.getDefault()
+                )
+
+                putExtra(
+                    RecognizerIntent.EXTRA_PROMPT,
+                    "Say the vehicle number"
+                )
+
+                putExtra(
+                    RecognizerIntent.EXTRA_MAX_RESULTS,
+                    1
+                )
+            }
+
+        try {
+
+            speechLauncher.launch(intent)
+
+        } catch (e: ActivityNotFoundException) {
+
+            Toast.makeText(
+                this,
+                "Voice recognition service is not available.",
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+    private fun cleanVehicleNumber(text: String): String {
+
+        return text
+            .uppercase(Locale.getDefault())
+            .replace("-", "")
+            .replace("/", "")
+            .replace(".", "")
+            .replace(" ", "")
+            .replace("INDIA", "")
+            .trim()
+    }
 }
