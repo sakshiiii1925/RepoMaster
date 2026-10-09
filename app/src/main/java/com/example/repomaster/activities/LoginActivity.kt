@@ -20,6 +20,7 @@ import android.os.CountDownTimer
 import android.graphics.Color
 import android.text.SpannableString
 import android.text.Spanned
+import androidx.appcompat.app.AppCompatDelegate
 import android.text.style.ForegroundColorSpan
 
 class LoginActivity : AppCompatActivity() {
@@ -32,6 +33,9 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AppCompatDelegate.setDefaultNightMode(
+            AppCompatDelegate.MODE_NIGHT_NO
+        )
         setContentView(R.layout.activity_login)
         //add color for master word
         val txtTitle = findViewById<TextView>(R.id.txtTitle)

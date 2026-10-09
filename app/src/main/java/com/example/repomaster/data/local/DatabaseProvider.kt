@@ -162,15 +162,42 @@ object DatabaseProvider {
 // ADD IMAGE UPLOAD PENDING TO VEHICLES
 // =========================================================
 
-    private val MIGRATION_7_8 =
-        object : Migration(7, 8) {
 
-            override fun migrate(
-                database: SupportSQLiteDatabase
-            ) {
-                // imageUploadPending already exists
+    private val MIGRATION_7_8 = object : Migration(7, 8) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            val cursor = database.query("PRAGMA table_info(vehicles)")
+
+            var imageUploadPendingExists = false
+
+            try {
+                while (cursor.moveToNext()) {
+                    val columnName = cursor.getString(
+                        cursor.getColumnIndexOrThrow("name")
+                    )
+
+                    android.util.Log.e(
+                        "RepoMasterSchema",
+                        "Existing vehicles column: $columnName"
+                    )
+
+                    if (columnName == "imageUploadPending") {
+                        imageUploadPendingExists = true
+                    }
+                }
+            } finally {
+                cursor.close()
+            }
+
+            if (!imageUploadPendingExists) {
+                database.execSQL(
+                    """
+                ALTER TABLE vehicles
+                ADD COLUMN imageUploadPending INTEGER NOT NULL DEFAULT 0
+                """.trimIndent()
+                )
             }
         }
+    }
 
     @Volatile
     private var INSTANCE: AppDatabase? = null

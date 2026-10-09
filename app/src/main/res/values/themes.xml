@@ -1,10 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.RepoMaster" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
+    <style name="Base.Theme.RepoMaster"
+        parent="Theme.Material3.Light.NoActionBar">
     </style>
 
-    <style name="Theme.RepoMaster" parent="Base.Theme.RepoMaster" />
+    <style name="Theme.RepoMaster"
+        parent="Base.Theme.RepoMaster" />
 
 </resources>
