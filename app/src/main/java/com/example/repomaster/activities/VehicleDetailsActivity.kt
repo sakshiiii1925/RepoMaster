@@ -81,7 +81,7 @@ class VehicleDetailsActivity : AppCompatActivity() {
 
 
     private lateinit var txtTotalCharges: TextView
-    private lateinit var txtRefLetter: TextView
+
 
     private lateinit var txtUploadBy: TextView
     private lateinit var txtUploadDate: TextView
@@ -339,9 +339,22 @@ private lateinit var toolbar: MaterialToolbar
                     if (isReassignment) "Reassign" else "Assign"
                 ) { _, _ ->
 
+                    val userId = SessionManager(this).getUserId()
+
+                    if (userId <= 0) {
+                        Toast.makeText(
+                            this,
+                            "User ID not found. Please log in again.",
+                            Toast.LENGTH_LONG
+                        ).show()
+
+                        return@setPositiveButton
+                    }
+
                     yardViewModel.assignVehicleToYard(
                         vehicleNumber,
-                        newYardId
+                        newYardId,
+                        userId.toLong()
                     )
                 }
                 .setNegativeButton("Cancel", null)
@@ -463,9 +476,6 @@ private lateinit var toolbar: MaterialToolbar
 
                 txtTotalCharges.text =
                     vehicle.totalCharges.toString()
-
-                txtRefLetter.text = vehicle.refLetter
-
 
                 txtUploadBy.text = vehicle.uploadBy
                 txtUploadDate.text =
@@ -718,7 +728,7 @@ private lateinit var toolbar: MaterialToolbar
 
 
         txtTotalCharges=findViewById(R.id.txtTotalCharges)
-        txtRefLetter=findViewById(R.id.txtRefLetter)
+
 
 
         txtUploadBy=findViewById(R.id.txtUploadBy)

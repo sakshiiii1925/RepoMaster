@@ -55,7 +55,7 @@ fun Vehicle.toEntity(): VehicleEntity {
 
         finance = finance,
         agencyId = agencyId,
-        refLetter = refLetter,
+
 
         totalCharges = totalCharges,
 
@@ -121,7 +121,7 @@ fun Vehicle.toEntity(): VehicleEntity {
 
             finance = finance,
             agencyId = agencyId,
-            refLetter = refLetter,
+
 
             totalCharges = totalCharges,
 

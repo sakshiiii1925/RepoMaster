@@ -61,7 +61,7 @@ data class Vehicle(
     val agencyId:String?,
 
 
-    val refLetter:String?,
+
 
 
     val totalCharges:Double?,

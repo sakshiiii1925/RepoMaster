@@ -209,33 +209,31 @@ class YardViewModel : ViewModel() {
             LiveData<String> =
         _assignYardError
 
+
     fun assignVehicleToYard(
         vehicleNumber: String,
-        yardId: Long
+        yardId: Long,
+        userId: Long
     ) {
-
         viewModelScope.launch {
-
             try {
-
-                val response =
-                    repository.assignVehicleToYard(
-                        vehicleNumber,
-                        yardId
-                    )
+                val response = repository.assignVehicleToYard(
+                    vehicleNumber,
+                    yardId,
+                    userId
+                )
 
                 _assignVehicleToYard.postValue(response)
-
             } catch (e: Exception) {
-
                 e.printStackTrace()
-
                 _assignYardError.postValue(
                     e.message ?: "Assignment failed"
                 )
             }
         }
     }
+
+
 // =========================
 // Get Vehicles By Yard
 // =========================

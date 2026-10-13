@@ -44,11 +44,14 @@ interface YardApi {
     // Assign vehicle to yard
 
 
+
     @PUT("api/vehicles/{vehicleNumber}/assign-yard")
     suspend fun assignVehicleToYard(
         @Path("vehicleNumber") vehicleNumber: String,
-        @Query("yardId") yardId: Long
+        @Query("yardId") yardId: Long,
+        @Query("userId") userId: Long
     ): Response<ResponseBody>
+
     @GET("api/vehicles/yard/{yardId}")
     suspend fun getVehiclesByYard(
         @Path("yardId") yardId: Long,

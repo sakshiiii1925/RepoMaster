@@ -56,7 +56,7 @@ data class VehicleEntity(
 
     val finance: String?,
     val agencyId: String?,
-    val refLetter: String?,
+
 
     val totalCharges: Double?,
 

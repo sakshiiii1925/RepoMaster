@@ -67,7 +67,7 @@ class AddVehicleActivity : AppCompatActivity() {
     private lateinit var etContactName2MobileNo: TextInputEditText
 
     private lateinit var etAgencyId: TextInputEditText
-    private lateinit var etRefLetter: TextInputEditText
+
     private lateinit var etTotalCharges: TextInputEditText
 
     private lateinit var etUploadBy: TextInputEditText
@@ -159,7 +159,7 @@ private lateinit var toolbar: MaterialToolbar
         // Other
 
         etAgencyId=findViewById(R.id.etAgencyId)
-        etRefLetter=findViewById(R.id.etRefLetter)
+
         etTotalCharges=findViewById(R.id.etTotalCharges)
 
         etUploadBy=findViewById(R.id.etUploadBy)
@@ -285,8 +285,7 @@ private lateinit var toolbar: MaterialToolbar
                     etAgencyId.text.toString().trim(),
 
 
-                refLetter =
-                    etRefLetter.text.toString().trim(),
+
 
 
                 totalCharges =

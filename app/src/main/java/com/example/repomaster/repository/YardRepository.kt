@@ -60,16 +60,19 @@ class YardRepository(
         )
     }
     // Assign vehicle to yard
+
     suspend fun assignVehicleToYard(
         vehicleNumber: String,
-        yardId: Long
+        yardId: Long,
+        userId: Long
     ): Response<ResponseBody> {
-
         return yardApi.assignVehicleToYard(
             vehicleNumber,
-            yardId
+            yardId,
+            userId
         )
     }
+
     // Get vehicles assigned to a yard
     suspend fun getVehiclesByYard(
         yardId: Long,

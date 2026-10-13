@@ -190,7 +190,7 @@
                         android:id="@+id/etColor"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Color"/>
+                        android:hint=" Vehicle Color"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -633,49 +633,6 @@
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
-        <!-- ========================= -->
-        <!-- REFERENCE LETTER CARD -->
-        <!-- ========================= -->
-
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="12dp"
-            app:cardCornerRadius="18dp"
-            app:cardElevation="6dp"
-            android:backgroundTint="@color/white">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="📄 Reference Letter"
-                    android:textStyle="bold"
-                    android:textSize="18sp"
-                    android:textColor="@android:color/black"/>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etRefLetter"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Reference Letter"/>
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-            </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-
 
         <!-- ========================= -->
         <!-- CHARGES & UPLOAD DETAILS -->

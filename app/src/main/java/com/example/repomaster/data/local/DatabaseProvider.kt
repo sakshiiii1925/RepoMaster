@@ -198,6 +198,15 @@ object DatabaseProvider {
             }
         }
     }
+    private val MIGRATION_8_9 = object : Migration(8, 9) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            database.execSQL(
+                "ALTER TABLE vehicles DROP COLUMN refLetter"
+            )
+        }
+    }
+
+
 
     @Volatile
     private var INSTANCE: AppDatabase? = null
@@ -217,7 +226,10 @@ object DatabaseProvider {
                     MIGRATION_4_5,
                     MIGRATION_5_6,
                     MIGRATION_6_7,
-                    MIGRATION_7_8
+                    MIGRATION_7_8,
+                    MIGRATION_8_9,
+
+
                 )
                 .build()
 
