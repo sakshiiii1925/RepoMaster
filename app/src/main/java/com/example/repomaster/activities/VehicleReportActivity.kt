@@ -157,7 +157,7 @@ class VehicleReportActivity : AppCompatActivity() {
          * REPORT_TYPE = MONTHLY
          * YEAR        = 2026
          * MONTH       = 9
-         * STATUS      = repo mark
+         * STATUS      = Repo init and Parked
          *
          * PHP will filter using repo_marked_at.
          */

@@ -1,6 +1,4 @@
-
 package com.example.repomaster.api
-
 import com.example.repomaster.models.Vehicle
 import com.example.repomaster.models.StatusUpdateRequest
 import com.example.repomaster.models.SearchHistory
@@ -9,13 +7,10 @@ import com.example.repomaster.models.ApiResponse1
 import com.example.repomaster.models.VehicleCountResponse
 import com.example.repomaster.models.BulkDeleteSearchHistoryRequest
 import com.example.repomaster.models.BulkDeleteVehicleRequest
-
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
-
 import retrofit2.Call
 import retrofit2.Response
-
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET

@@ -133,7 +133,7 @@
                         android:paddingEnd="14dp"
                         android:paddingTop="7dp"
                         android:paddingBottom="7dp"
-                        android:text="repo mark"
+                        android:text="Repo init and Parked"
                         android:textSize="14sp"
                         android:textStyle="bold"
                         android:textColor="#002147"/>

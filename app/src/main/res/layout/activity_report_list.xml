@@ -562,14 +562,7 @@
                                     android:textSize="13sp"
                                     android:textStyle="bold" />
 
-                                <TextView
-                                    android:id="@+id/header5"
-                                    android:layout_width="110dp"
-                                    android:layout_height="match_parent"
-                                    android:gravity="center"
-                                    android:textColor="#172033"
-                                    android:textSize="13sp"
-                                    android:textStyle="bold" />
+
 
                                 <TextView
                                     android:id="@+id/header6"

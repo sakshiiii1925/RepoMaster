@@ -20,6 +20,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.example.repomaster.models.Yard
 import com.example.repomaster.utils.SessionManager
 import com.example.repomaster.viewmodel.YardViewModel
+import com.google.android.material.card.MaterialCardView
 
 class UserVehicleDetails : AppCompatActivity() {
     private val repoImageUploadLauncher =
@@ -97,7 +98,7 @@ class UserVehicleDetails : AppCompatActivity() {
     private lateinit var txtAgencyId: TextView
 
 
-
+private lateinit var callcard: MaterialCardView
     private lateinit var btnCallAgency: TextView
     private lateinit var btnCallAgency2: TextView
     private lateinit var autoStatus: MaterialAutoCompleteTextView
@@ -283,7 +284,7 @@ private lateinit var toolbar: MaterialToolbar
 
 
         initializeViews()
-
+callcard=findViewById(R.id.callcard)
         btnAssignYard.setOnClickListener {
 
             val vehicleNumber =
@@ -489,7 +490,7 @@ private lateinit var toolbar: MaterialToolbar
                     updateStatusColor(status)
 
                     if (
-                        status == "repo mark" ||
+                        status == "Repo init and Parked" ||
                         status == "Parked"
                     ) {
 
@@ -619,6 +620,41 @@ private lateinit var toolbar: MaterialToolbar
             }
 
     }
+        callcard.setOnClickListener {
+            val mobile1 = txtAgencyMobile.text.toString().trim()
+            val mobile2 = txtAgencyMobile2.text.toString().trim()
+
+            val numbers = mutableListOf<String>()
+
+            if (mobile1.isNotEmpty()) numbers.add(mobile1)
+            if (mobile2.isNotEmpty()) numbers.add(mobile2)
+
+            when (numbers.size) {
+
+                0 -> {
+                    Toast.makeText(this, "No agency mobile number available", Toast.LENGTH_SHORT).show()
+                }
+
+                1 -> {
+                    val intent = Intent(Intent.ACTION_DIAL)
+                    intent.data = Uri.parse("tel:${numbers[0]}")
+                    startActivity(intent)
+                }
+
+                else -> {
+                    AlertDialog.Builder(this)
+                        .setTitle("Choose Agency Number")
+                        .setItems(numbers.toTypedArray()) { _, which ->
+
+                            val intent = Intent(Intent.ACTION_DIAL)
+                            intent.data = Uri.parse("tel:${numbers[which]}")
+                            startActivity(intent)
+
+                        }
+                        .show()
+                }
+            }
+        }
         btnSaveStatus.setOnClickListener {
 
             val status =
@@ -637,6 +673,7 @@ private lateinit var toolbar: MaterialToolbar
                 status
             )
         }
+
 
 
     }
@@ -705,9 +742,7 @@ private lateinit var toolbar: MaterialToolbar
 
         val statusList = listOf(
             "open list",
-            "Contacted",
-            "repo mark",
-            "Parked",
+            "Repo init and Parked",
             "Released"
         )
 
@@ -740,11 +775,11 @@ private lateinit var toolbar: MaterialToolbar
             }
 
             // =========================================
-            // REPO MARK / PARKED
+            // Repo init and Parked / PARKED
             // =========================================
 
             if (
-                selectedStatus == "repo mark" ||
+                selectedStatus == "Repo init and Parked" ||
                 selectedStatus == "Parked"
             ) {
 
@@ -814,19 +849,9 @@ private lateinit var toolbar: MaterialToolbar
             }
 
 
-            "Contacted" -> {
-
-                txtRepoStatus.setTextColor(
-                    ContextCompat.getColor(
-                        this,
-                        R.color.status_contacted
-                    )
-                )
-
-            }
 
 
-            "repo mark" -> {
+            "Repo init and Parked" -> {
 
                 txtRepoStatus.setTextColor(
                     ContextCompat.getColor(
@@ -838,16 +863,7 @@ private lateinit var toolbar: MaterialToolbar
             }
 
 
-            "Parked" -> {
 
-                txtRepoStatus.setTextColor(
-                    ContextCompat.getColor(
-                        this,
-                        R.color.status_parked
-                    )
-                )
-
-            }
 
 
             "Released" -> {
@@ -855,7 +871,7 @@ private lateinit var toolbar: MaterialToolbar
                 txtRepoStatus.setTextColor(
                     ContextCompat.getColor(
                         this,
-                        R.color.status_released
+                        R.color.status_parked
                     )
                 )
 

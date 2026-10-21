@@ -60,7 +60,7 @@
                     android:id="@+id/txtStatus"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="repo mark"
+                    android:text="Repo init and Parked"
                     android:textSize="12sp"
                     android:textStyle="bold"
                     android:textColor="@android:color/white"

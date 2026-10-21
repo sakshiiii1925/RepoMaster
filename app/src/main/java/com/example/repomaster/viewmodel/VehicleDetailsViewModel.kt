@@ -60,7 +60,7 @@ class VehicleDetailsViewModel(
             // =============================================
 
             if (
-                status == "repo mark" ||
+                status == "Repo init and Parked" ||
                 status == "Parked"
             ) {
 

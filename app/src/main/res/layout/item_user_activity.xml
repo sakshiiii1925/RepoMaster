@@ -62,7 +62,7 @@
             android:textStyle="bold"/>
 
 
-        <!-- REPO MARK -->
+        <!-- Repo init and Parked -->
 
         <TextView
             android:id="@+id/txtRepoMarked"
@@ -74,16 +74,7 @@
             android:textStyle="bold"/>
 
 
-        <!-- PARKED -->
 
-        <TextView
-            android:id="@+id/txtParked"
-            android:layout_width="110dp"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:textColor="#EF6C00"
-            android:textSize="14sp"
-            android:textStyle="bold"/>
 
 
         <!-- RELEASED -->

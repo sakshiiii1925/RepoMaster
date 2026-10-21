@@ -19,7 +19,7 @@ class UserReportActivity : AppCompatActivity() {
 
     private lateinit var txtTotalVehicles: TextView
     private lateinit var txtRepoMarked: TextView
-    private lateinit var txtParked: TextView
+
     private lateinit var txtReleased: TextView
     private lateinit var userViewModel: UserViewModel
     private lateinit var sessionManager: SessionManager
@@ -35,7 +35,6 @@ class UserReportActivity : AppCompatActivity() {
         // Initialize TextViews
         txtTotalVehicles = findViewById(R.id.txtTotalVehicles)
         txtRepoMarked = findViewById(R.id.txtRepoMarked)
-        txtParked = findViewById(R.id.txtParked)
         txtReleased = findViewById(R.id.txtReleased)
         toolbar=findViewById(R.id.toolbar)
 //toolbar
@@ -95,13 +94,8 @@ class UserReportActivity : AppCompatActivity() {
     }
 
     private fun displayReport(report: UserReport) {
-
         txtTotalVehicles.text = report.totalVehicles.toString()
-
-        txtRepoMarked.text = report.repoMarked.toString()
-
-        txtParked.text = report.parked.toString()
-
+        txtRepoMarked.text = (report.repoMarked + report.parked).toString()
         txtReleased.text = report.released.toString()
     }
 
@@ -126,7 +120,6 @@ val agencyId=sessionManager.getAgencyId() ?:""
             listOf(
                 report.totalVehicles.toString(),
                 report.repoMarked.toString(),
-                report.parked.toString(),
                 report.released.toString()
             )
         )
@@ -139,8 +132,7 @@ val agencyId=sessionManager.getAgencyId() ?:""
 
             headers = listOf(
                 "Total Vehicle",
-                "Repo Marked",
-                "Parked",
+                "Repo init and Parkeded",
                 "Released"
             ),
 

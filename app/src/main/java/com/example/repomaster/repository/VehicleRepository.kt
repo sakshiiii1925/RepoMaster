@@ -124,12 +124,12 @@ class VehicleRepository(
                 )
 
                 // ----------------------------------------
-                // Repo Mark / Parked
+                // Repo init and Parked / Parked
                 // Create pending image upload
                 // ----------------------------------------
 
                 if (
-                    status == "repo mark" ||
+                    status == "Repo init and Parked" ||
                     status == "Parked"
                 ) {
 
@@ -233,11 +233,11 @@ class VehicleRepository(
                     // Keep status pending.
                     //
                     // Also create pending image record
-                    // for Repo Mark / Parked.
+                    // for Repo init and Parked / Parked.
                     // ------------------------------------
 
                     if (
-                        status == "repo mark" ||
+                        status == "Repo init and Parked" ||
                         status == "Parked"
                     ) {
 
@@ -292,7 +292,7 @@ class VehicleRepository(
                 // ----------------------------------------
 
                 if (
-                    status == "repo mark" ||
+                    status == "Repo init and Parked" ||
                     status == "Parked"
                 ) {
 

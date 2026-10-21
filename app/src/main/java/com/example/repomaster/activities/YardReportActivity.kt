@@ -238,9 +238,8 @@ class YardReportActivity : AppCompatActivity() {
 
             "ALL" -> "All Vehicles"
 
-            "REPO MARK" -> "Repo Marked"
+            "Repo init and Parked" -> "Repo init and Parkeded"
 
-            "PARKED" -> "Parked"
 
             "RELEASED" -> "Released"
 
@@ -287,8 +286,7 @@ class YardReportActivity : AppCompatActivity() {
         txtRepoMarked =
             findViewById(R.id.txtRepoMarked)
 
-        txtParked =
-            findViewById(R.id.txtParked)
+
 
         txtReleased =
             findViewById(R.id.txtReleased)
@@ -478,18 +476,12 @@ class YardReportActivity : AppCompatActivity() {
         val repoMarked =
             vehicles.count {
                 it.repoStatus.equals(
-                    "repo mark",
+                    "Repo init and Parked",
                     ignoreCase = true
                 )
             }
 
-        val parked =
-            vehicles.count {
-                it.repoStatus.equals(
-                    "parked",
-                    ignoreCase = true
-                )
-            }
+
 
         val released =
             vehicles.count {
@@ -500,10 +492,9 @@ class YardReportActivity : AppCompatActivity() {
             }
 
         txtRepoMarked.text =
-            "Repo Marked: $repoMarked"
+            "Repo init and Parkeded: $repoMarked"
 
-        txtParked.text =
-            "Parked: $parked"
+
 
         txtReleased.text =
             "Released: $released"
@@ -648,34 +639,23 @@ class YardReportActivity : AppCompatActivity() {
         }
 
 
-        // Repo Marked
+        // Repo init and Parkeded
         txtRepoMarked.setOnClickListener {
 
-            selectedStatus = "repo mark"
+            selectedStatus = "Repo init and Parked"
 
             updateSelectedCard(
                 txtRepoMarked
             )
 
             filterVehiclesByStatus(
-                "repo mark"
+                "Repo init and Parked"
             )
         }
 
 
         // Parked
-        txtParked.setOnClickListener {
 
-            selectedStatus = "parked"
-
-            updateSelectedCard(
-                txtParked
-            )
-
-            filterVehiclesByStatus(
-                "parked"
-            )
-        }
 
 
         // Released
@@ -854,7 +834,7 @@ class YardReportActivity : AppCompatActivity() {
         val cards = listOf(
             txtVehicleCount,
             txtRepoMarked,
-            txtParked,
+
             txtReleased
         )
 

@@ -301,7 +301,7 @@
 
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="0dp"
-                    android:layout_height="145dp"
+                    android:layout_height="150dp"
                     android:layout_weight="1"
                     android:layout_marginEnd="6dp"
                     app:cardCornerRadius="18dp"
@@ -355,11 +355,11 @@
                 </com.google.android.material.card.MaterialCardView>
 
 
-                <!-- ================= REPO MARKED ================= -->
+                <!-- ================= Repo init and ParkedED ================= -->
 
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="0dp"
-                    android:layout_height="145dp"
+                    android:layout_height="150dp"
                     android:layout_weight="1"
                     android:layout_marginStart="6dp"
                     app:cardCornerRadius="18dp"
@@ -386,7 +386,7 @@
                                 android:layout_gravity="center"
                                 android:src="@drawable/outline_directions_car_24"
                                 app:tint="#E58A22"
-                                android:contentDescription="Repo Marked" />
+                                android:contentDescription="Repo init and Parkeded" />
 
                         </com.google.android.material.card.MaterialCardView>
 
@@ -404,7 +404,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Repo Marked"
+                            android:text="Repo init and Parked"
                             android:textColor="#737D8C"
                             android:textSize="13sp" />
 
@@ -435,69 +435,12 @@
                 android:weightSum="2">
 
 
-                <!-- ================= PARKED ================= -->
-
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="0dp"
-                    android:layout_height="145dp"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="6dp"
-                    app:cardCornerRadius="18dp"
-                    app:cardElevation="2dp"
-                    app:cardBackgroundColor="#FFFFFF"
-                    app:strokeWidth="0dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:padding="16dp">
-
-                        <com.google.android.material.card.MaterialCardView
-                            android:layout_width="44dp"
-                            android:layout_height="44dp"
-                            app:cardCornerRadius="13dp"
-                            app:cardElevation="0dp"
-                            app:cardBackgroundColor="#EEF9F3">
-
-                            <ImageView
-                                android:layout_width="23dp"
-                                android:layout_height="23dp"
-                                android:layout_gravity="center"
-                                android:src="@drawable/outline_local_parking_24"
-                                app:tint="#2E9B62"
-                                android:contentDescription="Parked" />
-
-                        </com.google.android.material.card.MaterialCardView>
-
-
-                        <TextView
-                            android:id="@+id/txtParked"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:text="0"
-                            android:textColor="#172033"
-                            android:textSize="25sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Parked"
-                            android:textColor="#737D8C"
-                            android:textSize="13sp" />
-
-                    </LinearLayout>
-
-                </com.google.android.material.card.MaterialCardView>
-
 
                 <!-- ================= RELEASED ================= -->
 
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="0dp"
-                    android:layout_height="145dp"
+                    android:layout_height="150dp"
                     android:layout_weight="1"
                     android:layout_marginStart="6dp"
                     app:cardCornerRadius="18dp"

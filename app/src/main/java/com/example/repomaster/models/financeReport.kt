@@ -1,10 +1,15 @@
+
 package com.example.repomaster.models
+
+import com.google.gson.annotations.SerializedName
 
 data class financeReport(
     val finance: String,
     val branch: String,
     val totalVehicles: Long,
-    val repoMarkedCount: Long,
-    val parkedCount: Long,
-    val releasedCount: Long,
+
+    @SerializedName("repoInitAndParkedCount")
+    val RepoInitAndParkedCount: Long,
+
+    val releasedCount: Long
 )

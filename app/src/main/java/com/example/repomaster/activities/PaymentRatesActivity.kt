@@ -32,7 +32,7 @@ class PaymentRatesActivity : AppCompatActivity() {
     private lateinit var layoutOtherVehicleType: TextInputLayout
     private lateinit var edtOtherVehicleType: TextInputEditText
     private lateinit var edtRepoMarkRate: TextInputEditText
-    private lateinit var edtParkedRate: TextInputEditText
+
 
     private lateinit var btnSaveRate: Button
     private lateinit var btnCancelEdit: Button
@@ -93,8 +93,7 @@ class PaymentRatesActivity : AppCompatActivity() {
         edtRepoMarkRate =
             findViewById(R.id.edtRepoMarkRate)
 
-        edtParkedRate =
-            findViewById(R.id.edtParkedRate)
+
 
         btnSaveRate =
             findViewById(R.id.btnSaveRate)
@@ -375,34 +374,18 @@ class PaymentRatesActivity : AppCompatActivity() {
         )
 
 
-        // Repo Mark
+        // Repo init and Parked
 
         val repoMark =
             TextView(this)
 
         repoMark.text =
-            "Repo Mark: ₹${rate.repo_mark_rate}"
+            "Repo init and Parked: ₹${rate.repo_mark_rate}"
 
         repoMark.textSize =
             16f
 
         repoMark.setTextColor(
-            getColor(android.R.color.darker_gray)
-        )
-
-
-        // Parked
-
-        val parked =
-            TextView(this)
-
-        parked.text =
-            "Parked: ₹${rate.parked_rate}"
-
-        parked.textSize =
-            16f
-
-        parked.setTextColor(
             getColor(android.R.color.darker_gray)
         )
 
@@ -455,8 +438,6 @@ class PaymentRatesActivity : AppCompatActivity() {
         outer.addView(vehicleType)
 
         outer.addView(repoMark)
-
-        outer.addView(parked)
 
         outer.addView(buttonLayout)
 
@@ -520,12 +501,7 @@ class PaymentRatesActivity : AppCompatActivity() {
                 ?.trim()
                 ?: ""
 
-        val parkedText =
-            edtParkedRate
-                .text
-                ?.toString()
-                ?.trim()
-                ?: ""
+
 
 
         // -----------------------------------------------------
@@ -561,13 +537,13 @@ class PaymentRatesActivity : AppCompatActivity() {
 
 
         // -----------------------------------------------------
-        // Validate Repo Mark Rate
+        // Validate Repo init and Parked Rate
         // -----------------------------------------------------
 
         if (repoMarkText.isEmpty()) {
 
             edtRepoMarkRate.error =
-                "Repo Mark rate is required"
+                "Repo init and Parked rate is required"
 
             edtRepoMarkRate.requestFocus()
 
@@ -579,22 +555,13 @@ class PaymentRatesActivity : AppCompatActivity() {
         // Validate Parked Rate
         // -----------------------------------------------------
 
-        if (parkedText.isEmpty()) {
 
-            edtParkedRate.error =
-                "Parked rate is required"
-
-            edtParkedRate.requestFocus()
-
-            return
-        }
 
 
         val repoMarkRate =
             repoMarkText.toDoubleOrNull()
 
-        val parkedRate =
-            parkedText.toDoubleOrNull()
+
 
 
         if (repoMarkRate == null ||
@@ -608,28 +575,18 @@ class PaymentRatesActivity : AppCompatActivity() {
         }
 
 
-        if (parkedRate == null ||
-            parkedRate < 0
-        ) {
 
-            edtParkedRate.error =
-                "Enter a valid rate"
-
-            return
-        }
 
 
         // -----------------------------------------------------
         // Request
         // -----------------------------------------------------
 
-        val request =
-            SavePaymentRateRequest(
-                agency_id = agencyId,
-                vehicle_type = vehicleType,
-                repo_mark_rate = repoMarkRate,
-                parked_rate = parkedRate
-            )
+        val request = SavePaymentRateRequest(
+            agency_id = agencyId,
+            vehicle_type = vehicleType,
+            repo_mark_rate = repoMarkRate
+        )
 
 
         btnSaveRate.isEnabled =
@@ -768,9 +725,7 @@ class PaymentRatesActivity : AppCompatActivity() {
             rate.repo_mark_rate
         )
 
-        edtParkedRate.setText(
-            rate.parked_rate
-        )
+
 
         actvVehicleType.requestFocus()
     }
@@ -885,8 +840,7 @@ class PaymentRatesActivity : AppCompatActivity() {
         edtRepoMarkRate.text =
             null
 
-        edtParkedRate.text =
-            null
+
 
         layoutOtherVehicleType.visibility =
             View.GONE

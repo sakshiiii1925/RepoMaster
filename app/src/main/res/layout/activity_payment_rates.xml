@@ -144,7 +144,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="3dp"
-                                android:text="Set repo mark and parked charges"
+                                android:text="Set Repo init and Parked and parked charges"
                                 android:textColor="#64748B"
                                 android:textSize="13sp" />
 
@@ -241,7 +241,7 @@
                         android:layout_marginTop="14dp"
                         android:orientation="horizontal">
 
-                        <!-- Repo Mark -->
+                        <!-- Repo init and Parked -->
 
                         <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/layoutRepoMarkRate"
@@ -249,7 +249,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:hint="Repo Mark"
+                            android:hint="Repo init and Parked"
                             app:boxCornerRadiusBottomEnd="14dp"
                             app:boxCornerRadiusBottomStart="14dp"
                             app:boxCornerRadiusTopEnd="14dp"
@@ -277,29 +277,7 @@
 
                         <!-- Parked -->
 
-                        <com.google.android.material.textfield.TextInputLayout
-                            android:id="@+id/layoutParkedRate"
-                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:hint="Parked"
-                            app:boxCornerRadiusBottomEnd="14dp"
-                            app:boxCornerRadiusBottomStart="14dp"
-                            app:boxCornerRadiusTopEnd="14dp"
-                            app:boxCornerRadiusTopStart="14dp"
-                            app:boxStrokeColor="#CBD5E1"
-                            app:prefixText="₹ "
-                            app:prefixTextColor="#172033">
 
-                            <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/edtParkedRate"
-                                android:layout_width="match_parent"
-                                android:layout_height="56dp"
-                                android:inputType="numberDecimal"
-                                android:maxLines="1" />
-
-                        </com.google.android.material.textfield.TextInputLayout>
 
                     </LinearLayout>
 

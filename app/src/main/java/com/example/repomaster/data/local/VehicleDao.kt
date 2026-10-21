@@ -13,13 +13,17 @@ interface VehicleDao {
     // =========================================================
 
     @Query("""
-        SELECT * FROM vehicles
-        WHERE vehicleNumber = :vehicleNumber
-        AND agencyId = :agencyId
-        LIMIT 1
-    """)
+    SELECT * FROM vehicles
+    WHERE agencyId = :agencyId
+    AND (
+        UPPER(REPLACE(REPLACE(REPLACE(REPLACE(vehicleNumber, '-', ''), '/', ''), '.', ''), ' ', '')) = :normalizedKeyword
+        OR
+        UPPER(REPLACE(REPLACE(REPLACE(REPLACE(chassisNumber, '-', ''), '/', ''), '.', ''), ' ', '')) = :normalizedKeyword
+    )
+    LIMIT 1
+""")
     suspend fun getVehicle(
-        vehicleNumber: String,
+        normalizedKeyword: String,
         agencyId: String
     ): VehicleEntity?
 
@@ -29,13 +33,20 @@ interface VehicleDao {
     // =========================================================
 
     @Query("""
-        SELECT * FROM vehicles
-        WHERE vehicleNumber LIKE '%' || :keyword || '%'
-        AND agencyId = :agencyId
-        ORDER BY vehicleNumber
-    """)
+    SELECT * FROM vehicles
+    WHERE agencyId = :agencyId
+    AND (
+        UPPER(REPLACE(REPLACE(REPLACE(REPLACE(vehicleNumber, '-', ''), '/', ''), '.', ''), ' ', ''))
+            LIKE '%' || :normalizedKeyword || '%'
+        OR
+        UPPER(REPLACE(REPLACE(REPLACE(REPLACE(chassisNumber, '-', ''), '/', ''), '.', ''), ' ', ''))
+            LIKE '%' || :normalizedKeyword || '%'
+    )
+    ORDER BY vehicleNumber
+    LIMIT 50
+""")
     suspend fun searchVehicles(
-        keyword: String,
+        normalizedKeyword: String,
         agencyId: String
     ): List<VehicleEntity>
 
@@ -162,13 +173,17 @@ interface VehicleDao {
     // =========================================================
 
     @Query("""
-        SELECT * FROM vehicles
-        WHERE vehicleNumber = :vehicleNumber
-        AND agencyId = :agencyId
-        LIMIT 1
-    """)
+    SELECT * FROM vehicles
+    WHERE agencyId = :agencyId
+    AND (
+        UPPER(REPLACE(REPLACE(REPLACE(REPLACE(vehicleNumber, '-', ''), '/', ''), '.', ''), ' ', '')) = :normalizedKeyword
+        OR
+        UPPER(REPLACE(REPLACE(REPLACE(REPLACE(chassisNumber, '-', ''), '/', ''), '.', ''), ' ', '')) = :normalizedKeyword
+    )
+    LIMIT 1
+""")
     suspend fun getVehicleByNumber(
-        vehicleNumber: String,
+        normalizedKeyword: String,
         agencyId: String
     ): VehicleEntity?
 

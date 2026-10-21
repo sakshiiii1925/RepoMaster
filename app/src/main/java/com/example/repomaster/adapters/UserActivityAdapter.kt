@@ -43,8 +43,7 @@ class UserActivityAdapter(
         val txtRepoMarked: TextView =
             itemView.findViewById(R.id.txtRepoMarked)
 
-        val txtParked: TextView =
-            itemView.findViewById(R.id.txtParked)
+
 
         val txtReleased: TextView =
             itemView.findViewById(R.id.txtReleased)
@@ -85,10 +84,8 @@ class UserActivityAdapter(
             item.totalSearches.toString()
 
         holder.txtRepoMarked.text =
-            item.repoMarkedCount.toString()
+            item.RepoInitAndParkedCount.toString()
 
-        holder.txtParked.text =
-            item.parkedCount.toString()
 
         holder.txtReleased.text =
             item.releasedCount.toString()
@@ -98,12 +95,12 @@ class UserActivityAdapter(
 
 
         // =========================================
-        // REPO MARK CLICK
+        // Repo init and Parked CLICK
         // =========================================
 
         holder.txtRepoMarked.setOnClickListener {
 
-            if (item.repoMarkedCount > 0) {
+            if (item.RepoInitAndParkedCount > 0) {
 
                 listener.onRepoMarkedClick(
                     item.userEmail
@@ -116,15 +113,9 @@ class UserActivityAdapter(
         // PARKED CLICK
         // =========================================
 
-        holder.txtParked.setOnClickListener {
 
-            if (item.parkedCount > 0) {
 
-                listener.onParkedClick(
-                    item.userEmail
-                )
-            }
-        }
+
 
 
         // =========================================
@@ -147,10 +138,9 @@ class UserActivityAdapter(
         // =========================================
 
         holder.txtRepoMarked.isClickable =
-            item.repoMarkedCount > 0
+            item.RepoInitAndParkedCount > 0
 
-        holder.txtParked.isClickable =
-            item.parkedCount > 0
+
 
         holder.txtReleased.isClickable =
             item.releasedCount > 0

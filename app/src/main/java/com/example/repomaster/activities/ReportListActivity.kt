@@ -34,7 +34,7 @@ class ReportListActivity : AppCompatActivity(), OnReportClickListener {
     private lateinit var header2: TextView
     private lateinit var header3: TextView
     private lateinit var header4: TextView
-    private lateinit var header5: TextView
+
     private lateinit var header6: TextView
     private lateinit var spMonth: AutoCompleteTextView
     private lateinit var spYear: AutoCompleteTextView
@@ -80,7 +80,6 @@ private lateinit var layout1: LinearLayout
         header2=findViewById(R.id.header2)
         header3=findViewById(R.id.header3)
         header4=findViewById(R.id.header4)
-        header5=findViewById(R.id.header5)
         header6=findViewById(R.id.header6)
         layout1=findViewById(R.id.layout1)
         layout2=findViewById(R.id.layout2)
@@ -298,8 +297,7 @@ private lateinit var layout1: LinearLayout
         header2.text = "Branch"
         header6.text = "Released"
         header3.text="Vehicles"
-        header4.text="Repo Mark"
-        header5.text="Parked"
+        header4.text="Repo init and Parked"
         userViewModel.getfinanceReport(
             agencyId,
             finance,
@@ -317,8 +315,7 @@ private lateinit var layout1: LinearLayout
                                 it.finance,
                                 it.branch,
                                 it.totalVehicles.toString(),
-                                it.repoMarkedCount.toString(),
-                                it.parkedCount.toString(),
+                                it.RepoInitAndParkedCount.toString(),
                                 it.releasedCount.toString()
                             )
                         )
@@ -340,8 +337,7 @@ private lateinit var layout1: LinearLayout
         header1.text = "Year"
         header2.text = "Month"
         header3.text = "Vehicles"
-        header4.text = "Repo Mark"
-        header5.text = "Parked"
+        header4.text = "Repo init and Parked"
         header6.text = "Released"
 
         userViewModel.getMonthlyReport(
@@ -384,8 +380,7 @@ private lateinit var layout1: LinearLayout
                                 it.repoYear,
                                 it.repoMonth,
                                 it.totalVehicles.toString(),
-                                it.repoMarkedCount.toString(),
-                                it.parkedCount.toString(),
+                                it.RepoInitAndParkedCount.toString(),
                                 it.releasedCount.toString()
                             )
                         )
@@ -421,8 +416,7 @@ private lateinit var layout1: LinearLayout
                         it.finance,
                         it.branch,
                         it.totalVehicles.toString(),
-                        it.repoMarkedCount.toString(),
-                        it.parkedCount.toString(),
+                        it.RepoInitAndParkedCount.toString(),
                         it.releasedCount.toString()
                     )
 
@@ -437,8 +431,7 @@ private lateinit var layout1: LinearLayout
                         "Finance",
                         "Branch",
                         "Vehicles",
-                        "Repo Mark",
-                        "Parked",
+                        "Repo init and Parked",
                         "Released"
                     ),
 
@@ -479,8 +472,7 @@ private lateinit var layout1: LinearLayout
                         it.repoYear,
                         it.repoMonth,
                         it.totalVehicles.toString(),
-                        it.repoMarkedCount.toString(),
-                        it.parkedCount.toString(),
+                        it.RepoInitAndParkedCount.toString(),
                         it.releasedCount.toString()
                     )
                 }
@@ -493,8 +485,7 @@ private lateinit var layout1: LinearLayout
                         "Year",
                         "Month",
                         "Vehicles",
-                        "Repo Mark",
-                        "Parked",
+                        "Repo init and Parked",
                         "Released"
                     ),
                     rows = rows,

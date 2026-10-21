@@ -174,7 +174,7 @@
             android:paddingEnd="16dp"
             android:clickable="true"
             android:layout_marginStart="10dp"
-            android:text="Repo Marked: 0"
+            android:text="Repo init and Parkeded: 0"
             android:background="@drawable/yard_summary_card"
             android:textColor="@color/white"
             android:textSize="16sp"
@@ -185,19 +185,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_margin="10dp">
-        <TextView
-            android:id="@+id/txtParked"
-            android:layout_width="match_parent"
-            android:layout_height="45dp"
-            android:gravity="center_vertical"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:clickable="true"
-            android:text="Parked: 0"
-            android:background="@drawable/yard_summary_card"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+
         <TextView
             android:id="@+id/txtReleased"
             android:layout_width="match_parent"

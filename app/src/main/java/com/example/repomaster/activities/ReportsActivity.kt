@@ -63,11 +63,7 @@ Total Vehicles:${report.totalVehicles}
 
 Open List : ${report.openlist}
 
-Contacted : ${report.contacted}
-
-Repo Mark : ${report.repoMark}
-
-Parked : ${report.parked}
+Repo init and Parked : ${report.repoMark}
 
 Released : ${report.released}
                         """.trimIndent()

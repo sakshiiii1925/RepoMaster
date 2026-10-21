@@ -53,7 +53,7 @@
             android:textSize="14sp"
             android:textStyle="bold"/>
 
-        <!-- REPO MARK -->
+        <!-- Repo init and Parked -->
 
         <TextView
             android:id="@+id/txtCol4"
@@ -64,16 +64,9 @@
             android:textSize="14sp"
             android:textStyle="bold"/>
 
-        <!-- PARKED -->
 
-        <TextView
-            android:id="@+id/txtCol5"
-            android:layout_width="110dp"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:textColor="#2563EB"
-            android:textSize="14sp"
-            android:textStyle="bold"/>
+
+
 
         <!-- RELEASED -->
 

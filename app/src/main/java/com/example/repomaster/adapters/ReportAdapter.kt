@@ -23,7 +23,7 @@ class ReportAdapter(
         val col2 = view.findViewById<TextView>(R.id.txtCol2)
         val col3 = view.findViewById<TextView>(R.id.txtCol3)
         val col4 = view.findViewById<TextView>(R.id.txtCol4)
-        val col5 = view.findViewById<TextView>(R.id.txtCol5)
+
         val col6= view.findViewById<TextView>(R.id.txtCol6)
 
     }
@@ -47,8 +47,8 @@ class ReportAdapter(
         holder.col2.text = item.columns.getOrNull(1) ?: ""
         holder.col3.text = item.columns.getOrNull(2) ?: ""
         holder.col4.text = item.columns.getOrNull(3) ?: ""
-        holder.col5.text = item.columns.getOrNull(4) ?: ""
-        holder.col6.text = item.columns.getOrNull(5) ?: ""
+
+        holder.col6.text = item.columns.getOrNull(4) ?: ""
 
         if (reportType == "FINANCE") {
 
@@ -60,12 +60,10 @@ class ReportAdapter(
             }
 
             holder.col4.setOnClickListener {
-                listener.onFinanceReportClick(finance, branch, "repo mark")
+                listener.onFinanceReportClick(finance, branch, "Repo init and Parked")
             }
 
-            holder.col5.setOnClickListener {
-                listener.onFinanceReportClick(finance, branch, "Parked")
-            }
+
 
             holder.col6.setOnClickListener {
                 listener.onFinanceReportClick(finance, branch, "Released")
@@ -81,12 +79,10 @@ class ReportAdapter(
             }
 
             holder.col4.setOnClickListener {
-                listener.onMonthlyReportClick(year, month, "repo mark")
+                listener.onMonthlyReportClick(year, month, "Repo init and Parked")
             }
 
-            holder.col5.setOnClickListener {
-                listener.onMonthlyReportClick(year, month, "Parked")
-            }
+
 
             holder.col6.setOnClickListener {
                 listener.onMonthlyReportClick(year, month, "Released")

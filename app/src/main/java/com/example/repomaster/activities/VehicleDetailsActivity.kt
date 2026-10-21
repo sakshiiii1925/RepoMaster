@@ -531,7 +531,7 @@ private lateinit var toolbar: MaterialToolbar
                         autoStatus.text.toString().trim()
 
                     if (
-                        status.equals("repo mark", ignoreCase = true) ||
+                        status.equals("Repo init and Parked", ignoreCase = true) ||
                         status.equals("Parked", ignoreCase = true)
                     ) {
                         openRepoImageUpload(status)
@@ -550,7 +550,7 @@ private lateinit var toolbar: MaterialToolbar
                         autoStatus.text.toString().trim()
 
                     if (
-                        status.equals("repo mark", ignoreCase = true) ||
+                        status.equals("Repo init and Parked", ignoreCase = true) ||
                         status.equals("Parked", ignoreCase = true)
                     ) {
                         openRepoImageUpload(status)
@@ -750,9 +750,7 @@ private lateinit var toolbar: MaterialToolbar
 
         val statusList=listOf(
             "open list",
-            "Contacted",
-            "repo mark",
-            "Parked",
+            "Repo init and Parked",
             "Released"
         )
 
@@ -788,36 +786,14 @@ private lateinit var toolbar: MaterialToolbar
             }
 
 
-            "Contacted" -> {
-
-                txtRepoStatus.setTextColor(
-                    ContextCompat.getColor(
-                        this,
-                        R.color.status_contacted
-                    )
-                )
-
-            }
 
 
-            "repo mark" -> {
+            "Repo init and Parked" -> {
 
                 txtRepoStatus.setTextColor(
                     ContextCompat.getColor(
                         this,
                         R.color.status_on_way
-                    )
-                )
-
-            }
-
-
-            "Parked" -> {
-
-                txtRepoStatus.setTextColor(
-                    ContextCompat.getColor(
-                        this,
-                        R.color.status_parked
                     )
                 )
 

@@ -69,7 +69,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
-                            android:text="Search vehicles instantly using Vehicle Number or Loan Number."
+                            android:text="Search vehicles instantly using Vehicle Number or Loan Number or chassis Number."
                             android:textColor="#666666"
                             android:textSize="15sp"/>
 
@@ -116,7 +116,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-                                android:hint="Vehicle Number"
+                                android:hint="Vehicle Number or  Chassis Number"
                                 android:imeOptions="actionSearch"
                                 android:inputType="textCapCharacters"
                                 android:maxLines="1"/>

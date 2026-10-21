@@ -99,8 +99,7 @@ class UserActivityReportActivity :
         txtTotalRepoMarked =
             findViewById(R.id.txtTotalRepoMarked)
 
-        txtTotalParked =
-            findViewById(R.id.txtTotalParked)
+
 
         txtTotalReleased =
             findViewById(R.id.txtTotalReleased)
@@ -328,8 +327,8 @@ class UserActivityReportActivity :
                 it.userName,
                 it.userEmail,
                 it.totalSearches.toString(),
-                it.repoMarkedCount.toString(),
-                it.parkedCount.toString(),
+                it.RepoInitAndParkedCount.toString(),
+
                 it.releasedCount.toString(),
                 it.lastSearchTime ?: ""
             )
@@ -345,8 +344,7 @@ class UserActivityReportActivity :
                 "User",
                 "Email",
                 "Searches",
-                "Repo Mark",
-                "Parked",
+                "Repo init and Parked",
                 "Released",
                 "Last Search"
             ),
@@ -424,14 +422,11 @@ class UserActivityReportActivity :
 
         txtTotalRepoMarked.text =
             reports.sumOf {
-                it.repoMarkedCount
+                it.RepoInitAndParkedCount
             }.toString()
 
 
-        txtTotalParked.text =
-            reports.sumOf {
-                it.parkedCount
-            }.toString()
+
 
         txtTotalReleased.text =
             reports.sumOf {
@@ -444,7 +439,7 @@ class UserActivityReportActivity :
 
         openVehicleReport(
             userEmail = userEmail,
-            status = "repo mark"
+            status = "Repo init and Parked"
         )
     }
 
