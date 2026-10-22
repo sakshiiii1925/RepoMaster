@@ -386,16 +386,31 @@ private lateinit var toolbar: MaterialToolbar
                 factory
             )[VehicleDetailsViewModel::class.java]
 
+        val vehicleNumber = intent.getStringExtra("vehicleNumber")
+            ?.trim()
+            .orEmpty()
 
+        val loanNumber = intent.getStringExtra("loanNumber")
+            ?.trim()
+            .orEmpty()
 
+        when {
+            vehicleNumber.isNotEmpty() -> {
+                viewModel.getVehicle(vehicleNumber)
+            }
 
+            loanNumber.isNotEmpty() -> {
+                viewModel.getVehicleByLoanNumber(loanNumber)
+            }
 
-
-        val vehicleNumber =
-            intent.getStringExtra("vehicleNumber") ?: ""
-
-
-        viewModel.getVehicle(vehicleNumber)
+            else -> {
+                Toast.makeText(
+                    this,
+                    "Vehicle number and loan number are both missing",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
 
 
 
@@ -651,8 +666,14 @@ private lateinit var toolbar: MaterialToolbar
             }
 
 
+            val currentVehicleNumber =
+                txtVehicleNo.text.toString().trim()
+
+            val currentLoanNumber =
+                txtLoanNumber.text.toString().trim()
+
             viewModel.updateRepoStatus(
-                vehicleNumber,
+                currentVehicleNumber.ifBlank { currentLoanNumber },
                 status
             )
 
@@ -827,31 +848,27 @@ private lateinit var toolbar: MaterialToolbar
         val vehicleNumber =
             txtVehicleNo.text.toString().trim()
 
-        if (vehicleNumber.isEmpty()) {
+        val loanNumber =
+            txtLoanNumber.text.toString().trim()
+
+        if (vehicleNumber.isBlank() && loanNumber.isBlank()) {
             Toast.makeText(
                 this,
-                "Vehicle number not found",
+                "Vehicle number and loan number are both missing",
                 Toast.LENGTH_SHORT
             ).show()
             return
         }
 
-        val intent =
-            Intent(
-                this,
-                RepoImageUploadActivity::class.java
-            )
+        val uploadIntent = Intent(
+            this,
+            RepoImageUploadActivity::class.java
+        ).apply {
+            putExtra("vehicleNumber", vehicleNumber)
+            putExtra("loanNumber", loanNumber)
+            putExtra("status", status)
+        }
 
-        intent.putExtra(
-            "vehicleNumber",
-            vehicleNumber
-        )
-
-        intent.putExtra(
-            "status",
-            status
-        )
-
-        startActivity(intent)
+        startActivity(uploadIntent)
     }
 }

@@ -1,3 +1,4 @@
+
 package com.example.repomaster.adapters
 
 import android.content.Intent
@@ -8,17 +9,14 @@ import android.widget.CheckBox
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
-
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
-
 import com.example.repomaster.R
 import com.example.repomaster.activities.UserVehicleDetails
 import com.example.repomaster.activities.VehicleDetailsActivity
 import com.example.repomaster.models.Vehicle
 import com.example.repomaster.utils.SessionManager
 import com.example.repomaster.viewmodel.HomeViewModel
-
 
 class VehicleAdapter(
     private var vehicleList: List<Vehicle>,
@@ -27,656 +25,285 @@ class VehicleAdapter(
     private val onSelectionModeChanged: (selectionMode: Boolean) -> Unit
 ) : RecyclerView.Adapter<VehicleAdapter.VehicleViewHolder>() {
 
-
-    // =========================================================
-    // SELECTED VEHICLES
-    // =========================================================
-
-    private val selectedVehicles =
-        mutableSetOf<String>()
-
-
-    // =========================================================
-    // SELECTION MODE
-    // =========================================================
-
+    private val selectedVehicles = mutableSetOf<String>()
     private var selectionMode = false
 
+    /**
+     * Uses the server's composite record identity first.
+     * Fallback identifiers are used only when the composite key is incomplete.
+     */
+    private fun getVehicleSelectionKey(vehicle: Vehicle): String {
+        val repoYear = vehicle.id?.repoYear?.trim().orEmpty()
+        val repoMonth = vehicle.id?.repoMonth?.trim().orEmpty()
+        val loanNumber = vehicle.id?.loanNumber?.trim().orEmpty()
 
-    // =========================================================
-    // VIEW HOLDER
-    // =========================================================
+        if (
+            repoYear.isNotEmpty() &&
+            repoMonth.isNotEmpty() &&
+            loanNumber.isNotEmpty()
+        ) {
+            return "RECORD:$repoYear:$repoMonth:$loanNumber"
+        }
 
-    class VehicleViewHolder(
-        itemView: View
-    ) : RecyclerView.ViewHolder(itemView) {
+        val vehicleNumber = vehicle.vehicleNumber?.trim().orEmpty()
+        if (vehicleNumber.isNotEmpty()) return "VEHICLE:$vehicleNumber"
 
-        val checkVehicle: CheckBox =
-            itemView.findViewById(
-                R.id.checkVehicle
-            )
+        val chassisNumber = vehicle.chassisNumber?.trim().orEmpty()
+        if (chassisNumber.isNotEmpty()) return "CHASSIS:$chassisNumber"
 
-        val txtVehicleNo: TextView =
-            itemView.findViewById(
-                R.id.txtVehicleNumber
-            )
+        val engineNumber = vehicle.engineNumber?.trim().orEmpty()
+        if (engineNumber.isNotEmpty()) return "ENGINE:$engineNumber"
 
-        val txtEngNum: TextView =
-            itemView.findViewById(
-                R.id.txtEngine
-            )
-
-        val txtChassNum: TextView =
-            itemView.findViewById(
-                R.id.txtChassis
-            )
-
-        val btnView: ImageButton =
-            itemView.findViewById(
-                R.id.btnView
-            )
-
-        val btnDelete: ImageButton =
-            itemView.findViewById(
-                R.id.btnDelete
-            )
-
-        val checkboxvisibility: LinearLayout =
-            itemView.findViewById(
-                R.id.checkboxvisibility
-            )
+        return ""
     }
 
-
-    // =========================================================
-    // CREATE VIEW HOLDER
-    // =========================================================
+    class VehicleViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val checkVehicle: CheckBox = itemView.findViewById(R.id.checkVehicle)
+        val txtVehicleNo: TextView = itemView.findViewById(R.id.txtVehicleNumber)
+        val txtEngNum: TextView = itemView.findViewById(R.id.txtEngine)
+        val txtChassNum: TextView = itemView.findViewById(R.id.txtChassis)
+        val btnView: ImageButton = itemView.findViewById(R.id.btnView)
+        val btnDelete: ImageButton = itemView.findViewById(R.id.btnDelete)
+        val checkboxvisibility: LinearLayout =
+            itemView.findViewById(R.id.checkboxvisibility)
+    }
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): VehicleViewHolder {
-
-        val view =
-            LayoutInflater.from(
-                parent.context
-            ).inflate(
-                R.layout.item_vehicle,
-                parent,
-                false
-            )
-
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_vehicle, parent, false)
         return VehicleViewHolder(view)
     }
 
+    override fun getItemCount(): Int = vehicleList.size
 
-    // =========================================================
-    // ITEM COUNT
-    // =========================================================
+    fun updateList(newList: List<Vehicle>) {
+        vehicleList = newList
 
-    override fun getItemCount(): Int =
-        vehicleList.size
+        val visibleKeys = newList
+            .map { getVehicleSelectionKey(it) }
+            .filter { it.isNotBlank() }
+            .toSet()
 
+        selectedVehicles.retainAll(visibleKeys)
 
-    // =========================================================
-    // UPDATE LIST
-    // =========================================================
-
-    fun updateList(
-        newList: List<Vehicle>
-    ) {
-
-        vehicleList =
-            newList
-
-        val visibleVehicles =
-            newList
-                .mapNotNull {
-                    it.vehicleNumber
-                }
-                .toSet()
-
-        selectedVehicles.retainAll(
-            visibleVehicles
-        )
-
-        /*
-         * If filtering/searching removes
-         * the selected items, check selection mode.
-         */
-
-        if (
-            selectedVehicles.isEmpty() &&
-            selectionMode
-        ) {
-
+        if (selectedVehicles.isEmpty() && selectionMode) {
             exitSelectionMode()
-
         } else {
-
             notifyDataSetChanged()
-
-            onSelectionChanged(
-                selectedVehicles.size,
-                vehicleList.size
-            )
+            onSelectionChanged(selectedVehicles.size, vehicleList.size)
         }
     }
 
-
-    // =========================================================
-    // GET SELECTED VEHICLES
-    // =========================================================
-
+    /**
+     * Kept for compatibility with code that needs vehicle numbers.
+     * Do not use this for bulk deletion because vehicle numbers may be blank
+     * or duplicated.
+     */
     fun getSelectedVehicles(): List<String> {
-
-        return selectedVehicles.toList()
+        return getSelectedVehicleRecords()
+            .mapNotNull { it.vehicleNumber?.trim()?.takeIf(String::isNotEmpty) }
+            .distinct()
     }
 
-
-    // =========================================================
-    // SELECT ALL
-    // =========================================================
+    fun getSelectedVehicleRecords(): List<Vehicle> {
+        return vehicleList.filter { vehicle ->
+            val key = getVehicleSelectionKey(vehicle)
+            key.isNotBlank() && key in selectedVehicles
+        }
+    }
 
     fun selectAll() {
-
-        if (!selectionMode) {
-            return
-        }
+        if (!selectionMode) return
 
         selectedVehicles.clear()
 
         vehicleList.forEach { vehicle ->
-
-            vehicle.vehicleNumber?.let {
-
-                selectedVehicles.add(it)
+            val key = getVehicleSelectionKey(vehicle)
+            if (key.isNotBlank()) {
+                selectedVehicles.add(key)
             }
         }
 
         notifyDataSetChanged()
-
-        onSelectionChanged(
-            selectedVehicles.size,
-            vehicleList.size
-        )
+        onSelectionChanged(selectedVehicles.size, vehicleList.size)
     }
-
-
-    // =========================================================
-    // DESELECT ALL
-    // =========================================================
 
     fun deselectAll() {
-
-        selectedVehicles.clear()
-
-        notifyDataSetChanged()
-
-        exitSelectionMode()
+        clearSelection()
     }
-
-
-    // =========================================================
-    // CLEAR SELECTION
-    // =========================================================
 
     fun clearSelection() {
-
-        if (
-            selectedVehicles.isEmpty() &&
-            !selectionMode
-        ) {
-            return
-        }
-
+        if (selectedVehicles.isEmpty() && !selectionMode) return
         selectedVehicles.clear()
-
-        notifyDataSetChanged()
-
         exitSelectionMode()
     }
 
-
-    // =========================================================
-    // ENTER SELECTION MODE
-    // =========================================================
-
-    private fun enterSelectionMode(
-        vehicleNumber: String
-    ) {
+    private fun enterSelectionMode(selectionKey: String) {
+        if (selectionKey.isBlank()) return
 
         if (!selectionMode) {
-
             selectionMode = true
-
             onSelectionModeChanged(true)
         }
 
-        selectedVehicles.add(
-            vehicleNumber
-        )
-
+        selectedVehicles.add(selectionKey)
         notifyDataSetChanged()
-
-        onSelectionChanged(
-            selectedVehicles.size,
-            vehicleList.size
-        )
+        onSelectionChanged(selectedVehicles.size, vehicleList.size)
     }
 
+    private fun toggleSelection(selectionKey: String) {
+        if (selectionKey.isBlank()) return
 
-    // =========================================================
-    // EXIT SELECTION MODE
-    // =========================================================
+        if (!selectionMode) {
+            enterSelectionMode(selectionKey)
+            return
+        }
+
+        if (selectionKey in selectedVehicles) {
+            selectedVehicles.remove(selectionKey)
+        } else {
+            selectedVehicles.add(selectionKey)
+        }
+
+        if (selectedVehicles.isEmpty()) {
+            exitSelectionMode()
+        } else {
+            notifyDataSetChanged()
+            onSelectionChanged(selectedVehicles.size, vehicleList.size)
+        }
+    }
 
     private fun exitSelectionMode() {
-
         selectedVehicles.clear()
-
         selectionMode = false
-
         notifyDataSetChanged()
-
         onSelectionModeChanged(false)
-
-        onSelectionChanged(
-            0,
-            vehicleList.size
-        )
+        onSelectionChanged(0, vehicleList.size)
     }
 
+    override fun onBindViewHolder(holder: VehicleViewHolder, position: Int) {
+        val vehicle = vehicleList[position]
+        val vehicleNumber = vehicle.vehicleNumber.orEmpty()
+        val selectionKey = getVehicleSelectionKey(vehicle)
 
-    // =========================================================
-    // BIND VIEW HOLDER
-    // =========================================================
+        holder.txtVehicleNo.text = vehicleNumber
+        holder.txtEngNum.text = vehicle.engineNumber.orEmpty()
+        holder.txtChassNum.text = vehicle.chassisNumber.orEmpty()
 
-    override fun onBindViewHolder(
-        holder: VehicleViewHolder,
-        position: Int
-    ) {
+        val sessionManager = SessionManager(holder.itemView.context)
+        val isAdmin = sessionManager.getRole().equals("ADMIN", ignoreCase = true)
 
-        val vehicle =
-            vehicleList[position]
-
-        val vehicleNumber =
-            vehicle.vehicleNumber ?: ""
-
-
-        // =====================================================
-        // VEHICLE DATA
-        // =====================================================
-
-        holder.txtVehicleNo.text =
-            vehicleNumber
-
-        holder.txtEngNum.text =
-            vehicle.engineNumber ?: ""
-
-        holder.txtChassNum.text =
-            vehicle.chassisNumber ?: ""
-
-
-        // =====================================================
-        // SESSION / ROLE
-        // =====================================================
-
-        val sessionManager =
-            SessionManager(
-                holder.itemView.context
-            )
-
-        val role =
-            sessionManager.getRole()
-
-        val isAdmin =
-            role.equals(
-                "ADMIN",
-                ignoreCase = true
-            )
-
-
-        // =====================================================
-        // CHECKBOX
-        // ONLY SHOW DURING SELECTION MODE
-        // =====================================================
-
-        if (
-            isAdmin &&
-            selectionMode
-        ) {
-
-            holder.checkboxvisibility.visibility =
-                View.VISIBLE
-
-            holder.checkVehicle.visibility =
-                View.VISIBLE
-
-            holder.checkVehicle
-                .setOnCheckedChangeListener(null)
+        // Checkbox visibility and state
+        if (isAdmin && selectionMode) {
+            holder.checkboxvisibility.visibility = View.VISIBLE
+            holder.checkVehicle.visibility = View.VISIBLE
+            holder.checkVehicle.setOnCheckedChangeListener(null)
 
             holder.checkVehicle.isChecked =
-                selectedVehicles.contains(
-                    vehicleNumber
-                )
+                selectionKey.isNotBlank() && selectionKey in selectedVehicles
 
-            holder.checkVehicle
-                .setOnCheckedChangeListener {
-                        _, checked ->
+            holder.checkVehicle.isEnabled = selectionKey.isNotBlank()
 
-                    if (checked) {
-
-                        selectedVehicles.add(
-                            vehicleNumber
-                        )
-
-                    } else {
-
-                        selectedVehicles.remove(
-                            vehicleNumber
-                        )
-                    }
-
-                    notifyDataSetChanged()
-
-                    onSelectionChanged(
-                        selectedVehicles.size,
-                        vehicleList.size
-                    )
-
-                    /*
-                     * If nothing is selected,
-                     * automatically exit selection mode.
-                     */
-
-                    if (
-                        selectedVehicles.isEmpty()
-                    ) {
-
-                        exitSelectionMode()
-                    }
+            holder.checkVehicle.setOnCheckedChangeListener { _, checked ->
+                if (selectionKey.isBlank()) {
+                    holder.checkVehicle.setOnCheckedChangeListener(null)
+                    holder.checkVehicle.isChecked = false
+                    return@setOnCheckedChangeListener
                 }
 
-        } else {
-
-            holder.checkVehicle
-                .setOnCheckedChangeListener(null)
-
-            holder.checkVehicle.isChecked =
-                false
-
-            holder.checkVehicle.visibility =
-                View.GONE
-
-            holder.checkboxvisibility.visibility =
-                View.GONE
-        }
-
-
-        // =====================================================
-        // LONG PRESS
-        // =====================================================
-
-        if (isAdmin) {
-
-            holder.txtVehicleNo
-                .setOnLongClickListener {
-
-                    if (!selectionMode) {
-
-                        enterSelectionMode(
-                            vehicleNumber
-                        )
-
-                    } else {
-
-                        if (
-                            selectedVehicles.contains(
-                                vehicleNumber
-                            )
-                        ) {
-
-                            selectedVehicles.remove(
-                                vehicleNumber
-                            )
-
-                        } else {
-
-                            selectedVehicles.add(
-                                vehicleNumber
-                            )
-                        }
-
-                        notifyDataSetChanged()
-
-                        onSelectionChanged(
-                            selectedVehicles.size,
-                            vehicleList.size
-                        )
-                    }
-
-                    true
-                }
-
-
-            /*
-             * Long press anywhere on the row
-             * except action buttons.
-             */
-
-            holder.itemView
-                .setOnLongClickListener {
-
-                    if (!selectionMode) {
-
-                        enterSelectionMode(
-                            vehicleNumber
-                        )
-
-                    } else {
-
-                        if (
-                            selectedVehicles.contains(
-                                vehicleNumber
-                            )
-                        ) {
-
-                            selectedVehicles.remove(
-                                vehicleNumber
-                            )
-
-                        } else {
-
-                            selectedVehicles.add(
-                                vehicleNumber
-                            )
-                        }
-
-                        notifyDataSetChanged()
-
-                        onSelectionChanged(
-                            selectedVehicles.size,
-                            vehicleList.size
-                        )
-                    }
-
-                    true
-                }
-
-        } else {
-
-            holder.itemView
-                .setOnLongClickListener(null)
-
-            holder.txtVehicleNo
-                .setOnLongClickListener(null)
-        }
-
-
-        // =====================================================
-        // NORMAL ROW CLICK
-        // =====================================================
-
-        holder.itemView.setOnClickListener {
-
-            if (selectionMode) {
-
-                if (
-                    selectedVehicles.contains(
-                        vehicleNumber
-                    )
-                ) {
-
-                    selectedVehicles.remove(
-                        vehicleNumber
-                    )
-
+                if (checked) {
+                    selectedVehicles.add(selectionKey)
                 } else {
-
-                    selectedVehicles.add(
-                        vehicleNumber
-                    )
+                    selectedVehicles.remove(selectionKey)
                 }
 
-                notifyDataSetChanged()
-
-                onSelectionChanged(
-                    selectedVehicles.size,
-                    vehicleList.size
-                )
-
-                if (
-                    selectedVehicles.isEmpty()
-                ) {
-
+                if (selectedVehicles.isEmpty()) {
                     exitSelectionMode()
-                }
-
-                return@setOnClickListener
-            }
-
-
-            // =================================================
-            // NORMAL VIEW MODE
-            // =================================================
-
-            val intent =
-                if (isAdmin) {
-
-                    Intent(
-                        holder.itemView.context,
-                        VehicleDetailsActivity::class.java
-                    )
-
                 } else {
-
-                    Intent(
-                        holder.itemView.context,
-                        UserVehicleDetails::class.java
-                    )
+                    notifyDataSetChanged()
+                    onSelectionChanged(selectedVehicles.size, vehicleList.size)
                 }
-
-
-            intent.putExtra(
-                "vehicleNumber",
-                vehicleNumber
-            )
-
-            holder.itemView.context
-                .startActivity(intent)
+            }
+        } else {
+            holder.checkVehicle.setOnCheckedChangeListener(null)
+            holder.checkVehicle.isChecked = false
+            holder.checkVehicle.isEnabled = true
+            holder.checkVehicle.visibility = View.GONE
+            holder.checkboxvisibility.visibility = View.GONE
         }
 
+        // Long press selection
+        if (isAdmin) {
+            holder.txtVehicleNo.setOnLongClickListener {
+                toggleSelection(selectionKey)
+                true
+            }
 
-        // =====================================================
-        // VIEW BUTTON
-        // =====================================================
+            holder.itemView.setOnLongClickListener {
+                toggleSelection(selectionKey)
+                true
+            }
+        } else {
+            holder.txtVehicleNo.setOnLongClickListener(null)
+            holder.itemView.setOnLongClickListener(null)
+        }
 
-        holder.btnView.setOnClickListener {
-
+        // Row click
+        holder.itemView.setOnClickListener {
             if (selectionMode) {
-
+                toggleSelection(selectionKey)
                 return@setOnClickListener
             }
 
-            val intent =
-                if (isAdmin) {
+            val intent = if (isAdmin) {
+                Intent(holder.itemView.context, VehicleDetailsActivity::class.java)
+            } else {
+                Intent(holder.itemView.context, UserVehicleDetails::class.java)
+            }
 
-                    Intent(
-                        holder.itemView.context,
-                        VehicleDetailsActivity::class.java
-                    )
-
-                } else {
-
-                    Intent(
-                        holder.itemView.context,
-                        UserVehicleDetails::class.java
-                    )
-                }
-
-            intent.putExtra(
-                "vehicleNumber",
-                vehicleNumber
-            )
-
-            holder.itemView.context
-                .startActivity(intent)
+            intent.putExtra("vehicleNumber", vehicleNumber)
+            intent.putExtra("loanNumber", vehicle.id?.loanNumber.orEmpty())
+            holder.itemView.context.startActivity(intent)
         }
 
+        // View button
+        holder.btnView.setOnClickListener {
+            if (selectionMode) return@setOnClickListener
 
-        // =====================================================
-        // DELETE BUTTON
-        // =====================================================
+            val intent = if (isAdmin) {
+                Intent(holder.itemView.context, VehicleDetailsActivity::class.java)
+            } else {
+                Intent(holder.itemView.context, UserVehicleDetails::class.java)
+            }
 
-        if (
-            isAdmin &&
-            !selectionMode
-        ) {
+            intent.putExtra("vehicleNumber", vehicleNumber)
+            intent.putExtra("loanNumber", vehicle.id?.loanNumber.orEmpty())
+            holder.itemView.context.startActivity(intent)
+        }
 
-            holder.btnDelete.visibility =
-                View.VISIBLE
-
+        // Individual delete button
+        if (isAdmin && !selectionMode) {
+            holder.btnDelete.visibility = View.VISIBLE
             holder.btnDelete.setOnClickListener {
-
-                AlertDialog.Builder(
-                    holder.itemView.context
-                )
-                    .setTitle(
-                        "Delete Vehicle"
-                    )
+                AlertDialog.Builder(holder.itemView.context)
+                    .setTitle("Delete Vehicle")
                     .setMessage(
                         "Are you sure you want to delete " +
-                                "$vehicleNumber?"
+                                vehicleNumber.ifBlank { "(vehicle number blank)" } +
+                                "?"
                     )
-                    .setPositiveButton(
-                        "Delete"
-                    ) { _, _ ->
-
-                        homeViewModel
-                            .deleteVehicle(
-                                vehicleNumber
-                            )
+                    .setPositiveButton("Delete") { _, _ ->
+                        homeViewModel.deleteVehicle(vehicleNumber)
                     }
-                    .setNegativeButton(
-                        "Cancel",
-                        null
-                    )
+                    .setNegativeButton("Cancel", null)
                     .show()
             }
-
         } else {
-
-            /*
-             * Hide individual delete button
-             * during selection mode.
-             */
-
-            holder.btnDelete.visibility =
-                if (isAdmin) {
-                    View.GONE
-                } else {
-                    View.GONE
-                }
+            holder.btnDelete.setOnClickListener(null)
+            holder.btnDelete.visibility = View.GONE
         }
     }
 }

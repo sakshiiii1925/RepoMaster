@@ -407,10 +407,7 @@ class RepoImageUploadActivity : AppCompatActivity() {
             )[RepoImageUploadViewModel::class.java]
 
 
-        val vehicleNumber =
-            intent.getStringExtra(
-                "vehicleNumber"
-            ) ?: ""
+        val vehicleNumber = getVehicleIdentifier()
 
 
         val status =
@@ -888,10 +885,7 @@ class RepoImageUploadActivity : AppCompatActivity() {
 
     private fun uploadImages() {
 
-        val vehicleNumber =
-            intent.getStringExtra(
-                "vehicleNumber"
-            ) ?: ""
+        val vehicleNumber = getVehicleIdentifier()
 
 
         val status =
@@ -928,11 +922,10 @@ class RepoImageUploadActivity : AppCompatActivity() {
         // Vehicle Number
         // -----------------------------------------------
 
-        if (vehicleNumber.isEmpty()) {
-
+        if (vehicleNumber.isBlank()) {
             Toast.makeText(
                 this,
-                "Vehicle number missing",
+                "Vehicle number and loan number are both missing",
                 Toast.LENGTH_SHORT
             ).show()
 
@@ -1346,10 +1339,7 @@ class RepoImageUploadActivity : AppCompatActivity() {
 
             if (result != null) {
 
-                val vehicleNumber =
-                    intent.getStringExtra(
-                        "vehicleNumber"
-                    ) ?: ""
+                val vehicleNumber = getVehicleIdentifier()
 
                 // -----------------------------------------
                 // IMPORTANT:
@@ -1402,7 +1392,19 @@ class RepoImageUploadActivity : AppCompatActivity() {
             }
         }
     }
+    private fun getVehicleIdentifier(): String {
+        val vehicleNumber =
+            intent.getStringExtra("vehicleNumber")
+                ?.trim()
+                .orEmpty()
 
+        val loanNumber =
+            intent.getStringExtra("loanNumber")
+                ?.trim()
+                .orEmpty()
+
+        return vehicleNumber.ifBlank { loanNumber }
+    }
 
     // ====================================================
     // Back

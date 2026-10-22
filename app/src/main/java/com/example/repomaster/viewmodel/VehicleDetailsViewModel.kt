@@ -40,51 +40,58 @@ class VehicleDetailsViewModel(
 
     fun updateRepoStatus(
         vehicleNumber: String,
-        status: String
+        status: String,
+        loanNumber: String = ""
     ) {
-
         viewModelScope.launch {
+            // Use vehicle number first; otherwise use loan number.
+            val identifier = vehicleNumber.trim()
+                .ifBlank { loanNumber.trim() }
 
-            // =============================================
-            // SAVE STATUS
-            // =============================================
+            if (identifier.isBlank()) {
+                _statusSaveResult.value = StatusSaveResult.FAILED
+                return@launch
+            }
 
-            val result =
-                repository.updateStatus(
-                    vehicleNumber,
-                    status
-                )
-
-            // =============================================
-            // IMAGE UPLOAD REQUIRED
-            // =============================================
+            val result = repository.updateStatus(
+                identifier,
+                status
+            )
 
             if (
                 status == "Repo init and Parked" ||
                 status == "Parked"
             ) {
-
                 repository.markImageUploadPending(
-                    vehicleNumber,
+                    identifier,
                     status
                 )
             }
 
-            // =============================================
-            // RESULT
-            // =============================================
+            _statusSaveResult.value = result
 
-            _statusSaveResult.value =
-                result
+            // Reload using whichever identifier is available.
+            _vehicle.value = if (vehicleNumber.isNotBlank()) {
+                repository.getVehicle(vehicleNumber.trim())
+            } else {
+                repository.getVehicleByLoanNumber(loanNumber.trim())
+            }
+        }
+    }
 
-            // =============================================
-            // RELOAD VEHICLE
-            // =============================================
 
-            _vehicle.value =
-                repository.getVehicle(
-                    vehicleNumber
-                )
+
+
+    fun getVehicleByLoanNumber(loanNumber: String) {
+        viewModelScope.launch {
+            try {
+                val result =
+                    repository.getVehicleByLoanNumber(loanNumber)
+
+                _vehicle.value = result
+            } catch (e: Exception) {
+                _vehicle.value = null
+            }
         }
     }
 }

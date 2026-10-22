@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.*
+import com.example.repomaster.models.VehicleDeleteKey
 import com.google.android.material.card.MaterialCardView
 import android.widget.Toast
 import android.view.View
@@ -691,14 +692,12 @@ class ViewVehicleActivity :
         // =====================================================
         // SELECT ALL
         // =====================================================
-
         btnSelectAll.setOnClickListener {
 
             if (adapter.itemCount == 0) {
-
                 Toast.makeText(
                     this,
-                    "No vehicles available",
+                    "No records available",
                     Toast.LENGTH_SHORT
                 ).show()
 
@@ -706,22 +705,15 @@ class ViewVehicleActivity :
             }
 
             val selectedCount =
-                adapter
-                    .getSelectedVehicles()
-                    .size
+                adapter.getSelectedVehicleRecords().size
 
-            if (
-                selectedCount ==
-                adapter.itemCount
-            ) {
-
+            if (selectedCount == adapter.itemCount) {
                 adapter.deselectAll()
-
             } else {
-
                 adapter.selectAll()
             }
         }
+
 
 
         // =====================================================
@@ -815,46 +807,107 @@ class ViewVehicleActivity :
     // DELETE SELECTED
     // =========================================================
 
+
     private fun deleteSelectedVehicles() {
 
-        val selected =
-            adapter
-                .getSelectedVehicles()
+        val selectedRecords = adapter.getSelectedVehicleRecords()
 
-
-        if (selected.isEmpty()) {
-
+        if (selectedRecords.isEmpty()) {
             Toast.makeText(
                 this,
-                "Please select vehicles first",
+                "Please select records first",
                 Toast.LENGTH_SHORT
             ).show()
-
             return
         }
 
+        val invalidRecords = selectedRecords.filter { vehicle ->
+            val id = vehicle.id
+
+            id?.repoYear.isNullOrBlank() ||
+                    id?.repoMonth.isNullOrBlank() ||
+                    id?.loanNumber.isNullOrBlank()
+        }
+
+        if (invalidRecords.isNotEmpty()) {
+            Toast.makeText(
+                this,
+                "${invalidRecords.size} selected record(s) are missing " +
+                        "Repo Year, Repo Month, or Loan Number. " +
+                        "Refresh the list and check the vehicle data.",
+                Toast.LENGTH_LONG
+            ).show()
+            return
+        }
 
         AlertDialog.Builder(this)
-            .setTitle(
-                "Delete Selected Vehicles"
-            )
+            .setTitle("Delete Selected Records")
             .setMessage(
-                "Are you sure you want to delete " +
-                        "${selected.size} selected vehicle(s)?"
+                "Are you sure you want to permanently delete " +
+                        "${selectedRecords.size} selected record(s)?"
             )
-            .setPositiveButton(
-                "Delete"
-            ) { _, _ ->
+            .setPositiveButton("Delete") { _, _ ->
 
-                homeViewModel
-                    .deleteMultipleVehicles(
-                        selected
-                    )
+                // Disable or show loading here if your screen supports it.
+                homeViewModel.deleteMultipleVehiclesResult.observe(this) { success ->
+
+                    if (success == null) {
+                        return@observe
+                    }
+
+                    if (success) {
+                        Toast.makeText(
+                            this,
+                            "Selected vehicles deleted successfully",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        adapter.clearSelection()
+                        homeViewModel.getAllVehicles()
+                    } else {
+                        Toast.makeText(
+                            this,
+                            "Failed to delete selected vehicles",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+
+                // This was missing from your original function.
+                val deleteKeys = selectedRecords.mapNotNull { vehicle ->
+                    val id = vehicle.id
+
+                    val repoYear = id?.repoYear
+                    val repoMonth = id?.repoMonth
+                    val loanNumber = id?.loanNumber
+
+                    if (
+                        !repoYear.isNullOrBlank() &&
+                        !repoMonth.isNullOrBlank() &&
+                        !loanNumber.isNullOrBlank()
+                    ) {
+                        VehicleDeleteKey(
+                            repoYear = repoYear,
+                            repoMonth = repoMonth,
+                            loanNumber = loanNumber
+                        )
+                    } else {
+                        null
+                    }
+                }
+
+                if (deleteKeys.isEmpty()) {
+                    Toast.makeText(
+                        this,
+                        "No valid records available to delete.",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    return@setPositiveButton
+                }
+
+                homeViewModel.deleteMultipleVehicles(deleteKeys)
             }
-            .setNegativeButton(
-                "Cancel",
-                null
-            )
+            .setNegativeButton("Cancel", null)
             .show()
     }
 

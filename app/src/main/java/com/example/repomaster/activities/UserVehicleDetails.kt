@@ -52,15 +52,23 @@ class UserVehicleDetails : AppCompatActivity() {
 
                     // Refresh vehicle details
                     val vehicleNumber =
-                        intent.getStringExtra(
-                            "vehicleNumber"
-                        ) ?: ""
+                        intent.getStringExtra("vehicleNumber")
+                            ?.trim()
+                            .orEmpty()
 
-                    if (vehicleNumber.isNotEmpty()) {
+                    val loanNumber =
+                        intent.getStringExtra("loanNumber")
+                            ?.trim()
+                            .orEmpty()
 
-                        viewModel.getVehicle(
-                            vehicleNumber
-                        )
+                    when {
+                        vehicleNumber.isNotEmpty() -> {
+                            viewModel.getVehicle(vehicleNumber)
+                        }
+
+                        loanNumber.isNotEmpty() -> {
+                            viewModel.getVehicleByLoanNumber(loanNumber)
+                        }
                     }
                 }
 
@@ -403,11 +411,32 @@ callcard=findViewById(R.id.callcard)
                 .show()
         }
         val vehicleNumber =
-            intent.getStringExtra("vehicleNumber") ?: ""
+            intent.getStringExtra("vehicleNumber")
+                ?.trim()
+                .orEmpty()
 
+        val loanNumber =
+            intent.getStringExtra("loanNumber")
+                ?.trim()
+                .orEmpty()
 
-        viewModel.getVehicle(vehicleNumber)
+        when {
+            vehicleNumber.isNotEmpty() -> {
+                viewModel.getVehicle(vehicleNumber)
+            }
 
+            loanNumber.isNotEmpty() -> {
+                viewModel.getVehicleByLoanNumber(loanNumber)
+            }
+
+            else -> {
+                Toast.makeText(
+                    this,
+                    "Vehicle number and loan number are both missing",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
 
 
         viewModel.vehicle.observe(this){ vehicle ->
@@ -495,8 +524,15 @@ callcard=findViewById(R.id.callcard)
                     ) {
 
                         openRepoImageUpload(
-                            vehicleNumber,
-                            status
+                            vehicleNumber = intent
+                                .getStringExtra("vehicleNumber")
+                                ?.trim()
+                                .orEmpty(),
+                            loanNumber = intent
+                                .getStringExtra("loanNumber")
+                                ?.trim()
+                                .orEmpty(),
+                            status = status
                         )
 
                     } else {
@@ -668,8 +704,20 @@ callcard=findViewById(R.id.callcard)
                 return@setOnClickListener
             }
 
+            val vehicleIdentifier = getVehicleIdentifier()
+
+            if (vehicleIdentifier.isBlank()) {
+                Toast.makeText(
+                    this,
+                    "Vehicle number and loan number are both missing",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                return@setOnClickListener
+            }
+
             viewModel.updateRepoStatus(
-                vehicleNumber,
+                vehicleIdentifier,
                 status
             )
         }
@@ -680,18 +728,22 @@ callcard=findViewById(R.id.callcard)
 
     private fun openRepoImageUpload(
         vehicleNumber: String,
+        loanNumber: String,
         status: String
     ) {
-
-        val intent =
-            Intent(
-                this,
-                RepoImageUploadActivity::class.java
-            )
+        val intent = Intent(
+            this,
+            RepoImageUploadActivity::class.java
+        )
 
         intent.putExtra(
             "vehicleNumber",
             vehicleNumber
+        )
+
+        intent.putExtra(
+            "loanNumber",
+            loanNumber
         )
 
         intent.putExtra(
@@ -759,15 +811,12 @@ callcard=findViewById(R.id.callcard)
             val selectedStatus =
                 statusList[position]
 
-            val vehicleNumber =
-                intent.getStringExtra("vehicleNumber")
-                    ?: ""
+            val vehicleIdentifier = getVehicleIdentifier()
 
-            if (vehicleNumber.isEmpty()) {
-
+            if (vehicleIdentifier.isBlank()) {
                 Toast.makeText(
                     this,
-                    "Vehicle number not found",
+                    "Vehicle number and loan number are both missing",
                     Toast.LENGTH_SHORT
                 ).show()
 
@@ -794,7 +843,7 @@ callcard=findViewById(R.id.callcard)
                     // -------------------------------------
 
                     viewModel.updateRepoStatus(
-                        vehicleNumber,
+                        vehicleIdentifier,
                         selectedStatus
                     )
 
@@ -809,7 +858,7 @@ callcard=findViewById(R.id.callcard)
                     // -------------------------------------
 
                     viewModel.updateRepoStatus(
-                        vehicleNumber,
+                        vehicleIdentifier,
                         selectedStatus
                     )
                 }
@@ -821,7 +870,7 @@ callcard=findViewById(R.id.callcard)
                 // =========================================
 
                 viewModel.updateRepoStatus(
-                    vehicleNumber,
+                    vehicleIdentifier,
                     selectedStatus
                 )
             }
@@ -878,6 +927,19 @@ callcard=findViewById(R.id.callcard)
             }
 
         }
+    }
+    private fun getVehicleIdentifier(): String {
+        val vehicleNumber = intent
+            .getStringExtra("vehicleNumber")
+            ?.trim()
+            .orEmpty()
+
+        val loanNumber = intent
+            .getStringExtra("loanNumber")
+            ?.trim()
+            .orEmpty()
+
+        return vehicleNumber.ifBlank { loanNumber }
     }
     override fun onSupportNavigateUp(): Boolean {
 

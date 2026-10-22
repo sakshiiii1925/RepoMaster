@@ -17,6 +17,8 @@ import com.example.repomaster.network.RetrofitClient
 import com.example.repomaster.data.local.PendingImageUploadEntity
 import okhttp3.MultipartBody
 import retrofit2.Response
+import com.example.repomaster.models.BulkDeleteVehicleRequest
+import com.example.repomaster.models.VehicleDeleteKey
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import com.example.repomaster.models.UploadedImageDetails
@@ -2040,46 +2042,62 @@ class VehicleRepository(
 // DELETE MULTIPLE VEHICLES
 // =========================================================
 
+    // =========================================================
+// DELETE MULTIPLE VEHICLES USING COMPOSITE PRIMARY KEY
+// =========================================================
+
     suspend fun deleteMultipleVehicles(
-        vehicleNumbers: List<String>
+        records: List<VehicleDeleteKey>
     ): Boolean {
 
         return try {
 
-            if (vehicleNumbers.isEmpty()) {
-
+            if (records.isEmpty()) {
+                Log.e(
+                    "BULK_DELETE",
+                    "No vehicle records selected"
+                )
                 return false
             }
 
-            val userId =
-                sessionManager.getUserId()
+            // Every record must have its complete database key.
+            val invalidRecords = records.filter {
+                it.repoYear.isBlank() ||
+                        it.repoMonth.isBlank() ||
+                        it.loanNumber.isBlank()
+            }
+
+            if (invalidRecords.isNotEmpty()) {
+                Log.e(
+                    "BULK_DELETE",
+                    "${invalidRecords.size} records have incomplete keys"
+                )
+                return false
+            }
+
+            val userId = sessionManager.getUserId()
 
             if (userId <= 0) {
-
                 Log.e(
                     "BULK_DELETE",
                     "Invalid userId=$userId"
                 )
-
                 return false
             }
 
-            val request =
-                com.example.repomaster.models
-                    .BulkDeleteVehicleRequest(
-                        vehicleNumbers
-                    )
+            val request = BulkDeleteVehicleRequest(
+                records = records
+            )
 
             Log.d(
                 "BULK_DELETE",
-                "Deleting ${vehicleNumbers.size} vehicles"
+                "Selected records to delete: ${records.size}"
             )
 
-            val response =
-                api.deleteMultipleVehicles(
-                    userId,
-                    request
-                )
+            val response = api.deleteMultipleVehicles(
+                userId,
+                request
+            )
 
             Log.d(
                 "BULK_DELETE",
@@ -2088,41 +2106,29 @@ class VehicleRepository(
 
             if (response.isSuccessful) {
 
-                // Remove from Room
-                try {
+                Log.d(
+                    "BULK_DELETE",
+                    "Server bulk-delete request succeeded"
+                )
 
-                    val agencyId =
-                        getCurrentAgencyId()
-
-                    if (agencyId.isNotBlank()) {
-
-                        vehicleNumbers.forEach {
-
-                            vehicleDao.deleteVehicle(
-                                it,
-                                agencyId
-                            )
-                        }
-                    }
-
-                } catch (e: Exception) {
-
-                    Log.e(
-                        "BULK_DELETE",
-                        "Room cleanup failed",
-                        e
-                    )
-                }
+                /*
+                 * IMPORTANT:
+                 * Do not delete Room rows by vehicleNumber here.
+                 *
+                 * Vehicle numbers may be blank or duplicated.
+                 * We must inspect VehicleEntity and VehicleDao
+                 * before safely removing the corresponding local rows.
+                 */
 
                 true
 
             } else {
 
+                val error = response.errorBody()?.string()
+
                 Log.e(
                     "BULK_DELETE",
-                    "API error=${
-                        response.errorBody()?.string()
-                    }"
+                    "API error=${response.code()}, body=$error"
                 )
 
                 false
@@ -2132,13 +2138,14 @@ class VehicleRepository(
 
             Log.e(
                 "BULK_DELETE",
-                "Exception",
+                "Exception while deleting selected records",
                 e
             )
 
             false
         }
     }
+
 
 
 // =========================================================
@@ -2170,7 +2177,7 @@ class VehicleRepository(
             )
 
             val response =
-                api.deleteVehiclesByDate(
+                api.deleteVehiclesByUploadDate(
                     date,
                     userId
                 )
@@ -2542,5 +2549,37 @@ class VehicleRepository(
 
     private fun getCurrentAgencyId(): String {
         return sessionManager.getAgencyId().trim()
+    }
+    suspend fun getVehicleByLoanNumber(
+        loanNumber: String
+    ): Vehicle? {
+        return try {
+            val loan = loanNumber.trim()
+
+            if (loan.isBlank()) {
+                return null
+            }
+
+            val result = searchVehicle(loan)
+
+            if (
+                result != null &&
+                result.id?.loanNumber.equals(
+                    loan,
+                    ignoreCase = true
+                )
+            ) {
+                result
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            android.util.Log.e(
+                "VehicleRepository",
+                "Error finding vehicle by loan number",
+                e
+            )
+            null
+        }
     }
 }

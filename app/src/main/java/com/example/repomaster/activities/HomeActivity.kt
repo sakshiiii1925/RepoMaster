@@ -384,21 +384,30 @@ private lateinit var speechRecognizer: SpeechRecognizer
                 ?: "A"
     }
     private fun observeVehicle() {
-
         homeViewModel.vehicle.observe(this) { vehicle ->
 
-            android.util.Log.d("HOME", "Observer Called : $vehicle")
+            android.util.Log.d("HOME", "Observer Called: $vehicle")
 
             if (vehicle != null) {
-
                 android.util.Log.d("HOME", "Vehicle Found")
 
-                val intent = Intent(this, UserVehicleDetails::class.java)
-                intent.putExtra("vehicleNumber", vehicle.vehicleNumber)
+                val vehicleNumber =
+                    vehicle.vehicleNumber?.trim().orEmpty()
+
+                val loanNumber =
+                    vehicle.id?.loanNumber?.trim().orEmpty()
+
+                val intent = Intent(
+                    this,
+                    UserVehicleDetails::class.java
+                )
+
+                intent.putExtra("vehicleNumber", vehicleNumber)
+                intent.putExtra("loanNumber", loanNumber)
+
                 startActivity(intent)
 
             } else {
-
                 android.util.Log.d("HOME", "Vehicle Not Found")
 
                 Toast.makeText(
@@ -433,16 +442,39 @@ private lateinit var speechRecognizer: SpeechRecognizer
             SearchSuggestionAdapter(emptyList()) { vehicle ->
 
                 rvSuggestions.visibility = View.GONE
-
                 val vehicleNumber =
                     vehicle.vehicleNumber
                         ?.trim()
-                        ?.replace("-", "")
-                        ?.replace("/", "")
-                        ?.replace(".", "")
-                        ?.replace(" ", "")
-                        ?.uppercase()
-                        ?: return@SearchSuggestionAdapter
+                        .orEmpty()
+
+                val loanNumber =
+                    vehicle.id?.loanNumber
+                        ?.trim()
+                        .orEmpty()
+
+// Use vehicle number when available;
+// otherwise use loan number.
+                val searchValue = vehicleNumber.ifBlank {
+                    loanNumber
+                }
+
+                if (searchValue.isBlank()) {
+                    Toast.makeText(
+                        this@HomeActivity,
+                        "Vehicle and loan numbers are missing",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    return@SearchSuggestionAdapter
+                }
+
+                etVehicleNumber.setText(searchValue)
+
+                etVehicleNumber.setSelection(
+                    etVehicleNumber.text?.length ?: 0
+                )
+
+                homeViewModel.searchVehicle(searchValue)
 
                 etVehicleNumber.setText(vehicleNumber)
 

@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import androidx.lifecycle.liveData
 import okhttp3.MultipartBody
 import android.util.Log
+import com.example.repomaster.models.VehicleDeleteKey
 import com.example.repomaster.repository.StatusSaveResult
 import okhttp3.ResponseBody
 import retrofit2.Response
@@ -219,22 +220,20 @@ class HomeViewModel(
 // DELETE MULTIPLE VEHICLES
 // =========================================================
 
+
     val deleteMultipleVehiclesResult =
         MutableLiveData<Boolean>()
 
     fun deleteMultipleVehicles(
-        vehicleNumbers: List<String>
+        records: List<VehicleDeleteKey>
     ) {
-
         viewModelScope.launch {
 
-            val result =
-                repository.deleteMultipleVehicles(
-                    vehicleNumbers
-                )
+            val result = repository.deleteMultipleVehicles(
+                records
+            )
 
-            deleteMultipleVehiclesResult.value =
-                result
+            deleteMultipleVehiclesResult.value = result
         }
     }
 

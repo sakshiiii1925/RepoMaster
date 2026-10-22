@@ -120,15 +120,12 @@ interface VehicleApi {
     // DELETE ALL VEHICLES BY UPLOAD DATE
     // =========================================================
 
-    @DELETE("api/vehicles/date/{date}")
-    suspend fun deleteVehiclesByDate(
-        @Path("date")
-        date: String,
-
-        @Query("userId")
-        userId: Int
-    ): Response<ApiResponse1>
-
+    // DELETE ALL VEHICLES BY UPLOAD DATE
+    @DELETE("api/vehicles/upload-date/{date}")
+    suspend fun deleteVehiclesByUploadDate(
+        @Path("date") date: String,
+        @Query("userId") userId: Int
+    ): Response<ResponseBody>
 
     // =========================================================
     // EXCEL UPLOAD

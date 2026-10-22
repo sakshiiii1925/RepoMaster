@@ -75,7 +75,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
 
-                        android:text="VEHICLE NUMBER"
+                        android:text="VEHICLE NUMBER/Loan Number"
                         android:textSize="11sp"
                         android:textStyle="bold"
                         android:textColor="#7A8290"
