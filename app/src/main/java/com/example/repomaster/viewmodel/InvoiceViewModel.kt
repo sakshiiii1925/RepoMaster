@@ -383,37 +383,67 @@ class InvoiceViewModel(
     val vehicleSuggestions: LiveData<List<Vehicle>>
         get() = _vehicleSuggestions
 
+
+
     fun searchVehiclesForInvoice(keyword: String) {
-
         viewModelScope.launch {
-
             try {
+                android.util.Log.d("InvoiceSearch", "Searching for: $keyword")
 
                 val result =
-                    repository.searchVehiclesForInvoice(keyword)
+                    repository.searchVehiclesForInvoice(keyword.trim())
 
                 result
                     .onSuccess { vehicles ->
-
-                        _vehicleSuggestions.postValue(
-                            vehicles
+                        android.util.Log.d(
+                            "InvoiceSearch",
+                            "Vehicles received: ${vehicles.size}"
                         )
-                    }
-                    .onFailure {
 
-                        _vehicleSuggestions.postValue(
-                            emptyList()
+                        vehicles.forEach { vehicle ->
+                            android.util.Log.d(
+                                "InvoiceSearch",
+                                "Vehicle=${vehicle.vehicleNumber}, " +
+                                        "Loan=${vehicle.id?.loanNumber}, " +
+                                        "Owner=${vehicle.ownerName}"
+                            )
+                        }
+
+                        _vehicleSuggestions.value = vehicles
+
+                        if (vehicles.isEmpty()) {
+                            _error.value =
+                                "API connected, but no matching vehicles returned"
+                        } else {
+                            _error.value = null
+                        }
+                    }
+                    .onFailure { exception ->
+                        android.util.Log.e(
+                            "InvoiceSearch",
+                            "Vehicle search API failed",
+                            exception
                         )
-                    }
 
+                        _error.value =
+                            "Vehicle search failed: " +
+                                    (exception.message ?: "Unknown error")
+                    }
             } catch (e: Exception) {
-
-                _vehicleSuggestions.postValue(
-                    emptyList()
+                android.util.Log.e(
+                    "InvoiceSearch",
+                    "Unexpected search error",
+                    e
                 )
+
+                _error.value =
+                    "Vehicle search failed: ${e.message ?: "Unknown error"}"
             }
         }
     }
+
+
+
     private val _dpdUpdated = MutableLiveData<Invoice?>()
     val dpdUpdated: LiveData<Invoice?> = _dpdUpdated
     fun updateDpdCharge(

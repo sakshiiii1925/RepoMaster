@@ -21,12 +21,47 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import android.content.Context
+import android.widget.ArrayAdapter
+import android.widget.Filter
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.TextView
 import com.google.android.material.appbar.MaterialToolbar
 
 class CreateInvoice : AppCompatActivity() {
+    private inner class VehicleSuggestionAdapter(
+        context: Context,
+        private val suggestions: MutableList<String>
+    ) : ArrayAdapter<String>(
+        context,
+        android.R.layout.simple_dropdown_item_1line,
+        suggestions
+    ) {
+        override fun getFilter(): Filter {
+            return object : Filter() {
+
+                override fun performFiltering(
+                    constraint: CharSequence?
+                ): FilterResults {
+                    val results = FilterResults()
+                    val snapshot = suggestions.toList()
+
+                    results.values = snapshot
+                    results.count = snapshot.size
+
+                    return results
+                }
+
+                override fun publishResults(
+                    constraint: CharSequence?,
+                    results: FilterResults?
+                ) {
+                    notifyDataSetChanged()
+                }
+            }
+        }
+    }
 
     // Invoice ViewModel
     private lateinit var invoiceViewModel: InvoiceViewModel
@@ -233,42 +268,7 @@ private lateinit var txtTotalPreview: TextView
                 ).show()
             }
         }
-        invoiceViewModel.vehicleSuggestions.observe(this) { vehicles ->
 
-            invoiceVehicles = vehicles
-
-            val suggestions =
-                vehicles
-                    .mapNotNull { vehicle ->
-                        vehicle.vehicleNumber
-                    }
-                    .map { number ->
-                        number
-                            .replace("-", "")
-                            .replace("/", "")
-                            .replace(".", "")
-                            .replace(" ", "")
-                            .uppercase()
-                    }
-                    .distinct()
-
-            vehicleSuggestionAdapter.clear()
-
-            vehicleSuggestionAdapter.addAll(
-                suggestions
-            )
-
-            vehicleSuggestionAdapter.notifyDataSetChanged()
-
-            if (suggestions.isNotEmpty()) {
-
-                etVehicleNumber.showDropDown()
-
-            } else {
-
-                etVehicleNumber.dismissDropDown()
-            }
-        }
     }
     private fun setupAmountCalculation(
         etBasic1Amount: TextInputEditText,
@@ -398,38 +398,29 @@ private lateinit var txtTotalPreview: TextView
     // VEHICLE SEARCH
     // ------------------------------------------------
 
+
     private fun setupVehicleSearch() {
 
         btnSearchVehicle.setOnClickListener {
 
-            val vehicleNumber =
-                etVehicleNumber.text
-                    ?.toString()
-                    ?.trim()
-                    ?.replace("-", "")
-                    ?.replace("/", "")
-                    ?.replace(".", "")
-                    ?.replace(" ", "")
-                    ?.uppercase()
-                    ?: ""
+            val keyword = etVehicleNumber.text
+                ?.toString()
+                ?.trim()
+                .orEmpty()
 
-            if (vehicleNumber.isEmpty()) {
-
+            if (keyword.isEmpty()) {
                 etVehicleNumber.error =
-                    "Enter Vehicle Number"
-
+                    "Enter vehicle number or loan number"
                 return@setOnClickListener
             }
 
-            Toast.makeText(
-                this,
-                "Searching vehicle...",
-                Toast.LENGTH_SHORT
-            ).show()
-
-            invoiceViewModel.searchVehiclesForInvoice(vehicleNumber)
+            selectedInvoiceVehicle = null
+            loadVehicleSuggestions(keyword)
         }
     }
+
+
+
     // ------------------------------------------------
     // FILL VEHICLE DETAILS
     // ------------------------------------------------
@@ -439,7 +430,7 @@ private lateinit var txtTotalPreview: TextView
         selectedInvoiceVehicle = vehicle
 
         etVehicleNumber.setText(
-            vehicle.vehicleNumber ?: ""
+            vehicle.vehicleNumber?.takeIf { it.isNotBlank() } ?: ""
         )
 
         etCustomerName.setText(
@@ -739,155 +730,136 @@ private lateinit var txtTotalPreview: TextView
             invoice
         )
     }
+
+
+    private var isSelectingVehicle = false
+
+
+
+    private var latestSearchKeyword = ""
+
+
     private fun setupVehicleAutocomplete() {
 
-        vehicleSuggestionAdapter = ArrayAdapter(
-            this,
-            android.R.layout.simple_dropdown_item_1line,
-            vehicleSuggestions
-        )
+        vehicleSuggestionAdapter =
+            VehicleSuggestionAdapter(this, vehicleSuggestions)
 
-        etVehicleNumber.setAdapter(
-            vehicleSuggestionAdapter
-        )
+        etVehicleNumber.setAdapter(vehicleSuggestionAdapter)
+        etVehicleNumber.threshold = 1
 
-        etVehicleNumber.threshold = 2
 
-        // Observe invoice-specific vehicle search results
         invoiceViewModel.vehicleSuggestions.observe(this) { vehicles ->
+
+            if (isSelectingVehicle) return@observe
 
             invoiceVehicles = vehicles
 
-            val suggestions =
-                vehicles
-                    .mapNotNull { vehicle ->
-                        vehicle.vehicleNumber
-                    }
-                    .map { number ->
-                        number
-                            .replace("-", "")
-                            .replace("/", "")
-                            .replace(".", "")
-                            .replace(" ", "")
-                            .uppercase()
-                    }
-                    .distinct()
+            vehicleSuggestions.clear()
 
-            vehicleSuggestionAdapter.clear()
+            vehicleSuggestions.addAll(
+                vehicles.map { vehicle ->
+                    val number = vehicle.vehicleNumber
+                        ?.takeIf { it.isNotBlank() }
+                        ?: "Vehicle number unavailable"
 
-            vehicleSuggestionAdapter.addAll(
-                suggestions
+                    val loan = vehicle.id?.loanNumber
+                        ?.takeIf { it.isNotBlank() }
+                        ?: "N/A"
+
+                    val owner = vehicle.ownerName
+                        ?.takeIf { it.isNotBlank() }
+                        ?: "Customer name unavailable"
+
+                    "$number | Loan: $loan | $owner"
+                }
             )
 
             vehicleSuggestionAdapter.notifyDataSetChanged()
 
-            if (suggestions.isNotEmpty()) {
-
-                etVehicleNumber.showDropDown()
-
+            if (vehicleSuggestions.isNotEmpty() && etVehicleNumber.hasFocus()) {
+                etVehicleNumber.post {
+                    if (!isFinishing && !isDestroyed &&
+                        vehicleSuggestions.isNotEmpty() &&
+                        etVehicleNumber.hasFocus()
+                    ) {
+                        etVehicleNumber.showDropDown()
+                    }
+                }
             } else {
-
                 etVehicleNumber.dismissDropDown()
             }
         }
 
-        etVehicleNumber.addTextChangedListener(
-            object : TextWatcher {
+        etVehicleNumber.addTextChangedListener(object : TextWatcher {
 
-                override fun beforeTextChanged(
-                    s: CharSequence?,
-                    start: Int,
-                    count: Int,
-                    after: Int
-                ) {
-                }
+            override fun beforeTextChanged(
+                s: CharSequence?,
+                start: Int,
+                count: Int,
+                after: Int
+            ) {}
 
-                override fun onTextChanged(
-                    s: CharSequence?,
-                    start: Int,
-                    before: Int,
-                    count: Int
-                ) {
+            override fun onTextChanged(
+                s: CharSequence?,
+                start: Int,
+                before: Int,
+                count: Int
+            ) {
+                if (isSelectingVehicle) return
 
-                    val keyword =
-                        s?.toString()
-                            ?.trim()
-                            ?.replace("-", "")
-                            ?.replace("/", "")
-                            ?.replace(".", "")
-                            ?.replace(" ", "")
-                            ?.uppercase()
-                            ?: ""
+                val keyword = s?.toString()?.trim().orEmpty()
 
-                    if (keyword.length >= 2) {
+                selectedInvoiceVehicle = null
 
-                        loadVehicleSuggestions(
-                            keyword
-                        )
-
-                    } else {
-
-                        invoiceVehicles =
-                            emptyList()
-
-                        vehicleSuggestionAdapter.clear()
-
-                        vehicleSuggestionAdapter.notifyDataSetChanged()
-
-                        etVehicleNumber.dismissDropDown()
-                    }
-                }
-
-                override fun afterTextChanged(
-                    s: Editable?
-                ) {
+                if (keyword.isNotEmpty()) {
+                    loadVehicleSuggestions(keyword)
+                } else {
+                    invoiceVehicles = emptyList()
+                    vehicleSuggestions.clear()
+                    vehicleSuggestionAdapter.notifyDataSetChanged()
+                    etVehicleNumber.dismissDropDown()
                 }
             }
-        )
 
-        // Vehicle selected from dropdown
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
         etVehicleNumber.setOnItemClickListener { _, _, position, _ ->
 
-            if (position >= invoiceVehicles.size) {
+            if (position !in invoiceVehicles.indices) {
                 return@setOnItemClickListener
             }
 
-            val selectedVehicle =
-                invoiceVehicles[position]
+            val vehicle = invoiceVehicles[position]
 
-            selectedInvoiceVehicle =
-                selectedVehicle
+            isSelectingVehicle = true
 
-            fillVehicleDetails(
-                selectedVehicle
-            )
+            fillVehicleDetails(vehicle)
 
-            val number =
-                selectedVehicle.vehicleNumber
-                    ?: ""
+            // Keep the selected vehicle number in the search field.
+            val number = vehicle.vehicleNumber.orEmpty()
 
-            etVehicleNumber.setText(
-                number,
-                false
-            )
-
-            etVehicleNumber.setSelection(
-                number.length
-            )
+            etVehicleNumber.setText(number, false)
+            etVehicleNumber.setSelection(number.length)
 
             etVehicleNumber.dismissDropDown()
+
+            isSelectingVehicle = false
         }
     }
 
-    private fun loadVehicleSuggestions(
-        keyword: String
-    ) {
 
-        invoiceViewModel.searchVehiclesForInvoice(
-            keyword
-        )
+
+
+
+
+
+
+    private fun loadVehicleSuggestions(keyword: String) {
+
+        latestSearchKeyword = keyword
+        invoiceViewModel.searchVehiclesForInvoice(keyword)
     }
-
 
     override fun onSupportNavigateUp(): Boolean {
 
