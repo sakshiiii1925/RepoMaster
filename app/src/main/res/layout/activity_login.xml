@@ -136,18 +136,34 @@
 
 
     </com.google.android.material.card.MaterialCardView>
-
     <!-- Version -->
     <TextView
         android:id="@+id/txtVersion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Version 1.0"
-        android:textColor="#999999"
+        android:textColor="#FFFFFF"
         android:textSize="12sp"
-        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@id/txtCompanyName"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="5dp" />
+
+    <!-- Company Footer -->
+    <TextView
+        android:id="@+id/txtCompanyName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="© 2026 Om Kalyani IT Solution Pvt. Ltd."
+        android:textColor="#FFFFFF"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

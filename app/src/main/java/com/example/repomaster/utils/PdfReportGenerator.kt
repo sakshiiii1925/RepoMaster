@@ -890,7 +890,7 @@ class PdfReportGenerator(
 // ============================================================
 
             document.add(
-                Paragraph("DIGITAL SIGNATURE")
+                Paragraph("SIGNATURE")
                     .setBold()
                     .setFontSize(11f)
                     .setMarginTop(12f)
@@ -963,7 +963,7 @@ class PdfReportGenerator(
             )
 
             digitalSignatureCell.add(
-                Paragraph("Digitally Signed By")
+                Paragraph("Signed By")
                     .setBold()
                     .setFontSize(8f)
                     .setTextAlignment(TextAlignment.CENTER)
@@ -982,40 +982,11 @@ class PdfReportGenerator(
 // SIGNATURE IMAGE
 // ============================================================
 
-            val signatureBitmap =
-                BitmapFactory.decodeResource(
-                    context.resources,
-                    R.drawable.digital_sign
-                )
 
-            if (signatureBitmap != null) {
 
-                val signatureStream =
-                    ByteArrayOutputStream()
 
-                signatureBitmap.compress(
-                    android.graphics.Bitmap.CompressFormat.PNG,
-                    100,
-                    signatureStream
-                )
 
-                val signatureImageData =
-                    ImageDataFactory.create(
-                        signatureStream.toByteArray()
-                    )
 
-                val signatureImage =
-                    Image(signatureImageData)
-
-                signatureImage
-                    .setWidth(110f)
-                    .setHeight(45f)
-                    .setHorizontalAlignment(
-                        com.itextpdf.layout.properties.HorizontalAlignment.CENTER
-                    )
-
-                digitalSignatureCell.add(signatureImage)
-            }
 
 
 // ============================================================
@@ -1040,28 +1011,7 @@ class PdfReportGenerator(
 // DIGITAL SIGNING DATE + TIME
 // ============================================================
 
-            val digitalSignedDateTime =
-                getDigitalSignatureDateTime()
 
-            digitalSignatureCell.add(
-                Paragraph(
-                    "Digitally signed on:\n$digitalSignedDateTime"
-                )
-                    .setFontSize(7f)
-                    .setTextAlignment(TextAlignment.CENTER)
-                    .setMarginTop(5f)
-            )
-
-            digitalSignatureCell.add(
-                Paragraph(
-                    "This document is digitally signed."
-                )
-                    .setFontSize(6.5f)
-                    .setTextAlignment(TextAlignment.CENTER)
-                    .setMarginTop(2f)
-            )
-
-            signatureTable.addCell(digitalSignatureCell)
 
 
 // ============================================================
@@ -1126,8 +1076,6 @@ class PdfReportGenerator(
                 SolidBorder(1f)
             )
     }
-
-
     private fun addBillingHeader(
         table: Table,
         text: String
