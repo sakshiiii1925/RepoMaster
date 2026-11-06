@@ -42,6 +42,11 @@
             android:title="Manage User Payments"
             android:iconTint="@color/black"/>
         <item
+            android:id="@+id/nav_help"
+            android:icon="@drawable/outline_question_mark_24"
+            android:title="Help"
+            android:iconTint="@color/black"/>
+        <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/baseline_logout_24"
             android:title="Logout" />

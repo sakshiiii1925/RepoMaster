@@ -278,5 +278,8 @@ class LoginActivity : AppCompatActivity() {
 
 
         }
+        findViewById<TextView>(R.id.tvHelpCenter).setOnClickListener {
+            startActivity(Intent(this, HelpCenterActivity::class.java))
+        }
     }
 }

@@ -255,8 +255,6 @@ class AdminDashboardActivity : AppCompatActivity(),NavigationView.OnNavigationIt
 
             }
 
-
-
         cardViewVehicle.setOnClickListener {
             animateCard(cardViewVehicle)
             cardViewVehicle.postDelayed({
@@ -325,6 +323,10 @@ class AdminDashboardActivity : AppCompatActivity(),NavigationView.OnNavigationIt
             }
             R.id.nav_invoice -> {
                 val intent= Intent(this, InvoiceActivity::class.java)
+                startActivity(intent)
+            }
+            R.id.nav_help -> {
+                val intent= Intent(this, HelpCenterActivity::class.java)
                 startActivity(intent)
             }
             R.id.nav_uploded_images -> {

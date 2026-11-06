@@ -331,6 +331,13 @@ private lateinit var speechRecognizer: SpeechRecognizer
                         )
                     )
                 }
+                R.id.nav_help ->{
+                    startActivity(
+                        Intent(
+                            this, HelpCenterActivity::class.java
+                        )
+                    )
+                }
             }
             drawerLayout.closeDrawer(
                 GravityCompat.START
