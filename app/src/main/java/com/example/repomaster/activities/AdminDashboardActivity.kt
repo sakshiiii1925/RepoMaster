@@ -5,6 +5,10 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import com.example.repomaster.update.AppUpdateManager
+import com.example.repomaster.update.UpdateInfo
 import com.example.repomaster.viewmodel.HomeViewModelFactory
 import androidx.activity.viewModels
 import com.example.repomaster.viewmodel.HomeViewModel
@@ -299,6 +303,8 @@ class AdminDashboardActivity : AppCompatActivity(),NavigationView.OnNavigationIt
             )
         }, 120)
         }
+        // Check latest RepoMaster version
+        checkAppUpdate()
     }
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
 
@@ -333,11 +339,10 @@ class AdminDashboardActivity : AppCompatActivity(),NavigationView.OnNavigationIt
                 val intent= Intent(this, UploadedImagesActivity::class.java)
                 startActivity(intent)
             }
-R.id.nav_manage_rates->{
-    val intent= Intent(this, PaymentRatesActivity::class.java)
-    startActivity(intent)
-
-}
+            R.id.nav_manage_rates->{
+                val intent= Intent(this, PaymentRatesActivity::class.java)
+                startActivity(intent)
+            }
             R.id.nav_manage_user_payments -> {
                 val intent= Intent(this, AdminPaymentActivity::class.java)
                 startActivity(intent)
@@ -502,6 +507,72 @@ R.id.nav_manage_rates->{
 
         handler.removeCallbacks(refreshRunnable)
 
+    }
+    private fun checkAppUpdate() {
+
+        lifecycleScope.launch {
+
+            val updateManager =
+                AppUpdateManager(this@AdminDashboardActivity)
+
+            val updateInfo =
+                updateManager.checkForUpdate()
+
+            if (updateInfo != null && !isFinishing) {
+
+                showUpdateDialog(updateInfo)
+            }
+        }
+    }
+    private fun showUpdateDialog(updateInfo: UpdateInfo) {
+
+        val builder =
+            AlertDialog.Builder(this)
+
+        builder.setTitle("RepoMaster Update Available")
+
+        builder.setMessage(
+            """
+        A new version of RepoMaster is available.
+
+        New Version: ${updateInfo.versionName}
+
+        What's New:
+        ${updateInfo.releaseNotes}
+
+        Please update your application.
+        """.trimIndent()
+        )
+
+        builder.setCancelable(!updateInfo.forceUpdate)
+
+        builder.setPositiveButton("Update Now") { _, _ ->
+
+            try {
+
+                val intent = Intent(
+                    Intent.ACTION_VIEW,
+                    android.net.Uri.parse(updateInfo.apkUrl)
+                )
+
+                startActivity(intent)
+
+            } catch (e: Exception) {
+
+                Toast.makeText(
+                    this,
+                    "Unable to open update link",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+
+        if (!updateInfo.forceUpdate) {
+
+            builder.setNegativeButton("Later", null)
+        }
+
+        builder.show()
     }
     override fun onResume() {
 

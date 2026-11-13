@@ -5,7 +5,8 @@ import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.repomaster.R
-
+import android.widget.ImageView
+import android.view.View
 class HelpDetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -15,7 +16,40 @@ class HelpDetailActivity : AppCompatActivity() {
         val title = intent.getStringExtra("title") ?: "Help"
         val category = intent.getStringExtra("category") ?: ""
         val description = intent.getStringExtra("description") ?: ""
+        val imgScreenshot =
+            findViewById<ImageView>(R.id.imgHelpScreenshot)
 
+        val screenshot = when (category) {
+
+            "account" -> R.drawable.help_login
+
+            "search" -> R.drawable.help_search
+
+            //"vehicle" -> R.drawable.help_vehicle
+
+           // "status" -> R.drawable.help_status
+
+            //"images" -> R.drawable.help_images
+
+           // "excel" -> R.drawable.help_excel
+
+            //"invoice" -> R.drawable.help_invoice
+
+            //"reports" -> R.drawable.help_reports
+
+            //"offline" -> R.drawable.help_offline
+
+            //"notifications" -> R.drawable.help_notifications
+
+            else -> 0
+        }
+
+        if (screenshot != 0) {
+            imgScreenshot.setImageResource(screenshot)
+            imgScreenshot.visibility = View.VISIBLE
+        } else {
+            imgScreenshot.visibility = View.GONE
+        }
         findViewById<TextView>(R.id.tvDetailTitle).text = title
         findViewById<TextView>(R.id.tvDetailDescription).text =
             getInstructions(category, description)

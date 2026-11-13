@@ -38,6 +38,10 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.textfield.TextInputEditText
 import androidx.activity.addCallback
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import com.example.repomaster.update.AppUpdateManager
+import com.example.repomaster.update.UpdateInfo
 
 class HomeActivity : AppCompatActivity() {
     private lateinit var toolbar:
@@ -203,6 +207,73 @@ private lateinit var speechRecognizer: SpeechRecognizer
 
         setupSearchButton()
         setupVoiceSearch()
+        checkAppUpdate()
+    }
+    private fun checkAppUpdate() {
+
+        lifecycleScope.launch {
+
+            val updateManager =
+                AppUpdateManager(this@HomeActivity)
+
+            val updateInfo =
+                updateManager.checkForUpdate()
+
+            if (updateInfo != null && !isFinishing) {
+
+                showUpdateDialog(updateInfo)
+            }
+        }
+    }
+    private fun showUpdateDialog(updateInfo: UpdateInfo) {
+
+        val builder =
+            AlertDialog.Builder(this)
+
+        builder.setTitle("RepoMaster Update Available")
+
+        builder.setMessage(
+            """
+        A new version of RepoMaster is available.
+
+        New Version: ${updateInfo.versionName}
+
+        What's New:
+        ${updateInfo.releaseNotes}
+
+        Please update your application.
+        """.trimIndent()
+        )
+
+        builder.setCancelable(!updateInfo.forceUpdate)
+
+        builder.setPositiveButton("Update Now") { _, _ ->
+
+            try {
+
+                val intent = Intent(
+                    Intent.ACTION_VIEW,
+                    android.net.Uri.parse(updateInfo.apkUrl)
+                )
+
+                startActivity(intent)
+
+            } catch (e: Exception) {
+
+                Toast.makeText(
+                    this,
+                    "Unable to open update link",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+
+        if (!updateInfo.forceUpdate) {
+
+            builder.setNegativeButton("Later", null)
+        }
+
+        builder.show()
     }
     private fun initializeViews() {
 
